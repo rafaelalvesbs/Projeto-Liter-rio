@@ -9,49 +9,71 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         body { margin: 0; font-family: Arial, sans-serif; background-color: #f5f6f8; }
-        .top-header { background-color: #004080; color: white; display: flex; justify-content: space-between; align-items: center; padding: 8px 20px; height: 40px; }
+        
+        /* Cabeçalho */
+        .top-header { background-color: #004080; color: white; display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; flex-wrap: wrap; gap: 10px; }
         .top-header-left { display: flex; align-items: center; gap: 10px; }
         .top-header-left .logo-icon { font-size: 24px; }
         .top-header-left .logo-text { line-height: 1.1; display: flex; align-items: center; height: 100%;}
         .top-header-left strong { font-size: 16px; letter-spacing: 1px; }
-        .top-header-right { display: flex; align-items: center; gap: 15px; font-size: 14px; }
-        .top-btn { background: white; color: #333; border: 1px solid #ccc; padding: 5px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 5px; }
+        .top-header-right { display: flex; align-items: center; gap: 15px; font-size: 14px; flex-wrap: wrap; }
+        .top-btn { background: white; color: #333; border: 1px solid #ccc; padding: 6px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 5px; }
         
-        .sub-header { background-color: white; border-bottom: 1px solid #ccc; display: flex; align-items: center; height: 45px; padding: 0 20px; }
-        .menu { display: flex; height: 100%; }
-        .menu button { background: none; border: none; color: #555; font-size: 13px; cursor: pointer; padding: 0 15px; display: flex; align-items: center; gap: 6px; height: 100%; border-right: 1px solid #eee; }
+        /* Menu de Navegação (Sub-header) */
+        .sub-header { background-color: white; border-bottom: 1px solid #ccc; display: flex; align-items: center; padding: 0; }
+        .menu { display: flex; width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; -ms-overflow-style: none; }
+        .menu::-webkit-scrollbar { display: none; /* Oculta a barra de rolagem visualmente no mobile, mas permite rolar com o dedo */ }
+        .menu button { background: none; border: none; color: #555; font-size: 13px; cursor: pointer; padding: 15px; display: flex; align-items: center; gap: 6px; white-space: nowrap; border-bottom: 3px solid transparent; transition: 0.2s; }
         .menu button i { color: #0066cc; }
-        .menu button:hover, .menu button.active { color: #0066cc; background-color: #f0f7ff; font-weight: bold; }
+        .menu button:hover, .menu button.active { color: #0066cc; background-color: #f0f7ff; font-weight: bold; border-bottom: 3px solid #0066cc; }
 
-        .container { padding: 20px; max-width: 1000px; margin: auto; display: none; }
-        .tab-content { display: none; background: white; padding: 20px; border-radius: 4px; border: 1px solid #ddd; }
+        /* Conteúdo */
+        .container { padding: 20px; max-width: 1000px; margin: auto; display: none; box-sizing: border-box; }
+        .tab-content { display: none; background: white; padding: 20px; border-radius: 4px; border: 1px solid #ddd; box-sizing: border-box; }
         .tab-content.active { display: block; }
         
-        .book-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px; margin-top: 15px; }
-        .book-card { border: 1px solid #eee; padding: 15px; border-radius: 4px; background: #fafafa; border-left: 4px solid #0066cc; display:flex; flex-direction:column; justify-content:space-between; }
-        .tag-digital { background: #2ecc71; color: white; padding: 3px 8px; border-radius: 4px; font-size: 11px; text-decoration: none;}
-        .tag-fisico { background: #e67e22; color: white; padding: 3px 8px; border-radius: 4px; font-size: 11px; }
+        /* Cabeçalho do Catálogo com Filtro */
+        .catalogo-header { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 15px; }
+        .catalogo-filtro { width: 100%; max-width: 250px; background: #f0f7ff; padding: 10px; border-radius: 4px; border: 1px solid #0066cc; box-sizing: border-box; }
+
+        /* Grelha de Livros */
+        .book-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px; margin-top: 15px; }
+        .book-card { border: 1px solid #eee; padding: 15px; border-radius: 4px; background: #fafafa; border-left: 4px solid #0066cc; display:flex; flex-direction:column; justify-content:space-between; box-sizing: border-box; }
+        .tag-digital { background: #2ecc71; color: white; padding: 3px 8px; border-radius: 4px; font-size: 11px; text-decoration: none; display: inline-block;}
+        .tag-fisico { background: #e67e22; color: white; padding: 3px 8px; border-radius: 4px; font-size: 11px; display: inline-block;}
         
-        input, select { width: 100%; padding: 8px; margin-top: 8px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; font-size: 14px;}
-        button.action-btn { background: #0066cc; color: white; cursor: pointer; border: none; margin-top: 15px; padding: 10px 20px; border-radius: 4px; font-weight: bold;}
+        /* Formulários e Botões */
+        input, select { width: 100%; padding: 10px; margin-top: 8px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; font-size: 14px;}
+        button.action-btn { background: #0066cc; color: white; cursor: pointer; border: none; margin-top: 15px; padding: 12px 20px; border-radius: 4px; font-weight: bold; font-size: 14px; width: 100%;}
         button.action-btn:hover { background: #00509e; }
         
-        .btn-escolher { background: #0066cc; width: 100%; color: white; padding: 8px; border: none; border-radius: 4px; cursor: pointer; margin-top: 10px; font-weight: bold; transition: 0.3s; }
+        .btn-escolher { background: #0066cc; width: 100%; color: white; padding: 10px; border: none; border-radius: 4px; cursor: pointer; margin-top: 10px; font-weight: bold; transition: 0.3s; font-size: 13px;}
         .btn-escolher:hover { background: #00509e; }
         .btn-escolhido { background: #27ae60 !important; cursor: default; }
 
-        .btn-excluir { background: #e74c3c; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; }
-        .btn-editar { background: #f39c12; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; margin-right: 5px; }
-
+        .btn-excluir { background: #e74c3c; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; margin-top: 5px; }
+        .btn-editar { background: #f39c12; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; margin-right: 5px; margin-top: 5px; }
         .form-group { margin-bottom: 15px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px; }
-        table, th, td { border: 1px solid #ddd; }
-        th, td { padding: 10px; text-align: left; }
+
+        /* Tabelas Responsivas */
+        .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; margin-top: 15px; border: 1px solid #ddd; border-radius: 4px; }
+        table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 500px; }
+        table, th, td { border-bottom: 1px solid #ddd; }
+        th, td { padding: 12px; text-align: left; }
         th { background-color: #f9f9f9; color: #333; }
 
-        #modalIdentificacao { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: flex; justify-content: center; align-items: center; z-index: 1000; }
-        .modal-box { background: white; padding: 30px; border-radius: 8px; width: 350px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
-        .modal-box h3 { color: #004080; margin-top: 0; }
+        /* Modal */
+        #modalIdentificacao { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: flex; justify-content: center; align-items: center; z-index: 1000; padding: 15px; box-sizing: border-box; }
+        .modal-box { background: white; padding: 30px; border-radius: 8px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.2); box-sizing: border-box; }
+        .modal-box h3 { color: #004080; margin-top: 0; font-size: 20px;}
+
+        /* Media Queries para Telas Menores (Mobile) */
+        @media (max-width: 768px) {
+            .top-header-right { width: 100%; justify-content: flex-start; }
+            .catalogo-filtro { max-width: 100%; }
+            .book-grid { grid-template-columns: 1fr; } /* No mobile, uma coluna por linha */
+            .tab-content { padding: 15px; }
+        }
     </style>
 </head>
 <body>
@@ -62,13 +84,14 @@
             <h3><i class="fas fa-user-circle"></i> Identificação Docente</h3>
             <p style="font-size: 14px; color: #555;">Selecione seu nome para acessar seus semestres correspondentes.</p>
             <div class="form-group" style="text-align: left;">
-                <label style="font-weight: bold; color: #555;">Seu Nome:</label>
+                <label style="font-weight: bold; color: #555; font-size: 14px;">Seu Nome:</label>
                 <select id="selectProfessor" autocomplete="off"></select>
             </div>
-            <button class="action-btn" style="width: 100%;" onclick="entrarSistema()">Entrar no Portal</button>
+            <button class="action-btn" onclick="entrarSistema()">Entrar no Portal</button>
         </div>
     </div>
 
+    <!-- Cabeçalho -->
     <header class="top-header">
         <div class="top-header-left">
             <i class="fas fa-book-open logo-icon"></i>
@@ -80,6 +103,7 @@
         </div>
     </header>
 
+    <!-- Navegação (Com rolagem horizontal suave no mobile) -->
     <nav class="sub-header">
         <div class="menu">
             <button class="tab-link active" onclick="openTab('catalogo', this); buscarMinhasEscolhasParaCatalogo();"><i class="fas fa-book"></i> Paradidáticos</button>
@@ -93,14 +117,14 @@
     <div class="container" id="appContainer">
         <!-- Paradidáticos -->
         <div id="catalogo" class="tab-content active">
-            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-                <div>
-                    <h3 style="color:#004080; margin:0;">Catálogo de Livros Paradidáticos</h3>
-                    <p style="color: #666; font-size: 14px;">Você está selecionando livros para o <strong>Semestre <span id="lblSemestreCatalogo"></span></strong>.</p>
+            <div class="catalogo-header">
+                <div style="flex: 1;">
+                    <h3 style="color:#004080; margin-top:0;">Catálogo de Livros Paradidáticos</h3>
+                    <p style="color: #666; font-size: 14px; margin-bottom: 5px;">Você está selecionando livros para o <strong>Semestre <span id="lblSemestreCatalogo"></span></strong>.</p>
                 </div>
-                <div style="width: 250px; background: #f0f7ff; padding: 10px; border-radius: 4px; border: 1px solid #0066cc;">
+                <div class="catalogo-filtro">
                     <label style="font-weight: bold; font-size:12px; color:#004080;">VER LIVROS DO SEMESTRE:</label>
-                    <select id="filtroNavegarSemestres" autocomplete="off" onchange="buscarMinhasEscolhasParaCatalogo()" style="margin-top:5px; padding:5px;">
+                    <select id="filtroNavegarSemestres" autocomplete="off" onchange="buscarMinhasEscolhasParaCatalogo()">
                         <!-- Options carregadas via JS baseadas no professor -->
                     </select>
                 </div>
@@ -111,37 +135,41 @@
         <!-- Minhas Escolhas -->
         <div id="minhas-escolhas" class="tab-content">
             <h3 style="color:#004080; margin-top:0;">Livros que eu escolhi</h3>
-            <table>
-                <thead>
-                    <tr><th>Livro</th><th>Semestre da Turma</th><th>Data da Escolha</th><th>Ações</th></tr>
-                </thead>
-                <tbody id="tabelaMinhasEscolhas"><tr><td colspan="4">Carregando...</td></tr></tbody>
-            </table>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr><th>Livro</th><th>Semestre da Turma</th><th>Data da Escolha</th><th>Ações</th></tr>
+                    </thead>
+                    <tbody id="tabelaMinhasEscolhas"><tr><td colspan="4">Carregando...</td></tr></tbody>
+                </table>
+            </div>
         </div>
 
         <!-- Sugerir Novo -->
         <div id="sugerir" class="tab-content">
             <h3 style="color:#004080; margin-top:0;">Sugerir Novo Livro Literário</h3>
             <div class="form-group">
-                <label>Título do Livro e Autor:</label>
+                <label style="font-weight: bold; color: #555; font-size: 14px;">Título do Livro e Autor:</label>
                 <input type="text" id="sug_titulo" autocomplete="off" placeholder="Ex: The Little Prince - Antoine de Saint-Exupéry">
             </div>
             <div class="form-group">
-                <label>Link (Site, PDF ou YouTube):</label>
+                <label style="font-weight: bold; color: #555; font-size: 14px;">Link (Site, PDF ou YouTube):</label>
                 <input type="text" id="sug_link" autocomplete="off" placeholder="Cole o URL completo aqui">
             </div>
-            <button class="action-btn" id="btnEnviarSugestao"><i class="fas fa-paper-plane"></i> Enviar Sugestão</button>
+            <button class="action-btn" id="btnEnviarSugestao" style="width: auto;"><i class="fas fa-paper-plane"></i> Enviar Sugestão</button>
         </div>
 
         <!-- Escolhas dos Colegas -->
         <div id="escolhas-colegas" class="tab-content">
             <h3 style="color:#004080; margin-top:0;">Livros escolhidos pelos colegas</h3>
-            <table>
-                <thead>
-                    <tr><th>Professor(a)</th><th>Livro</th><th>Semestre</th></tr>
-                </thead>
-                <tbody id="tabelaEscolhasColegas"><tr><td colspan="3">Carregando...</td></tr></tbody>
-            </table>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr><th>Professor(a)</th><th>Livro</th><th>Semestre</th></tr>
+                    </thead>
+                    <tbody id="tabelaEscolhasColegas"><tr><td colspan="3">Carregando...</td></tr></tbody>
+                </table>
+            </div>
         </div>
 
         <!-- Agendar Livros Físicos -->
@@ -149,8 +177,10 @@
             <h3 style="color:#004080; margin-top:0;">Agendamento Físico de Livros</h3>
             <div style="background: #e9f2fa; padding: 15px; border-radius: 4px; border-left: 4px solid #0066cc; margin-bottom: 20px;">
                 <strong>Nome:</strong> <span id="labelNomeProfessor"></span> <br>
-                <strong>Selecione o Semestre:</strong> 
-                <select id="filtroSemestreAgendamento" autocomplete="off" style="width: auto; display: inline-block; padding: 3px;"></select>
+                <div style="margin-top: 10px;">
+                    <strong>Selecione o Semestre:</strong> 
+                    <select id="filtroSemestreAgendamento" autocomplete="off" style="width: auto; display: inline-block; padding: 6px; margin: 0;"></select>
+                </div>
             </div>
             <div style="border: 2px dashed #ccc; padding: 30px; text-align: center; color: #777; border-radius: 4px;">
                 <i class="fas fa-box-open" style="font-size: 30px; margin-bottom: 10px;"></i><br>
@@ -159,6 +189,7 @@
         </div>
     </div>
 
+    <!-- SCRIPTS E LÓGICA FIREBASE -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
@@ -258,7 +289,6 @@
             window.professorLogado = nome;
             localStorage.setItem('clm_professor', nome);
 
-            // Filtra os semestres exclusivos do professor logado
             const meusSemestres = getSemestresPorProfessor(nome);
             const selectNavegar = document.getElementById('filtroNavegarSemestres');
             const selectAgendamento = document.getElementById('filtroSemestreAgendamento');
@@ -312,7 +342,7 @@
             
             livrosFiltrados.forEach(livro => {
                 const badge = livro.qtd === "Digital" ? '<span class="tag-digital"><i class="fas fa-desktop"></i> Digital</span>' : `<span class="tag-fisico"><i class="fas fa-book"></i> Físico</span>`;
-                const linkDiv = livro.link ? `<a href="${livro.link}" target="_blank" style="color:#0066cc; font-size:12px; margin-top:5px; display:block;"><i class="fas fa-external-link-alt"></i> Ver Material</a>` : '<div style="height:20px;"></div>';
+                const linkDiv = livro.link ? `<a href="${livro.link}" target="_blank" style="color:#0066cc; font-size:12px; margin-top:5px; display:inline-block;"><i class="fas fa-external-link-alt"></i> Ver Material</a>` : '<div style="height:20px;"></div>';
                 
                 let btnHtml = `<button class="btn-escolher" onclick="escolherLivroParaSemestre('${livro.titulo}')"><i class="fas fa-paper-plane"></i> Enviar Escolha para Coordenadora</button>`;
                 
@@ -323,8 +353,8 @@
                 grid.innerHTML += `
                     <div class="book-card">
                         <div>
-                            <h4 style="margin-top:0; color:#333; font-size:15px;">${livro.titulo}</h4>
-                            ${badge}
+                            <h4 style="margin-top:0; color:#333; font-size:15px; margin-bottom: 8px;">${livro.titulo}</h4>
+                            ${badge} <br>
                             ${linkDiv}
                         </div>
                         ${btnHtml}
@@ -382,7 +412,7 @@
                             <td><strong>${data.livro}</strong></td>
                             <td>Semestre ${data.semestre}</td>
                             <td>${dataFormatada}</td>
-                            <td>
+                            <td style="white-space: nowrap;">
                                 <button class="btn-editar" onclick="editarEscolha('${id}')" title="Editar"><i class="fas fa-edit"></i> Editar</button>
                                 <button class="btn-excluir" onclick="excluirEscolha('${id}')" title="Excluir"><i class="fas fa-trash"></i></button>
                             </td>
