@@ -48,11 +48,16 @@
         .btn-editar { background: #f39c12; color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; margin-right: 5px; margin-top: 5px; }
         .form-group { margin-bottom: 12px; }
 
-        .table-responsive { width: 100%; margin-top: 10px; border-radius: 4px; }
+        .table-responsive { width: 100%; margin-top: 10px; border-radius: 4px; overflow-x: auto;}
         table { width: 100%; border-collapse: collapse; font-size: 14px; }
         table, th, td { border-bottom: 1px solid #ddd; }
         th, td { padding: 10px; text-align: left; }
         th { background-color: #f9f9f9; color: #333; }
+
+        .semana-btn { display: block; width: 100%; padding: 8px; margin-bottom: 5px; border: 1px solid #ccc; border-radius: 4px; background: white; cursor: pointer; text-align: left; font-size: 13px; }
+        .semana-btn:hover { background: #f0f7ff; border-color: #0066cc; }
+        .semana-ocupada { background: #f9f9f9; border-color: #eee; color: #999; cursor: not-allowed; }
+        .semana-minha { background: #27ae60; color: white; border-color: #27ae60; }
 
         #modalIdentificacao { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: flex; justify-content: center; align-items: center; z-index: 1000; padding: 15px; box-sizing: border-box; }
         .modal-box { background: white; padding: 25px; border-radius: 8px; width: 100%; max-width: 350px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.2); box-sizing: border-box; }
@@ -92,8 +97,6 @@
             #tabelaEscolhasColegas td:nth-of-type(1)::before { content: "PROFESSOR(A):"; font-size: 10px; color: #888; font-weight: bold; }
             #tabelaEscolhasColegas td:nth-of-type(2)::before { content: "LIVRO:"; font-size: 10px; color: #888; font-weight: bold; }
             #tabelaEscolhasColegas td:nth-of-type(3)::before { content: "SEMESTRE:"; font-size: 10px; color: #888; font-weight: bold; }
-
-            .table-responsive { border: none; margin-top: 5px;}
         }
     </style>
 </head>
@@ -127,7 +130,7 @@
             <button class="tab-link" onclick="openTab('minhas-escolhas', this); buscarEscolhas();"><i class="fas fa-check-square"></i> Minhas Escolhas</button>
             <button class="tab-link" onclick="openTab('escolhas-colegas', this); carregarEscolhasColegas();"><i class="fas fa-users"></i> Escolhas Colegas</button>
             <button class="tab-link" onclick="openTab('sugerir', this); buscarMinhasSugestoes();"><i class="fas fa-lightbulb"></i> Sugerir Novo</button>
-            <button class="tab-link" onclick="openTab('agendar-fisico', this)"><i class="fas fa-calendar-check"></i> Agendar Físicos</button>
+            <button class="tab-link" onclick="openTab('agendar-fisico', this); renderizarPainelAgendamento();"><i class="fas fa-calendar-check"></i> Agendar Físicos</button>
         </div>
     </nav>
 
@@ -161,7 +164,7 @@
             </div>
         </div>
 
-        <!-- Sugerir Novo com Seleção de Semestre -->
+        <!-- Sugerir Novo -->
         <div id="sugerir" class="tab-content">
             <h3 style="color:#004080; margin-top:0; font-size:16px;">Sugerir Novo Livro Literário</h3>
             <div class="form-group">
@@ -195,9 +198,9 @@
             </div>
         </div>
 
-        <!-- Escolhas dos Colegas com Filtro por Semestre -->
+        <!-- Escolhas Colegas -->
         <div id="escolhas-colegas" class="tab-content">
-            <div class="flex-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+            <div class="catalogo-header" style="align-items:center;">
                 <h3 style="color:#004080; margin:0; font-size:16px;">Livros escolhidos pelos colegas</h3>
                 <div style="width: 200px;">
                     <label style="font-weight: bold; font-size:11px; color:#004080;">FILTRAR SEMESTRE:</label>
@@ -205,8 +208,7 @@
                         <option value="todos">Todos os Semestres</option>
                         <option value="1">Semestre 1</option><option value="2">Semestre 2</option>
                         <option value="3">Semestre 3</option><option value="4">Semestre 4</option>
-                        <option value="5">Semestre 5</option><option value="6">Semestre 6</option>
-                        <option value="7">Semestre 7</option>
+                        <option value="5">Semestre 5</option><option value="6">Semestre 6</option><option value="7">Semestre 7</option>
                     </select>
                 </div>
             </div>
@@ -220,19 +222,19 @@
             </div>
         </div>
 
-        <!-- Agendar Livros Físicos (Título alterado) -->
+        <!-- Agendamento Físico -->
         <div id="agendar-fisico" class="tab-content">
             <h3 style="color:#004080; margin-top:0; font-size:16px;">Agendamento de livros físicos</h3>
             <div style="background: #e9f2fa; padding: 15px; border-radius: 4px; border-left: 4px solid #0066cc; margin-bottom: 15px; font-size: 13px;">
                 <strong>Nome:</strong> <span id="labelNomeProfessor"></span> <br>
                 <div style="margin-top: 8px;">
                     <strong>Selecione o Semestre:</strong> 
-                    <select id="filtroSemestreAgendamento" autocomplete="off" style="width: auto; display: inline-block; padding: 4px; margin: 0; font-size: 13px;"></select>
+                    <select id="filtroSemestreAgendamento" autocomplete="off" onchange="renderizarPainelAgendamento()" style="width: auto; display: inline-block; padding: 4px; margin: 0; font-size: 13px;"></select>
                 </div>
             </div>
-            <div style="border: 2px dashed #ccc; padding: 20px; text-align: center; color: #777; border-radius: 4px; font-size: 13px;">
-                <i class="fas fa-box-open" style="font-size: 24px; margin-bottom: 8px;"></i><br>
-                A lista de agendamento de livros físicos será adicionada aqui em breve.
+            
+            <div id="areaAgendamento" style="display: flex; flex-wrap: wrap; gap: 20px;">
+                <!-- Lista de livros físicos e semanas injetadas via JS -->
             </div>
         </div>
     </div>
@@ -245,7 +247,6 @@
             apiKey: "AIzaSyD5aBrCz8rRAYLyqkD2WIlUwXy6P_U3Roo",
             authDomain: "projeto-literario-f8c24.firebaseapp.com",
             projectId: "projeto-literario-f8c24",
-            storageBucket: "projeto-literario-f8c24.firebasestorage.app",
             messagingSenderId: "129154242671",
             appId: "1:129154242671:web:a66a98213e9c4f4f6c159a"
         };
@@ -266,32 +267,35 @@
         };
 
         const acervo = [
-            { sem: 1, titulo: "The umbrella - Clare Harris", qtd: "10 livros", link: "https://www.youtube.com/watch?v=4UY9ixf4HiY" },
-            { sem: 1, titulo: "Gulliver's travels in Lilliput - Jonatahn Swift", qtd: "14 livros", link: "" },
-            { sem: 1, titulo: "Rich man, poor man - T.C Jupp", qtd: "16 livros", link: "" },
-            { sem: 1, titulo: "Lucky number -John Milne", qtd: "9 livros", link: "" },
-            { sem: 2, titulo: "The lost ship - Stephen Colbourn", qtd: "12 livros", link: "https://www.youtube.com/watch?v=QK-P6jkXYuk" },
-            { sem: 2, titulo: "Alissa - C.J. Moore", qtd: "11 livros", link: "" },
-            { sem: 2, titulo: "Sara says No! - Norman Whitney", qtd: "14 livros", link: "" },
-            { sem: 3, titulo: "This is London -Philip Prowse", qtd: "21 livros", link: "" },
-            { sem: 3, titulo: "The truth machine -Norman whitney", qtd: "21 livros", link: "" },
-            { sem: 3, titulo: "Anna and the fighter - Elizabeth Laird", qtd: "11 livros", link: "" },
+            { sem: 1, titulo: "The umbrella - Clare Harris", qtd: "10", link: "https://www.youtube.com/watch?v=4UY9ixf4HiY" },
+            { sem: 1, titulo: "Gulliver's travels in Lilliput - Jonatahn Swift", qtd: "14", link: "https://www.youtube.com/watch?v=dcOdIDDi2K4" },
+            { sem: 1, titulo: "Rich man, poor man - T.C Jupp", qtd: "16", link: "https://www.youtube.com/watch?v=4ojquasazqU" },
+            { sem: 1, titulo: "Lucky number -John Milne", qtd: "9", link: "" },
+            { sem: 2, titulo: "The lost ship - Stephen Colbourn", qtd: "12", link: "https://www.youtube.com/watch?v=QK-P6jkXYuk" },
+            { sem: 2, titulo: "Alissa - C.J. Moore", qtd: "11", link: "https://www.youtube.com/watch?v=uCpbVFMvADU&t=70s" },
+            { sem: 2, titulo: "Sara says No! - Norman Whitney", qtd: "14", link: "https://www.youtube.com/watch?v=u4j4bReUsw0" },
+            { sem: 3, titulo: "This is London -Philip Prowse", qtd: "21", link: "" },
+            { sem: 3, titulo: "The truth machine -Norman whitney", qtd: "21", link: "" },
+            { sem: 3, titulo: "Anna and the fighter - Elizabeth Laird", qtd: "11", link: "https://www.youtube.com/watch?v=8v35DEtoTWM" },
             { sem: 3, titulo: "Good humor - Hans C. Andersen", qtd: "Digital", link: "http://www.dominiopublico.gov.br/pesquisa/DetalheObraForm.do?select_action=&co_obra=609" },
             { sem: 3, titulo: "Great grandfather - Hans C. Andersen", qtd: "Digital", link: "http://www.dominiopublico.gov.br/pesquisa/DetalheObraForm.do?select_action=&co_obra=6094" },
-            { sem: 4, titulo: "The last of the Mohicans - James F. Cooper", qtd: "16 livros", link: "" },
+            { sem: 4, titulo: "The last of the Mohicans - James F. Cooper", qtd: "16", link: "" },
             { sem: 4, titulo: "The wedding gift -Guy de Maupassant", qtd: "Digital", link: "http://www.dominiopublico.gov.br/pesquisa/DetalheObraForm.do?select_action=&co_obra=6996" },
             { sem: 5, titulo: "A message from the sea - Charles Dickens", qtd: "Digital", link: "http://www.dominiopublico.gov.br/download/texto/gu001407.pdf" },
-            { sem: 5, titulo: "The man in the iron mask -Alexandre Dumas", qtd: "20 livros", link: "" },
+            { sem: 5, titulo: "The man in the iron mask -Alexandre Dumas", qtd: "20", link: "" },
             { sem: 6, titulo: "The three ghost stories -Charles Dickens", qtd: "Digital", link: "http://www.dominiopublico.gov.br/download/texto/pp000007.pdf" },
             { sem: 7, titulo: "Story teller", qtd: "Digital", link: "https://educapes.capes.gov.br/bitstream/capes/63069/1/edgar_allan_poe_storyteller_AE.pdf" }
+        ];
+
+        const semanasAgendamento = [
+            "28/09 a 02/10", "05/10 a 09/10", "12/10 a 16/10", "19/10 a 23/10",
+            "26/10 a 30/10", "02/11 a 06/11", "09/11 a 13/11", "16/11 a 19/11"
         ];
 
         window.getSemestresPorProfessor = function(nome) {
             let sems = [];
             for(let s in mapProfessores) {
-                if(mapProfessores[s].some(n => n.split('/').map(x => x.trim()).includes(nome))) {
-                    sems.push(s);
-                }
+                if(mapProfessores[s].some(n => n.split('/').map(x => x.trim()).includes(nome))) sems.push(s);
             }
             return sems;
         };
@@ -301,13 +305,8 @@
             const selectNome = document.getElementById('selectProfessor');
             selectNome.innerHTML = '<option value="">Selecione...</option>';
             let nomes = new Set();
-            for(let s in mapProfessores) {
-                mapProfessores[s].forEach(n => { n.split('/').forEach(part => nomes.add(part.trim())); });
-            }
-            // Ordem alfabética estrita
-            Array.from(nomes).sort((a, b) => a.localeCompare(b, 'pt-BR')).forEach(nome => { 
-                selectNome.innerHTML += `<option value="${nome}">${nome}</option>`; 
-            });
+            for(let s in mapProfessores) mapProfessores[s].forEach(n => { n.split('/').forEach(part => nomes.add(part.trim())); });
+            Array.from(nomes).sort((a, b) => a.localeCompare(b, 'pt-BR')).forEach(nome => { selectNome.innerHTML += `<option value="${nome}">${nome}</option>`; });
 
             if(profSalvo) {
                 document.getElementById('selectProfessor').value = profSalvo;
@@ -318,23 +317,16 @@
         window.sairSistema = function() {
             Swal.fire({
                 title: 'Sair da conta?',
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#0066cc',
-                cancelButtonColor: '#aaa',
-                confirmButtonText: 'Sim, sair',
-                cancelButtonText: 'Cancelar'
+                icon: 'question', showCancelButton: true, confirmButtonColor: '#0066cc', cancelButtonColor: '#aaa',
+                confirmButtonText: 'Sim, sair', cancelButtonText: 'Cancelar'
             }).then((result) => {
-                if (result.isConfirmed) {
-                    localStorage.removeItem('clm_professor');
-                    location.reload();
-                }
+                if (result.isConfirmed) { localStorage.removeItem('clm_professor'); location.reload(); }
             });
         }
 
         window.entrarSistema = function() {
             const nome = document.getElementById('selectProfessor').value;
-            if(!nome) { Swal.fire('Atenção', 'Selecione seu nome para entrar.', 'warning'); return; }
+            if(!nome) { Swal.fire('Atenção', 'Selecione seu nome.', 'warning'); return; }
 
             window.professorLogado = nome;
             localStorage.setItem('clm_professor', nome);
@@ -342,8 +334,7 @@
             const meusSemestres = getSemestresPorProfessor(nome);
             const selectNavegar = document.getElementById('filtroNavegarSemestres');
             const selectAgendamento = document.getElementById('filtroSemestreAgendamento');
-            selectNavegar.innerHTML = '';
-            selectAgendamento.innerHTML = '';
+            selectNavegar.innerHTML = ''; selectAgendamento.innerHTML = '';
 
             meusSemestres.forEach(sem => {
                 selectNavegar.innerHTML += `<option value="${sem}">Semestre ${sem}</option>`;
@@ -352,7 +343,6 @@
 
             document.getElementById('modalIdentificacao').style.display = 'none';
             document.getElementById('appContainer').style.display = 'block';
-            
             let shortName = nome.split(' ')[0];
             document.getElementById('btnTopName').innerHTML = `<i class="fas fa-user"></i> ${shortName.toUpperCase()}`;
             document.getElementById('labelNomeProfessor').innerText = nome;
@@ -372,7 +362,6 @@
                 const querySnapshot = await getDocs(collection(db, "escolhas"));
                 window.livrosJaEscolhidos = [];
                 const semAtualDoFiltro = document.getElementById('filtroNavegarSemestres').value;
-                
                 querySnapshot.forEach(doc => {
                     const data = doc.data();
                     if(data.professor === window.professorLogado && data.semestre.toString() === semAtualDoFiltro.toString()) {
@@ -386,10 +375,8 @@
         window.renderizarLivrosDoSemestre = function() {
             const semParaVisualizar = parseInt(document.getElementById('filtroNavegarSemestres').value);
             document.getElementById('lblSemestreCatalogo').innerText = semParaVisualizar;
-            
             const grid = document.getElementById('listaLivrosCatalogo');
             grid.innerHTML = '';
-            
             const livrosFiltrados = acervo.filter(l => l.sem === semParaVisualizar);
             
             livrosFiltrados.forEach((livro, index) => {
@@ -397,7 +384,6 @@
                 const linkDiv = livro.link ? `<a href="${livro.link}" target="_blank" style="color:#0066cc; font-size:12px; margin-top:5px; display:inline-block;"><i class="fas fa-external-link-alt"></i> Ver Material</a>` : '<div style="height:20px;"></div>';
                 
                 let btnHtml = `<button class="btn-escolher" onclick="escolherLivroParaSemestre('${livro.titulo}')"><i class="fas fa-paper-plane"></i> Enviar Escolha</button>`;
-                
                 if(window.livrosJaEscolhidos.includes(livro.titulo)) {
                     btnHtml = `<button class="btn-escolher btn-escolhido" disabled><i class="fas fa-check-circle"></i> Escolha Enviada</button>`;
                 }
@@ -418,47 +404,29 @@
 
         window.escolherLivroParaSemestre = async function(tituloLivro) {
             const semSelecionado = document.getElementById('filtroNavegarSemestres').value;
-            
-            // Regra: Professor só pode escolher 1 livro por semestre
             try {
                 const querySnapshot = await getDocs(collection(db, "escolhas"));
                 let jaTemEscolhaNesteSemestre = false;
                 querySnapshot.forEach(doc => {
                     const data = doc.data();
-                    if(data.professor === window.professorLogado && data.semestre.toString() === semSelecionado.toString()) {
-                        jaTemEscolhaNesteSemestre = true;
-                    }
+                    if(data.professor === window.professorLogado && data.semestre.toString() === semSelecionado.toString()) { jaTemEscolhaNesteSemestre = true; }
                 });
-
                 if(jaTemEscolhaNesteSemestre) {
-                    Swal.fire('Atenção', `Você já escolheu um livro para o Semestre ${semSelecionado}. Só é permitido 1 livro por semestre.`, 'warning');
+                    Swal.fire('Atenção', `Você já escolheu um livro para o Semestre ${semSelecionado}. Só é permitido 1 livro por semestre. Vá na aba "Minhas Escolhas" se quiser alterar.`, 'warning');
                     return;
                 }
             } catch(e) { console.error(e); }
 
             Swal.fire({
-                title: 'Confirmar Escolha',
-                text: `Deseja escolher "${tituloLivro}" para a sua turma do Semestre ${semSelecionado}?`,
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#0066cc',
-                cancelButtonColor: '#aaa',
-                confirmButtonText: 'Sim, confirmar',
-                cancelButtonText: 'Cancelar'
+                title: 'Confirmar Escolha', text: `Deseja escolher "${tituloLivro}" para a sua turma do Semestre ${semSelecionado}?`, icon: 'question',
+                showCancelButton: true, confirmButtonColor: '#0066cc', cancelButtonColor: '#aaa', confirmButtonText: 'Sim, confirmar', cancelButtonText: 'Cancelar'
             }).then(async (result) => {
                 if (result.isConfirmed) {
                     try {
-                        await addDoc(collection(db, "escolhas"), {
-                            professor: window.professorLogado,
-                            semestre: semSelecionado,
-                            livro: tituloLivro,
-                            dataEscolha: new Date().toISOString()
-                        });
+                        await addDoc(collection(db, "escolhas"), { professor: window.professorLogado, semestre: semSelecionado, livro: tituloLivro, dataEscolha: new Date().toISOString() });
                         buscarMinhasEscolhasParaCatalogo();
-                        Swal.fire('Sucesso!', 'Escolha enviada para a coordenação.', 'success');
-                    } catch (error) { 
-                        Swal.fire('Erro', 'Ocorreu um erro ao registrar escolha.', 'error');
-                    }
+                        Swal.fire('Sucesso!', 'Escolha enviada.', 'success');
+                    } catch (error) { Swal.fire('Erro', 'Erro ao registrar.', 'error'); }
                 }
             });
         };
@@ -466,21 +434,15 @@
         window.buscarEscolhas = async function() {
             const tbMinhas = document.getElementById('tabelaMinhasEscolhas');
             tbMinhas.innerHTML = '<tr><td colspan="4">Carregando...</td></tr>';
-
             try {
                 const querySnapshot = await getDocs(collection(db, "escolhas"));
                 let minhasHTML = '';
-
                 querySnapshot.forEach((docSnap) => {
-                    const id = docSnap.id;
-                    const data = docSnap.data();
+                    const id = docSnap.id; const data = docSnap.data();
                     const dataFormatada = new Date(data.dataEscolha).toLocaleDateString('pt-BR');
-                    
                     if(data.professor === window.professorLogado) {
                         minhasHTML += `<tr>
-                            <td><strong>${data.livro}</strong></td>
-                            <td>Semestre ${data.semestre}</td>
-                            <td>${dataFormatada}</td>
+                            <td><strong>${data.livro}</strong></td><td>Semestre ${data.semestre}</td><td>${dataFormatada}</td>
                             <td>
                                 <button class="btn-editar" onclick="editarEscolha('${id}')"><i class="fas fa-edit"></i> Editar</button>
                                 <button class="btn-excluir" onclick="excluirEscolha('${id}')"><i class="fas fa-trash"></i> Excluir</button>
@@ -488,21 +450,17 @@
                         </tr>`;
                     }
                 });
-
                 tbMinhas.innerHTML = minhasHTML || '<tr><td colspan="4">Você ainda não enviou escolhas.</td></tr>';
             } catch (error) { console.error(error); }
         };
 
-        // --- ABA ESCOLHAS DOS COLEGAS COM FILTRO POR SEMESTRE ---
         window.carregarEscolhasColegas = async function() {
             const tbColegas = document.getElementById('tabelaEscolhasColegas');
             tbColegas.innerHTML = '<tr><td colspan="3">Carregando...</td></tr>';
             const filtroSem = document.getElementById('filtroColegasSemestre').value;
-
             try {
                 const querySnapshot = await getDocs(collection(db, "escolhas"));
                 let colegasHTML = '';
-
                 querySnapshot.forEach((docSnap) => {
                     const data = docSnap.data();
                     if(data.professor !== window.professorLogado) {
@@ -511,50 +469,25 @@
                         }
                     }
                 });
-
                 tbColegas.innerHTML = colegasHTML || '<tr><td colspan="3">Nenhum colega encontrou escolhas para este filtro.</td></tr>';
             } catch (error) { console.error(error); }
         };
 
         window.excluirEscolha = function(idDocumento) {
             Swal.fire({
-                title: 'Excluir Escolha?',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#e74c3c',
-                cancelButtonColor: '#aaa',
-                confirmButtonText: 'Sim, excluir',
-                cancelButtonText: 'Cancelar'
+                title: 'Excluir Escolha?', icon: 'warning', showCancelButton: true, confirmButtonColor: '#e74c3c', cancelButtonColor: '#aaa', confirmButtonText: 'Sim, excluir', cancelButtonText: 'Cancelar'
             }).then(async (result) => {
-                if (result.isConfirmed) {
-                    await deleteDoc(doc(db, "escolhas", idDocumento));
-                    buscarEscolhas(); 
-                    buscarMinhasEscolhasParaCatalogo(); 
-                    Swal.fire('Excluído!', 'Sua escolha foi removida.', 'success');
-                }
+                if (result.isConfirmed) { await deleteDoc(doc(db, "escolhas", idDocumento)); buscarEscolhas(); buscarMinhasEscolhasParaCatalogo(); Swal.fire('Excluído!', '', 'success'); }
             });
         }
-
         window.editarEscolha = function(idDocumento) {
             Swal.fire({
-                title: 'Editar Escolha?',
-                text: "A escolha atual será removida para você fazer uma nova. Deseja continuar?",
-                icon: 'info',
-                showCancelButton: true,
-                confirmButtonColor: '#f39c12',
-                cancelButtonColor: '#aaa',
-                confirmButtonText: 'Sim, editar',
-                cancelButtonText: 'Cancelar'
+                title: 'Editar Escolha?', text: "A escolha atual será removida para você fazer uma nova. Continuar?", icon: 'info', showCancelButton: true, confirmButtonColor: '#f39c12', cancelButtonColor: '#aaa', confirmButtonText: 'Sim, editar', cancelButtonText: 'Cancelar'
             }).then(async (result) => {
-                if (result.isConfirmed) {
-                    await deleteDoc(doc(db, "escolhas", idDocumento));
-                    buscarMinhasEscolhasParaCatalogo();
-                    openTab('catalogo', document.querySelector('.menu button.tab-link')); 
-                }
+                if (result.isConfirmed) { await deleteDoc(doc(db, "escolhas", idDocumento)); buscarMinhasEscolhasParaCatalogo(); openTab('catalogo', document.querySelector('.menu button.tab-link')); }
             });
         }
 
-        // --- SISTEMA DE SUGESTÕES (Com Semestre Selecionado) ---
         window.buscarMinhasSugestoes = async function() {
             const tbSugestoes = document.getElementById('tabelaMinhasSugestoes');
             tbSugestoes.innerHTML = '<tr><td colspan="3">Carregando...</td></tr>';
@@ -564,11 +497,7 @@
                 querySnapshot.forEach((docSnap) => {
                     const data = docSnap.data();
                     if(data.professor === window.professorLogado) {
-                        html += `<tr>
-                            <td><strong>${data.titulo}</strong></td>
-                            <td>Sem. ${data.semestre}</td>
-                            <td><button class="btn-excluir" onclick="excluirSugestao('${docSnap.id}')"><i class="fas fa-trash"></i> Excluir</button></td>
-                        </tr>`;
+                        html += `<tr><td><strong>${data.titulo}</strong></td><td>Sem. ${data.semestre}</td><td><button class="btn-excluir" onclick="excluirSugestao('${docSnap.id}')"><i class="fas fa-trash"></i> Excluir</button></td></tr>`;
                     }
                 });
                 tbSugestoes.innerHTML = html || '<tr><td colspan="3">Nenhuma sugestão enviada.</td></tr>';
@@ -576,20 +505,9 @@
         };
 
         window.excluirSugestao = function(idDocumento) {
-            Swal.fire({
-                title: 'Excluir Sugestão?',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#e74c3c',
-                cancelButtonColor: '#aaa',
-                confirmButtonText: 'Sim, excluir',
-                cancelButtonText: 'Cancelar'
+            Swal.fire({ title: 'Excluir Sugestão?', icon: 'warning', showCancelButton: true, confirmButtonColor: '#e74c3c', confirmButtonText: 'Sim', cancelButtonText: 'Cancelar'
             }).then(async (result) => {
-                if (result.isConfirmed) {
-                    await deleteDoc(doc(db, "sugestoes", idDocumento));
-                    buscarMinhasSugestoes(); 
-                    Swal.fire('Excluída!', 'A sugestão foi removida.', 'success');
-                }
+                if (result.isConfirmed) { await deleteDoc(doc(db, "sugestoes", idDocumento)); buscarMinhasSugestoes(); Swal.fire('Excluída!', '', 'success'); }
             });
         }
 
@@ -597,19 +515,98 @@
             const titulo = document.getElementById('sug_titulo').value;
             const semestre = document.getElementById('sug_semestre').value;
             const link = document.getElementById('sug_link').value;
-            
-            if(!titulo) { Swal.fire('Atenção', 'Preencha o título do livro.', 'warning'); return; }
+            if(!titulo) { Swal.fire('Atenção', 'Preencha o título.', 'warning'); return; }
             try {
-                await addDoc(collection(db, "sugestoes"), {
-                    professor: window.professorLogado, semestre: semestre,
-                    titulo: titulo, link: link || 'Sem link', dataEnvio: new Date().toISOString()
-                });
-                Swal.fire('Sucesso!', 'Sugestão enviada para a coordenação.', 'success');
-                document.getElementById('sug_titulo').value = '';
-                document.getElementById('sug_link').value = '';
+                await addDoc(collection(db, "sugestoes"), { professor: window.professorLogado, semestre: semestre, titulo: titulo, link: link || 'Sem link', dataEnvio: new Date().toISOString() });
+                Swal.fire('Sucesso!', 'Sugestão enviada.', 'success');
+                document.getElementById('sug_titulo').value = ''; document.getElementById('sug_link').value = '';
                 buscarMinhasSugestoes();
-            } catch (error) { Swal.fire('Erro', 'Ocorreu um erro ao enviar a sugestão.', 'error'); }
+            } catch (error) { Swal.fire('Erro', 'Ocorreu um erro.', 'error'); }
         });
+
+        // --- SISTEMA DE AGENDAMENTO DE FÍSICOS ---
+        window.renderizarPainelAgendamento = async function() {
+            const semSelecionado = document.getElementById('filtroSemestreAgendamento').value;
+            const area = document.getElementById('areaAgendamento');
+            area.innerHTML = '<div style="width:100%; text-align:center;"><i class="fas fa-spinner fa-spin"></i> Carregando dados de agendamento...</div>';
+
+            const livrosFisicos = acervo.filter(l => l.sem === parseInt(semSelecionado) && l.qtd !== "Digital");
+            
+            if(livrosFisicos.length === 0) {
+                area.innerHTML = `<div style="border: 2px dashed #ccc; padding: 20px; width:100%; text-align: center; color: #777; border-radius: 4px;">Nenhum livro físico para o Semestre ${semSelecionado}. Apenas materiais digitais.</div>`;
+                return;
+            }
+
+            try {
+                const snapAgendamentos = await getDocs(collection(db, "agendamentos"));
+                let agendamentosFeitos = [];
+                snapAgendamentos.forEach(doc => agendamentosFeitos.push({ id: doc.id, ...doc.data() }));
+
+                area.innerHTML = '';
+                livrosFisicos.forEach(livro => {
+                    let containerHtml = `<div style="background: white; border: 1px solid #ddd; border-radius: 4px; padding: 15px; width: 100%; max-width: 350px;">
+                        <h4 style="color:#004080; margin-top:0; font-size:15px;"><i class="fas fa-book"></i> ${livro.titulo}</h4>
+                        <p style="font-size:12px; color:#666; margin-bottom:10px;">Estoque: ${livro.qtd} unidades</p>`;
+                    
+                    semanasAgendamento.forEach(semana => {
+                        // Verifica se a semana já foi reservada para ESTE livro
+                        const reserva = agendamentosFeitos.find(a => a.livro === livro.titulo && a.semana === semana && a.semestre === semSelecionado);
+                        
+                        if(reserva) {
+                            if(reserva.professor === window.professorLogado) {
+                                containerHtml += `<button class="semana-btn semana-minha" onclick="cancelarAgendamento('${reserva.id}')"><i class="fas fa-check"></i> ${semana} (Minha Reserva - Cancelar)</button>`;
+                            } else {
+                                containerHtml += `<button class="semana-btn semana-ocupada" disabled><i class="fas fa-lock"></i> ${semana} (Reservado: ${reserva.professor})</button>`;
+                            }
+                        } else {
+                            containerHtml += `<button class="semana-btn" onclick="agendarLivro('${livro.titulo}', '${semana}', '${semSelecionado}')"><i class="far fa-calendar-plus"></i> Reservar ${semana}</button>`;
+                        }
+                    });
+
+                    containerHtml += `</div>`;
+                    area.innerHTML += containerHtml;
+                });
+
+            } catch(e) {
+                area.innerHTML = '<div style="color:red;">Erro ao carregar agenda.</div>';
+            }
+        };
+
+        window.agendarLivro = function(livro, semana, semestre) {
+            Swal.fire({
+                title: 'Confirmar Reserva?',
+                text: `Deseja reservar o livro físico "${livro}" para a semana de ${semana}?`,
+                icon: 'question', showCancelButton: true, confirmButtonColor: '#0066cc', confirmButtonText: 'Sim, reservar'
+            }).then(async (result) => {
+                if(result.isConfirmed) {
+                    try {
+                        await addDoc(collection(db, "agendamentos"), {
+                            professor: window.professorLogado,
+                            livro: livro,
+                            semana: semana,
+                            semestre: semestre,
+                            dataRegistro: new Date().toISOString()
+                        });
+                        renderizarPainelAgendamento();
+                        Swal.fire('Sucesso!', 'A semana foi reservada para você.', 'success');
+                    } catch(e) { Swal.fire('Erro', 'Erro ao processar.', 'error'); }
+                }
+            });
+        };
+
+        window.cancelarAgendamento = function(idDocumento) {
+            Swal.fire({
+                title: 'Cancelar Reserva?',
+                text: "A semana ficará livre para os colegas.",
+                icon: 'warning', showCancelButton: true, confirmButtonColor: '#e74c3c', confirmButtonText: 'Sim, cancelar'
+            }).then(async (result) => {
+                if(result.isConfirmed) {
+                    await deleteDoc(doc(db, "agendamentos", idDocumento));
+                    renderizarPainelAgendamento();
+                    Swal.fire('Cancelado', 'Reserva removida.', 'success');
+                }
+            });
+        };
     </script>
 </body>
 </html>
