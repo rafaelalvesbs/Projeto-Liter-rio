@@ -45,7 +45,12 @@
         .status-escolhido { color: #27ae60; font-weight: bold; }
 
         @media (max-width: 768px) {
-            .top-header-right { width: 100%; justify-content: flex-start; }
+            .top-header { flex-wrap: nowrap !important; padding: 10px; }
+            .top-header-left .logo-icon { font-size: 18px; }
+            .top-header-left strong { font-size: 13px; white-space: nowrap; }
+            .top-header-right { width: auto; justify-content: flex-end; }
+            .top-btn { font-size: 10px; padding: 5px 8px; white-space: nowrap; }
+
             .tab-content { padding: 15px; }
             select { max-width: 100%; }
             .flex-header button { width: 100%; justify-content: center; padding: 10px; }
@@ -60,7 +65,6 @@
         </div>
         <div class="top-header-right">
             <button class="top-btn"><i class="fas fa-user"></i> SÔNIA</button>
-            <button class="top-btn">2026</button>
         </div>
     </header>
 
@@ -68,11 +72,14 @@
         <div class="menu">
             <button class="tab-link active" onclick="openTab('visaogeral', this); renderizarProfessores();"><i class="fas fa-home"></i> Cronograma Global</button>
             <button class="tab-link" onclick="openTab('gerenciar', this)"><i class="fas fa-book"></i> Paradidáticos</button>
-            <button class="tab-link" onclick="openTab('sugestoes', this)" id="btnCarregarSugestoes"><i class="fas fa-file-alt"></i> Analisar Sugestões</button>
+            <button class="tab-link" onclick="openTab('sugestoes', this)" id="btnCarregarSugestoes"><i class="fas fa-lightbulb"></i> Analisar Sugestões</button>
+            <!-- Novo menu solicitado -->
+            <button class="tab-link" onclick="openTab('agendados', this)"><i class="fas fa-calendar-check"></i> Livros Agendados</button>
         </div>
     </nav>
 
     <div class="container">
+        <!-- Cronograma Global -->
         <div id="visaogeral" class="tab-content active">
             <div class="flex-header">
                 <h3>Professores por Semestre e Escolhas</h3>
@@ -103,6 +110,7 @@
             </div>
         </div>
 
+        <!-- Paradidáticos -->
         <div id="gerenciar" class="tab-content">
             <h3 style="color:#004080; margin-top:0; font-size: 18px;">Lista de Livros Paradidáticos</h3>
             <div class="table-responsive">
@@ -115,6 +123,7 @@
             </div>
         </div>
 
+        <!-- Sugestões -->
         <div id="sugestoes" class="tab-content">
             <h3 style="color:#004080; margin-top:0; font-size: 18px;">Sugestões Enviadas pelos Professores</h3>
             <div class="table-responsive">
@@ -124,6 +133,22 @@
                     </thead>
                     <tbody id="tabelaSugestoes">
                         <tr><td colspan="4">Carregando sugestões do Firebase...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Livros Agendados -->
+        <div id="agendados" class="tab-content">
+            <h3 style="color:#004080; margin-top:0; font-size: 18px;">Livros Físicos Agendados</h3>
+            <p style="color: #666; font-size: 14px;">Controle dos livros físicos reservados para leitura em sala de aula.</p>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr><th>Professor</th><th>Livro</th><th>Semestre</th><th>Data Agendada</th></tr>
+                    </thead>
+                    <tbody id="tabelaAgendados">
+                        <tr><td colspan="4" style="text-align: center; color: #777;"><i class="fas fa-tools"></i> Recurso de agendamento de datas em construção...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -256,6 +281,7 @@
             }
         });
 
+        // Inicializar a tela
         renderizarProfessores();
         renderizarAcervo();
     </script>
