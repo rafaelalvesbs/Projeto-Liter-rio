@@ -1,46 +1,131 @@
 <!DOCTYPE html>
-<html lang="pt-PT">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CLM - Portal do Professor</title>
+    <title>SGE - Portal do Professor</title>
+    <!-- Ícones FontAwesome para ficar idêntico ao SGE -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { font-family: Arial, sans-serif; background-color: #f4f7f6; margin: 0; }
-        .header { background: #2c3e50; color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
-        .menu { display: flex; gap: 15px; background: #34495e; padding: 10px 20px; }
-        .menu button { background: none; border: none; color: white; font-size: 16px; cursor: pointer; padding: 5px 10px; }
-        .menu button.active { border-bottom: 2px solid #3498db; }
+        body { 
+            margin: 0; 
+            font-family: Arial, sans-serif; 
+            background-color: #f5f6f8; 
+            padding-bottom: 40px; 
+        }
+        
+        /* Cabeçalho Principal (Azul Escuro) */
+        .top-header {
+            background-color: #004080; 
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 20px;
+            height: 40px;
+        }
+        .top-header-left { display: flex; align-items: center; gap: 10px; }
+        .top-header-left .logo-icon { font-size: 24px; }
+        .top-header-left .logo-text { line-height: 1.1; }
+        .top-header-left strong { font-size: 16px; letter-spacing: 1px; }
+        .top-header-left span { font-size: 9px; display: block; }
+        
+        .top-header-right { display: flex; align-items: center; gap: 15px; font-size: 14px; }
+        .top-header-right i.fa-birthday-cake { color: #ff9999; cursor: pointer; }
+        .top-header-right i.fa-envelope { cursor: pointer; }
+        .top-header-right i.fa-bell { color: #ffcc00; cursor: pointer; }
+        .top-btn {
+            background: white; color: #333; border: 1px solid #ccc;
+            padding: 5px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer;
+            display: flex; align-items: center; gap: 5px;
+        }
+
+        /* Sub-Cabeçalho (Branco com menus) */
+        .sub-header {
+            background-color: white; border-bottom: 1px solid #ccc;
+            display: flex; align-items: center; height: 45px; padding: 0 20px;
+        }
+        .module-title {
+            color: #0066cc; font-weight: bold; font-size: 15px;
+            display: flex; align-items: center; gap: 8px;
+            padding-right: 20px; border-right: 1px solid #ddd; height: 100%;
+        }
+        .menu { display: flex; height: 100%; }
+        .menu button {
+            background: none; border: none; color: #555;
+            font-size: 13px; cursor: pointer; padding: 0 15px;
+            display: flex; align-items: center; gap: 6px; height: 100%;
+            border-right: 1px solid #eee;
+        }
+        .menu button i { color: #0066cc; }
+        .menu button:hover, .menu button.active {
+            color: #0066cc; background-color: #f0f7ff; font-weight: bold;
+        }
+
+        /* Rodapé Fixo */
+        .footer {
+            background-color: #004080; color: white;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 8px 20px; font-size: 11px;
+            position: fixed; bottom: 0; width: 100%; box-sizing: border-box;
+        }
+        .footer-links { display: flex; gap: 15px; }
+        .footer-links span { display: flex; align-items: center; gap: 5px; cursor: pointer; }
+
+        /* Conteúdo Principal */
         .container { padding: 20px; max-width: 1000px; margin: auto; }
-        .tab-content { display: none; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .tab-content { display: none; background: white; padding: 20px; border-radius: 4px; border: 1px solid #ddd; }
         .tab-content.active { display: block; }
+        
         .book-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px; margin-top: 15px; }
-        .book-card { border: 1px solid #ddd; padding: 15px; border-radius: 8px; background: #fafafa; }
-        .tag-digital { background: #2ecc71; color: white; padding: 3px 8px; border-radius: 4px; font-size: 12px; text-decoration: none;}
-        .tag-fisico { background: #e67e22; color: white; padding: 3px 8px; border-radius: 4px; font-size: 12px; }
-        input, select, button.btn { width: 100%; padding: 10px; margin-top: 10px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
-        button.btn { background: #3498db; color: white; cursor: pointer; border: none; margin-top: 15px; }
-        button.btn:hover { background: #2980b9; }
+        .book-card { border: 1px solid #eee; padding: 15px; border-radius: 4px; background: #fafafa; border-left: 4px solid #0066cc; }
+        .tag-digital { background: #2ecc71; color: white; padding: 3px 8px; border-radius: 4px; font-size: 11px; text-decoration: none;}
+        .tag-fisico { background: #e67e22; color: white; padding: 3px 8px; border-radius: 4px; font-size: 11px; }
+        
+        input, select { width: 100%; padding: 8px; margin-top: 8px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; font-size: 14px;}
+        button.action-btn { background: #0066cc; color: white; cursor: pointer; border: none; margin-top: 15px; padding: 10px 20px; border-radius: 4px; font-weight: bold;}
+        button.action-btn:hover { background: #00509e; }
         .form-group { margin-bottom: 15px; }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <h2>Centro de Línguas Maracanaú - Professores</h2>
-        <span>Acesso Docente</span>
-    </div>
+    <!-- Cabeçalho Idêntico ao SGE -->
+    <header class="top-header">
+        <div class="top-header-left">
+            <i class="fas fa-graduation-cap logo-icon"></i>
+            <div class="logo-text">
+                <strong>CLM</strong>
+                <span>CENTRO DE LÍNGUAS MARACANAÚ</span>
+            </div>
+        </div>
+        <div class="top-header-right">
+            <i class="fas fa-birthday-cake"></i>
+            <i class="fas fa-envelope"></i>
+            <i class="fas fa-bell"></i>
+            <button class="top-btn"><i class="fas fa-th-large"></i> Módulos</button>
+            <button class="top-btn"><i class="fas fa-user"></i> PROFESSOR</button>
+            <button class="top-btn">2026</button>
+        </div>
+    </header>
 
-    <div class="menu">
-        <button class="tab-link active" onclick="openTab('catalogo', this)">Catálogo de Livros</button>
-        <button class="tab-link" onclick="openTab('sugerir', this)">Sugerir Paradidático</button>
-    </div>
+    <!-- Sub-Cabeçalho com Menus Idêntico ao SGE -->
+    <nav class="sub-header">
+        <div class="module-title">
+            <i class="fas fa-book-open"></i> Paradidáticos
+        </div>
+        <div class="menu">
+            <button class="tab-link active" onclick="openTab('catalogo', this)"><i class="fas fa-list"></i> Catálogo de Livros</button>
+            <button class="tab-link" onclick="openTab('sugerir', this)"><i class="fas fa-lightbulb"></i> Sugerir Paradidático</button>
+        </div>
+    </nav>
 
     <div class="container">
         <!-- Catálogo -->
         <div id="catalogo" class="tab-content active">
-            <h3>Livros Disponíveis por Semestre</h3>
-            <div class="form-group">
-                <label>Filtrar Acervo:</label>
+            <h3 style="color:#004080; margin-top:0;">Livros Disponíveis por Semestre</h3>
+            <div class="form-group" style="max-width: 300px;">
+                <label style="font-weight: bold; color: #555;">Filtrar Acervo:</label>
                 <select id="semestreFilter" autocomplete="off" onchange="filtrarLivros()">
                     <option value="1">Semestre 1</option>
                     <option value="2">Semestre 2</option>
@@ -56,14 +141,14 @@
 
         <!-- Sugerir -->
         <div id="sugerir" class="tab-content">
-            <h3>Sugerir Novo Livro Literário</h3>
-            <p>A sua sugestão será enviada e guardada no Firebase para avaliação da coordenação.</p>
+            <h3 style="color:#004080; margin-top:0;">Sugerir Novo Livro Literário</h3>
+            <p style="color: #666; font-size: 14px;">Sua sugestão será enviada e salva no Firebase para avaliação da coordenação.</p>
             <div class="form-group">
-                <label>Título do Livro e Autor:</label>
+                <label style="font-weight: bold; color: #555;">Título do Livro e Autor:</label>
                 <input type="text" id="sug_titulo" autocomplete="off" placeholder="Ex: The Little Prince - Antoine de Saint-Exupéry">
             </div>
             <div class="form-group">
-                <label>Semestre Recomendado:</label>
+                <label style="font-weight: bold; color: #555;">Semestre Recomendado:</label>
                 <select id="sug_semestre" autocomplete="off">
                     <option value="Semestre 1">Semestre 1</option>
                     <option value="Semestre 2">Semestre 2</option>
@@ -75,12 +160,24 @@
                 </select>
             </div>
             <div class="form-group">
-                <label>Link (Site, PDF ou YouTube):</label>
+                <label style="font-weight: bold; color: #555;">Link (Site, PDF ou YouTube):</label>
                 <input type="text" id="sug_link" autocomplete="off" placeholder="Cole o URL completo aqui">
             </div>
-            <button class="btn" id="btnEnviarSugestao">Enviar Sugestão</button>
+            <button class="action-btn" id="btnEnviarSugestao"><i class="fas fa-paper-plane"></i> Enviar Sugestão</button>
         </div>
     </div>
+
+    <!-- Rodapé Idêntico ao SGE -->
+    <footer class="footer">
+        <div class="footer-links">
+            <span><i class="fas fa-video"></i> Tutoriais</span>
+            <span><i class="fas fa-book"></i> BCM</span>
+            <span><i class="fas fa-file-alt"></i> Formar Integralmente</span>
+            <span><i class="fas fa-chart-line"></i> Política Especial de Recuperação</span>
+            <span><i class="fas fa-heart"></i> Qualidade de Vida</span>
+        </div>
+        <div>CLM 1.0.0</div>
+    </footer>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
@@ -97,7 +194,7 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // --- ACERVO HARDCODED DOS PROFESSORES ---
+        // --- ACERVO HARDCODED ---
         const acervo = [
             { sem: 1, titulo: "The umbrella - Clare Harris", qtd: "10 livros", link: "https://www.youtube.com/watch?v=4UY9ixf4HiY" },
             { sem: 1, titulo: "Gulliver's travels in Lilliput - Jonatahn Swift", qtd: "14 livros", link: "" },
@@ -135,12 +232,12 @@
             const livrosFiltrados = acervo.filter(l => l.sem === sem);
             
             livrosFiltrados.forEach(livro => {
-                const badge = livro.qtd === "Digital" ? '<span class="tag-digital">Livro Digital</span>' : `<span class="tag-fisico">Físico - ${livro.qtd}</span>`;
-                const linkDiv = livro.link ? `<br><br><a href="${livro.link}" target="_blank" class="tag-digital">Aceder Material</a>` : '<p style="color:#7f8c8d; font-size:12px;">Agendar fisicamente.</p>';
+                const badge = livro.qtd === "Digital" ? '<span class="tag-digital"><i class="fas fa-desktop"></i> Digital</span>' : `<span class="tag-fisico"><i class="fas fa-book"></i> ${livro.qtd}</span>`;
+                const linkDiv = livro.link ? `<br><br><a href="${livro.link}" target="_blank" class="tag-digital" style="background:#3498db;"><i class="fas fa-external-link-alt"></i> Acessar Material</a>` : '<p style="color:#7f8c8d; font-size:12px; margin-bottom:0;"><i class="fas fa-info-circle"></i> Agendar fisicamente.</p>';
                 
                 grid.innerHTML += `
                     <div class="book-card">
-                        <h4 style="margin-top:0;">${livro.titulo}</h4>
+                        <h4 style="margin-top:0; color:#333; font-size:15px;">${livro.titulo}</h4>
                         ${badge}
                         ${linkDiv}
                     </div>
@@ -148,7 +245,7 @@
             });
         };
 
-        // --- ENVIO APENAS DAS SUGESTÕES ---
+        // --- ENVIO DA SUGESTÃO ---
         document.getElementById('btnEnviarSugestao').addEventListener('click', async () => {
             const titulo = document.getElementById('sug_titulo').value;
             const semestre = document.getElementById('sug_semestre').value;
@@ -166,7 +263,7 @@
                     link: link,
                     dataEnvio: new Date().toISOString()
                 });
-                alert("A sua sugestão foi enviada com sucesso para a coordenação!");
+                alert("Sua sugestão foi enviada com sucesso para a coordenação!");
                 document.getElementById('sug_titulo').value = '';
                 document.getElementById('sug_link').value = '';
             } catch (error) {
