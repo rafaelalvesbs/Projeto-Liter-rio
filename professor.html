@@ -198,7 +198,7 @@
             </div>
         </div>
 
-        <!-- Escolhas Colegas -->
+        <!-- Escolhas dos Colegas -->
         <div id="escolhas-colegas" class="tab-content">
             <div class="catalogo-header" style="align-items:center;">
                 <h3 style="color:#004080; margin:0; font-size:16px;">Livros escolhidos pelos colegas</h3>
@@ -234,7 +234,7 @@
             </div>
             
             <div id="areaAgendamento" style="display: flex; flex-wrap: wrap; gap: 20px;">
-                <!-- Lista de livros físicos e semanas injetadas via JS -->
+                <!-- Lista de agendamento injetada via JS -->
             </div>
         </div>
     </div>
@@ -530,63 +530,83 @@
             const area = document.getElementById('areaAgendamento');
             area.innerHTML = '<div style="width:100%; text-align:center;"><i class="fas fa-spinner fa-spin"></i> Carregando dados de agendamento...</div>';
 
-            const livrosFisicos = acervo.filter(l => l.sem === parseInt(semSelecionado) && l.qtd !== "Digital");
-            
-            if(livrosFisicos.length === 0) {
-                area.innerHTML = `<div style="border: 2px dashed #ccc; padding: 20px; width:100%; text-align: center; color: #777; border-radius: 4px;">Nenhum livro físico para o Semestre ${semSelecionado}. Apenas materiais digitais.</div>`;
-                return;
-            }
-
             try {
+                // 1. Busca a escolha do professor para o semestre
+                const escolhasSnap = await getDocs(collection(db, "escolhas"));
+                let livroEscolhido = null;
+                escolhasSnap.forEach(doc => {
+                    const data = doc.data();
+                    if(data.professor === window.professorLogado && data.semestre.toString() === semSelecionado.toString()) {
+                        livroEscolhido = data.livro;
+                    }
+                });
+
+                // 2. Se não escolheu livro ainda
+                if(!livroEscolhido) {
+                    area.innerHTML = `
+                        <div style="border: 2px dashed #ccc; padding: 30px; width:100%; text-align: center; color: #555; border-radius: 4px;">
+                            <i class="fas fa-exclamation-circle" style="font-size: 30px; margin-bottom: 10px; color: #f39c12;"></i><br>
+                            <strong style="font-size: 16px;">Nenhuma escolha registrada!</strong><br><br>
+                            Você precisa escolher um livro literário para o Semestre ${semSelecionado} antes de fazer o agendamento.<br><br>
+                            <button class="action-btn" style="width: auto; padding: 10px 20px;" onclick="openTab('catalogo', document.querySelector('.menu button.tab-link')); document.getElementById('filtroNavegarSemestres').value = '${semSelecionado}'; window.renderizarLivrosDoSemestre();">
+                                <i class="fas fa-book"></i> Ir para Escolha de Livros
+                            </button>
+                        </div>`;
+                    return;
+                }
+
+                const livroAcervo = acervo.find(l => l.titulo === livroEscolhido && l.sem.toString() === semSelecionado.toString());
+                
+                // 3. Verifica se é Digital
+                if(!livroAcervo || livroAcervo.qtd === "Digital") {
+                    area.innerHTML = `
+                        <div style="border: 2px dashed #2ecc71; padding: 30px; width:100%; text-align: center; color: #27ae60; border-radius: 4px;">
+                            <i class="fas fa-desktop" style="font-size: 30px; margin-bottom: 10px;"></i><br>
+                            O livro escolhido (<strong>${livroEscolhido}</strong>) é um material totalmente digital!<br>
+                            Não é necessário realizar agendamento físico.
+                        </div>`;
+                    return;
+                }
+
+                // 4. Se é físico, mostra a agenda do livro
                 const snapAgendamentos = await getDocs(collection(db, "agendamentos"));
                 let agendamentosFeitos = [];
                 snapAgendamentos.forEach(doc => agendamentosFeitos.push({ id: doc.id, ...doc.data() }));
 
-                area.innerHTML = '';
-                livrosFisicos.forEach(livro => {
-                    let containerHtml = `<div style="background: white; border: 1px solid #ddd; border-radius: 4px; padding: 15px; width: 100%; max-width: 350px;">
-                        <h4 style="color:#004080; margin-top:0; font-size:15px;"><i class="fas fa-book"></i> ${livro.titulo}</h4>
-                        <p style="font-size:12px; color:#666; margin-bottom:10px;">Estoque: ${livro.qtd} unidades</p>`;
+                let containerHtml = `<div style="background: white; border: 1px solid #ddd; border-radius: 4px; padding: 15px; width: 100%; max-width: 400px; margin: 0 auto;">
+                    <h4 style="color:#004080; margin-top:0; font-size:15px;"><i class="fas fa-book"></i> ${livroAcervo.titulo}</h4>
+                    <p style="font-size:12px; color:#666; margin-bottom:10px;">Estoque: ${livroAcervo.qtd} unidades reserváveis</p>`;
+                
+                semanasAgendamento.forEach(semana => {
+                    const reserva = agendamentosFeitos.find(a => a.livro === livroAcervo.titulo && a.semana === semana && a.semestre.toString() === semSelecionado.toString());
                     
-                    semanasAgendamento.forEach(semana => {
-                        // Verifica se a semana já foi reservada para ESTE livro
-                        const reserva = agendamentosFeitos.find(a => a.livro === livro.titulo && a.semana === semana && a.semestre === semSelecionado);
-                        
-                        if(reserva) {
-                            if(reserva.professor === window.professorLogado) {
-                                containerHtml += `<button class="semana-btn semana-minha" onclick="cancelarAgendamento('${reserva.id}')"><i class="fas fa-check"></i> ${semana} (Minha Reserva - Cancelar)</button>`;
-                            } else {
-                                containerHtml += `<button class="semana-btn semana-ocupada" disabled><i class="fas fa-lock"></i> ${semana} (Reservado: ${reserva.professor})</button>`;
-                            }
+                    if(reserva) {
+                        if(reserva.professor === window.professorLogado) {
+                            containerHtml += `<button class="semana-btn semana-minha" onclick="cancelarAgendamento('${reserva.id}')"><i class="fas fa-check"></i> ${semana} (Sua Reserva - Cancelar)</button>`;
                         } else {
-                            containerHtml += `<button class="semana-btn" onclick="agendarLivro('${livro.titulo}', '${semana}', '${semSelecionado}')"><i class="far fa-calendar-plus"></i> Reservar ${semana}</button>`;
+                            containerHtml += `<button class="semana-btn semana-ocupada" disabled><i class="fas fa-lock"></i> ${semana} (Reservado: ${reserva.professor})</button>`;
                         }
-                    });
-
-                    containerHtml += `</div>`;
-                    area.innerHTML += containerHtml;
+                    } else {
+                        containerHtml += `<button class="semana-btn" onclick="agendarLivro('${livroAcervo.titulo}', '${semana}', '${semSelecionado}')"><i class="far fa-calendar-plus"></i> Reservar ${semana}</button>`;
+                    }
                 });
 
+                containerHtml += `</div>`;
+                area.innerHTML = containerHtml;
+
             } catch(e) {
-                area.innerHTML = '<div style="color:red;">Erro ao carregar agenda.</div>';
+                area.innerHTML = '<div style="color:red; text-align:center;">Erro ao carregar agenda.</div>';
             }
         };
 
         window.agendarLivro = function(livro, semana, semestre) {
             Swal.fire({
-                title: 'Confirmar Reserva?',
-                text: `Deseja reservar o livro físico "${livro}" para a semana de ${semana}?`,
-                icon: 'question', showCancelButton: true, confirmButtonColor: '#0066cc', confirmButtonText: 'Sim, reservar'
+                title: 'Confirmar Reserva?', text: `Deseja reservar o livro físico "${livro}" para a semana de ${semana}?`,
+                icon: 'question', showCancelButton: true, confirmButtonColor: '#0066cc', confirmButtonText: 'Sim, reservar', cancelButtonText: 'Cancelar'
             }).then(async (result) => {
                 if(result.isConfirmed) {
                     try {
-                        await addDoc(collection(db, "agendamentos"), {
-                            professor: window.professorLogado,
-                            livro: livro,
-                            semana: semana,
-                            semestre: semestre,
-                            dataRegistro: new Date().toISOString()
-                        });
+                        await addDoc(collection(db, "agendamentos"), { professor: window.professorLogado, livro: livro, semana: semana, semestre: semestre, dataRegistro: new Date().toISOString() });
                         renderizarPainelAgendamento();
                         Swal.fire('Sucesso!', 'A semana foi reservada para você.', 'success');
                     } catch(e) { Swal.fire('Erro', 'Erro ao processar.', 'error'); }
@@ -596,9 +616,8 @@
 
         window.cancelarAgendamento = function(idDocumento) {
             Swal.fire({
-                title: 'Cancelar Reserva?',
-                text: "A semana ficará livre para os colegas.",
-                icon: 'warning', showCancelButton: true, confirmButtonColor: '#e74c3c', confirmButtonText: 'Sim, cancelar'
+                title: 'Cancelar Reserva?', text: "A semana ficará livre para os colegas.",
+                icon: 'warning', showCancelButton: true, confirmButtonColor: '#e74c3c', confirmButtonText: 'Sim, cancelar', cancelButtonText: 'Sair'
             }).then(async (result) => {
                 if(result.isConfirmed) {
                     await deleteDoc(doc(db, "agendamentos", idDocumento));
