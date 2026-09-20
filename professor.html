@@ -9,12 +9,12 @@
     <style>
         body { margin: 0; font-family: Arial, sans-serif; background-color: #f5f6f8; }
         
-        .top-header { background-color: #004080; color: white; display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; flex-wrap: wrap; gap: 10px; }
-        .top-header-left { display: flex; align-items: center; gap: 10px; }
+        .top-header { background-color: #004080; color: white; display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; }
+        .top-header-left { display: flex; align-items: center; gap: 8px; }
         .top-header-left .logo-icon { font-size: 24px; }
         .top-header-left .logo-text { line-height: 1.1; display: flex; align-items: center; height: 100%;}
         .top-header-left strong { font-size: 16px; letter-spacing: 1px; }
-        .top-header-right { display: flex; align-items: center; gap: 15px; font-size: 14px; flex-wrap: wrap; }
+        .top-header-right { display: flex; align-items: center; gap: 10px; }
         .top-btn { background: white; color: #333; border: 1px solid #ccc; padding: 6px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 5px; }
         
         .sub-header { background-color: white; border-bottom: 1px solid #ccc; display: flex; align-items: center; padding: 0; }
@@ -35,58 +35,69 @@
         .tag-digital { background: #2ecc71; color: white; padding: 3px 8px; border-radius: 4px; font-size: 11px; text-decoration: none; display: inline-block;}
         .tag-fisico { background: #e67e22; color: white; padding: 3px 8px; border-radius: 4px; font-size: 11px; display: inline-block;}
         
-        input, select { width: 100%; padding: 10px; margin-top: 8px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; font-size: 14px;}
-        button.action-btn { background: #0066cc; color: white; cursor: pointer; border: none; margin-top: 15px; padding: 12px 20px; border-radius: 4px; font-weight: bold; font-size: 14px; width: 100%;}
+        input, select { width: 100%; padding: 8px; margin-top: 5px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; font-size: 14px;}
+        button.action-btn { background: #0066cc; color: white; cursor: pointer; border: none; margin-top: 10px; padding: 10px 20px; border-radius: 4px; font-weight: bold; font-size: 14px; width: 100%;}
         button.action-btn:hover { background: #00509e; }
         
-        .btn-escolher { background: #0066cc; width: 100%; color: white; padding: 10px; border: none; border-radius: 4px; cursor: pointer; margin-top: 10px; font-weight: bold; transition: 0.3s; font-size: 13px;}
+        .btn-escolher { background: #0066cc; width: 100%; color: white; padding: 8px; border: none; border-radius: 4px; cursor: pointer; margin-top: 10px; font-weight: bold; transition: 0.3s; font-size: 13px;}
         .btn-escolher:hover { background: #00509e; }
         .btn-escolhido { background: #27ae60 !important; cursor: default; }
 
-        .btn-excluir { background: #e74c3c; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; margin-top: 5px; }
-        .btn-editar { background: #f39c12; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; margin-right: 5px; margin-top: 5px; }
-        .form-group { margin-bottom: 15px; }
+        .btn-excluir { background: #e74c3c; color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; margin-top: 5px; }
+        .btn-editar { background: #f39c12; color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; margin-right: 5px; margin-top: 5px; }
+        .form-group { margin-bottom: 12px; }
 
-        .table-responsive { width: 100%; margin-top: 15px; border-radius: 4px; }
+        .table-responsive { width: 100%; margin-top: 10px; border-radius: 4px; }
         table { width: 100%; border-collapse: collapse; font-size: 14px; }
         table, th, td { border-bottom: 1px solid #ddd; }
-        th, td { padding: 12px; text-align: left; }
+        th, td { padding: 10px; text-align: left; }
         th { background-color: #f9f9f9; color: #333; }
 
         #modalIdentificacao { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: flex; justify-content: center; align-items: center; z-index: 1000; padding: 15px; box-sizing: border-box; }
-        .modal-box { background: white; padding: 30px; border-radius: 8px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.2); box-sizing: border-box; }
-        .modal-box h3 { color: #004080; margin-top: 0; font-size: 20px;}
+        .modal-box { background: white; padding: 25px; border-radius: 8px; width: 100%; max-width: 350px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.2); box-sizing: border-box; }
+        .modal-box h3 { color: #004080; margin-top: 0; font-size: 18px;}
 
+        /* Exclusivo Mobile */
         @media (max-width: 768px) {
-            .btn-ano { display: none !important; }
-            .top-header-right { width: 100%; justify-content: flex-start; }
+            .top-header { padding: 8px 10px; flex-wrap: nowrap !important; }
+            .top-header-left .logo-icon { font-size: 18px; }
+            .top-header-left strong { font-size: 13px; white-space: nowrap; }
+            .top-btn { font-size: 10px; padding: 5px 8px; white-space: nowrap; }
             
             .menu { flex-wrap: wrap; }
-            .menu button { width: 33.33%; flex-direction: column; justify-content: center; padding: 10px 5px; font-size: 11px; border-right: 1px solid #eee; border-bottom: 1px solid #eee !important; }
+            .menu button { width: 33.33%; flex-direction: column; justify-content: center; padding: 8px 2px; font-size: 10px; border-right: 1px solid #eee; border-bottom: 1px solid #eee !important; gap: 4px; }
             .menu button:nth-child(4), .menu button:nth-child(5) { width: 50%; border-bottom: none !important; }
             .menu button:nth-child(3), .menu button:nth-child(5) { border-right: none; }
 
             .catalogo-filtro { max-width: 100%; }
-            .book-grid { grid-template-columns: 1fr; }
-            .tab-content { padding: 15px; }
+            .book-grid { grid-template-columns: 1fr; margin-top: 10px;}
+            .tab-content { padding: 12px; }
+            .book-card { padding: 10px; }
+            .book-card h4 { font-size: 14px; margin-bottom: 5px !important; }
+            .btn-escolher { padding: 6px; font-size: 12px; margin-top: 6px; }
 
-            /* Tabelas em formato de Cards (Empilhadas) */
+            /* Tabelas em formato de Cards Compactos (Empilhadas) */
             table, thead, tbody, th, td, tr { display: block; width: 100%; box-sizing: border-box; }
             thead tr { display: none; }
-            tr { margin-bottom: 15px; border: 1px solid #ddd; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-            td { text-align: left !important; border: none; border-bottom: 1px solid #eee; padding: 10px 15px; display: flex; flex-direction: column; gap: 2px; }
-            td:last-child { border-bottom: none; }
+            tr { margin-bottom: 10px; border: 1px solid #ddd; border-radius: 4px; padding: 5px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+            td { text-align: left !important; border: none; border-bottom: 1px solid #f0f0f0; padding: 6px 8px !important; display: flex; flex-direction: column; gap: 1px; font-size: 13px;}
+            td:last-child { border-bottom: none; flex-direction: row; gap: 8px; align-items: center;}
 
+            /* Rótulos para Minhas Escolhas */
             #tabelaMinhasEscolhas td:nth-of-type(1)::before { content: "LIVRO:"; font-size: 10px; color: #888; font-weight: bold; }
             #tabelaMinhasEscolhas td:nth-of-type(2)::before { content: "SEMESTRE:"; font-size: 10px; color: #888; font-weight: bold; }
-            #tabelaMinhasEscolhas td:nth-of-type(3)::before { content: "DATA DA ESCOLHA:"; font-size: 10px; color: #888; font-weight: bold; }
-            #tabelaMinhasEscolhas td:nth-of-type(4) { flex-direction: row; gap: 10px; padding-top: 10px; }
+            #tabelaMinhasEscolhas td:nth-of-type(3)::before { content: "DATA:"; font-size: 10px; color: #888; font-weight: bold; }
             
+            /* Rótulos para Minhas Sugestões */
+            #tabelaMinhasSugestoes td:nth-of-type(1)::before { content: "LIVRO SUGERIDO:"; font-size: 10px; color: #888; font-weight: bold; }
+            #tabelaMinhasSugestoes td:nth-of-type(2)::before { content: "SEMESTRE:"; font-size: 10px; color: #888; font-weight: bold; }
+
+            /* Rótulos para Escolha dos Colegas */
             #tabelaEscolhasColegas td:nth-of-type(1)::before { content: "PROFESSOR(A):"; font-size: 10px; color: #888; font-weight: bold; }
             #tabelaEscolhasColegas td:nth-of-type(2)::before { content: "LIVRO:"; font-size: 10px; color: #888; font-weight: bold; }
             #tabelaEscolhasColegas td:nth-of-type(3)::before { content: "SEMESTRE:"; font-size: 10px; color: #888; font-weight: bold; }
 
-            .table-responsive { border: none; }
+            .table-responsive { border: none; margin-top: 5px;}
         }
     </style>
 </head>
@@ -95,12 +106,12 @@
     <div id="modalIdentificacao">
         <div class="modal-box">
             <h3><i class="fas fa-user-circle"></i> Identificação Docente</h3>
-            <p style="font-size: 14px; color: #555;">Selecione seu nome para acessar seus semestres correspondentes.</p>
+            <p style="font-size: 13px; color: #555; margin-bottom:15px;">Selecione seu nome para acessar.</p>
             <div class="form-group" style="text-align: left;">
-                <label style="font-weight: bold; color: #555; font-size: 14px;">Seu Nome:</label>
+                <label style="font-weight: bold; color: #555; font-size: 13px;">Seu Nome:</label>
                 <select id="selectProfessor" autocomplete="off"></select>
             </div>
-            <button class="action-btn" onclick="entrarSistema()">Entrar no Portal</button>
+            <button class="action-btn" onclick="entrarSistema()" style="margin-top: 5px;">Entrar no Portal</button>
         </div>
     </div>
 
@@ -110,8 +121,7 @@
             <div class="logo-text"><strong>PROJETO LITERÁRIO</strong></div>
         </div>
         <div class="top-header-right">
-            <button class="top-btn" id="btnTopName" onclick="sairSistema()"><i class="fas fa-user"></i> PROFESSOR (Sair)</button>
-            <button class="top-btn btn-ano">2026</button>
+            <button class="top-btn" id="btnTopName" onclick="sairSistema()"><i class="fas fa-user"></i> PROFESSOR</button>
         </div>
     </header>
 
@@ -120,20 +130,21 @@
             <button class="tab-link active" onclick="openTab('catalogo', this); buscarMinhasEscolhasParaCatalogo();"><i class="fas fa-book"></i> Paradidáticos</button>
             <button class="tab-link" onclick="openTab('minhas-escolhas', this); buscarEscolhas();"><i class="fas fa-check-square"></i> Minhas Escolhas</button>
             <button class="tab-link" onclick="openTab('escolhas-colegas', this); buscarEscolhas();"><i class="fas fa-users"></i> Escolhas Colegas</button>
-            <button class="tab-link" onclick="openTab('sugerir', this)"><i class="fas fa-lightbulb"></i> Sugerir Novo</button>
+            <button class="tab-link" onclick="openTab('sugerir', this); buscarMinhasSugestoes();"><i class="fas fa-lightbulb"></i> Sugerir Novo</button>
             <button class="tab-link" onclick="openTab('agendar-fisico', this)"><i class="fas fa-calendar-check"></i> Agendar Físicos</button>
         </div>
     </nav>
 
     <div class="container" id="appContainer">
+        <!-- Catálogo -->
         <div id="catalogo" class="tab-content active">
             <div class="catalogo-header">
                 <div style="flex: 1;">
-                    <h3 style="color:#004080; margin-top:0;">Catálogo de Livros Paradidáticos</h3>
-                    <p style="color: #666; font-size: 14px; margin-bottom: 5px;">Você está selecionando livros para o <strong>Semestre <span id="lblSemestreCatalogo"></span></strong>.</p>
+                    <h3 style="color:#004080; margin-top:0; font-size:16px;">Catálogo de Paradidáticos</h3>
+                    <p style="color: #666; font-size: 13px; margin-bottom: 5px;">Você está selecionando para o <strong>Semestre <span id="lblSemestreCatalogo"></span></strong>.</p>
                 </div>
                 <div class="catalogo-filtro">
-                    <label style="font-weight: bold; font-size:12px; color:#004080;">VER LIVROS DO SEMESTRE:</label>
+                    <label style="font-weight: bold; font-size:11px; color:#004080;">VER LIVROS DO SEMESTRE:</label>
                     <select id="filtroNavegarSemestres" autocomplete="off" onchange="buscarMinhasEscolhasParaCatalogo()">
                     </select>
                 </div>
@@ -141,8 +152,9 @@
             <div class="book-grid" id="listaLivrosCatalogo"></div>
         </div>
 
+        <!-- Minhas Escolhas -->
         <div id="minhas-escolhas" class="tab-content">
-            <h3 style="color:#004080; margin-top:0;">Livros que eu escolhi</h3>
+            <h3 style="color:#004080; margin-top:0; font-size:16px;">Livros que eu escolhi</h3>
             <div class="table-responsive">
                 <table>
                     <thead>
@@ -153,21 +165,34 @@
             </div>
         </div>
 
+        <!-- Sugerir Novo com Opção de Excluir -->
         <div id="sugerir" class="tab-content">
-            <h3 style="color:#004080; margin-top:0;">Sugerir Novo Livro Literário</h3>
+            <h3 style="color:#004080; margin-top:0; font-size:16px;">Sugerir Novo Livro Literário</h3>
             <div class="form-group">
-                <label style="font-weight: bold; color: #555; font-size: 14px;">Título do Livro e Autor:</label>
+                <label style="font-weight: bold; color: #555; font-size: 13px;">Título do Livro e Autor:</label>
                 <input type="text" id="sug_titulo" autocomplete="off" placeholder="Ex: The Little Prince - Antoine de Saint-Exupéry">
             </div>
             <div class="form-group">
-                <label style="font-weight: bold; color: #555; font-size: 14px;">Link (Site, PDF ou YouTube):</label>
+                <label style="font-weight: bold; color: #555; font-size: 13px;">Link (Site, PDF ou YouTube):</label>
                 <input type="text" id="sug_link" autocomplete="off" placeholder="Cole o URL completo aqui">
             </div>
-            <button class="action-btn" id="btnEnviarSugestao" style="width: auto;"><i class="fas fa-paper-plane"></i> Enviar Sugestão</button>
+            <button class="action-btn" id="btnEnviarSugestao" style="width: auto; padding: 10px 15px;"><i class="fas fa-paper-plane"></i> Enviar Sugestão</button>
+            
+            <hr style="margin: 20px 0; border: 0; border-top: 1px solid #ddd;">
+            <h4 style="color:#004080; margin-top:0; font-size:15px;">Minhas Sugestões Enviadas</h4>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr><th>Livro Sugerido</th><th>Semestre</th><th>Ações</th></tr>
+                    </thead>
+                    <tbody id="tabelaMinhasSugestoes"><tr><td colspan="3">Carregando...</td></tr></tbody>
+                </table>
+            </div>
         </div>
 
+        <!-- Escolhas dos Colegas -->
         <div id="escolhas-colegas" class="tab-content">
-            <h3 style="color:#004080; margin-top:0;">Livros escolhidos pelos colegas</h3>
+            <h3 style="color:#004080; margin-top:0; font-size:16px;">Livros escolhidos pelos colegas</h3>
             <div class="table-responsive">
                 <table>
                     <thead>
@@ -178,18 +203,19 @@
             </div>
         </div>
 
+        <!-- Agendar Livros Físicos -->
         <div id="agendar-fisico" class="tab-content">
-            <h3 style="color:#004080; margin-top:0;">Agendamento Físico de Livros</h3>
-            <div style="background: #e9f2fa; padding: 15px; border-radius: 4px; border-left: 4px solid #0066cc; margin-bottom: 20px;">
+            <h3 style="color:#004080; margin-top:0; font-size:16px;">Agendamento Físico de Livros</h3>
+            <div style="background: #e9f2fa; padding: 15px; border-radius: 4px; border-left: 4px solid #0066cc; margin-bottom: 15px; font-size: 13px;">
                 <strong>Nome:</strong> <span id="labelNomeProfessor"></span> <br>
-                <div style="margin-top: 10px;">
+                <div style="margin-top: 8px;">
                     <strong>Selecione o Semestre:</strong> 
-                    <select id="filtroSemestreAgendamento" autocomplete="off" style="width: auto; display: inline-block; padding: 6px; margin: 0;"></select>
+                    <select id="filtroSemestreAgendamento" autocomplete="off" style="width: auto; display: inline-block; padding: 4px; margin: 0; font-size: 13px;"></select>
                 </div>
             </div>
-            <div style="border: 2px dashed #ccc; padding: 30px; text-align: center; color: #777; border-radius: 4px;">
-                <i class="fas fa-box-open" style="font-size: 30px; margin-bottom: 10px;"></i><br>
-                A lista de agendamento de livros físicos para este período será adicionada aqui em breve.
+            <div style="border: 2px dashed #ccc; padding: 20px; text-align: center; color: #777; border-radius: 4px; font-size: 13px;">
+                <i class="fas fa-box-open" style="font-size: 24px; margin-bottom: 8px;"></i><br>
+                A lista de agendamento de livros físicos será adicionada aqui em breve.
             </div>
         </div>
     </div>
@@ -271,7 +297,6 @@
         window.sairSistema = function() {
             Swal.fire({
                 title: 'Sair da conta?',
-                text: "Você precisará selecionar seu nome novamente.",
                 icon: 'question',
                 showCancelButton: true,
                 confirmButtonColor: '#0066cc',
@@ -305,7 +330,10 @@
 
             document.getElementById('modalIdentificacao').style.display = 'none';
             document.getElementById('appContainer').style.display = 'block';
-            document.getElementById('btnTopName').innerHTML = `<i class="fas fa-user"></i> ${nome.toUpperCase()} (Sair)`;
+            
+            // Ajuste para mobile caber na mesma linha
+            let shortName = nome.split(' ')[0];
+            document.getElementById('btnTopName').innerHTML = `<i class="fas fa-user"></i> ${shortName.toUpperCase()}`;
             document.getElementById('labelNomeProfessor').innerText = nome;
 
             buscarMinhasEscolhasParaCatalogo();
@@ -347,7 +375,7 @@
                 const badge = livro.qtd === "Digital" ? '<span class="tag-digital"><i class="fas fa-desktop"></i> Digital</span>' : `<span class="tag-fisico"><i class="fas fa-book"></i> Físico</span>`;
                 const linkDiv = livro.link ? `<a href="${livro.link}" target="_blank" style="color:#0066cc; font-size:12px; margin-top:5px; display:inline-block;"><i class="fas fa-external-link-alt"></i> Ver Material</a>` : '<div style="height:20px;"></div>';
                 
-                let btnHtml = `<button class="btn-escolher" onclick="escolherLivroParaSemestre('${livro.titulo}')"><i class="fas fa-paper-plane"></i> Enviar Escolha para Coordenadora</button>`;
+                let btnHtml = `<button class="btn-escolher" onclick="escolherLivroParaSemestre('${livro.titulo}')"><i class="fas fa-paper-plane"></i> Enviar Escolha</button>`;
                 
                 if(window.livrosJaEscolhidos.includes(livro.titulo)) {
                     btnHtml = `<button class="btn-escolher btn-escolhido" disabled><i class="fas fa-check-circle"></i> Escolha Enviada</button>`;
@@ -356,7 +384,7 @@
                 grid.innerHTML += `
                     <div class="book-card">
                         <div>
-                            <h4 style="margin-top:0; color:#333; font-size:15px; margin-bottom: 8px;">${livro.titulo}</h4>
+                            <h4 style="margin-top:0; color:#333; font-size:14px; margin-bottom: 5px;">${livro.titulo}</h4>
                             ${badge} <br>
                             ${linkDiv}
                         </div>
@@ -375,7 +403,8 @@
                 showCancelButton: true,
                 confirmButtonColor: '#0066cc',
                 cancelButtonColor: '#aaa',
-                confirmButtonText: 'Sim, confirmar'
+                confirmButtonText: 'Sim, confirmar',
+                cancelButtonText: 'Cancelar'
             }).then(async (result) => {
                 if (result.isConfirmed) {
                     try {
@@ -415,9 +444,9 @@
                             <td><strong>${data.livro}</strong></td>
                             <td>Semestre ${data.semestre}</td>
                             <td>${dataFormatada}</td>
-                            <td style="white-space: nowrap; display: flex; gap: 5px;">
-                                <button class="btn-editar" onclick="editarEscolha('${id}')" title="Editar"><i class="fas fa-edit"></i> Editar</button>
-                                <button class="btn-excluir" onclick="excluirEscolha('${id}')" title="Excluir"><i class="fas fa-trash"></i></button>
+                            <td>
+                                <button class="btn-editar" onclick="editarEscolha('${id}')"><i class="fas fa-edit"></i> Editar</button>
+                                <button class="btn-excluir" onclick="excluirEscolha('${id}')"><i class="fas fa-trash"></i> Excluir</button>
                             </td>
                         </tr>`;
                     } else {
@@ -433,12 +462,12 @@
         window.excluirEscolha = function(idDocumento) {
             Swal.fire({
                 title: 'Excluir Escolha?',
-                text: "Sua escolha será apagada do painel da coordenação.",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#e74c3c',
                 cancelButtonColor: '#aaa',
-                confirmButtonText: 'Sim, excluir'
+                confirmButtonText: 'Sim, excluir',
+                cancelButtonText: 'Cancelar'
             }).then(async (result) => {
                 if (result.isConfirmed) {
                     await deleteDoc(doc(db, "escolhas", idDocumento));
@@ -452,17 +481,57 @@
         window.editarEscolha = function(idDocumento) {
             Swal.fire({
                 title: 'Editar Escolha?',
-                text: "A escolha atual será removida para você fazer uma nova no catálogo. Deseja continuar?",
+                text: "A escolha atual será removida para você fazer uma nova. Deseja continuar?",
                 icon: 'info',
                 showCancelButton: true,
                 confirmButtonColor: '#f39c12',
                 cancelButtonColor: '#aaa',
-                confirmButtonText: 'Sim, editar'
+                confirmButtonText: 'Sim, editar',
+                cancelButtonText: 'Cancelar'
             }).then(async (result) => {
                 if (result.isConfirmed) {
                     await deleteDoc(doc(db, "escolhas", idDocumento));
                     buscarMinhasEscolhasParaCatalogo();
                     openTab('catalogo', document.querySelector('.menu button.tab-link')); 
+                }
+            });
+        }
+
+        // --- SISTEMA DE SUGESTÕES (Buscar, Adicionar, Excluir) ---
+        window.buscarMinhasSugestoes = async function() {
+            const tbSugestoes = document.getElementById('tabelaMinhasSugestoes');
+            tbSugestoes.innerHTML = '<tr><td colspan="3">Carregando...</td></tr>';
+            try {
+                const querySnapshot = await getDocs(collection(db, "sugestoes"));
+                let html = '';
+                querySnapshot.forEach((docSnap) => {
+                    const data = docSnap.data();
+                    if(data.professor === window.professorLogado) {
+                        html += `<tr>
+                            <td><strong>${data.titulo}</strong></td>
+                            <td>Sem. ${data.semestre}</td>
+                            <td><button class="btn-excluir" onclick="excluirSugestao('${docSnap.id}')"><i class="fas fa-trash"></i> Excluir</button></td>
+                        </tr>`;
+                    }
+                });
+                tbSugestoes.innerHTML = html || '<tr><td colspan="3">Nenhuma sugestão enviada.</td></tr>';
+            } catch (error) { console.error(error); }
+        };
+
+        window.excluirSugestao = function(idDocumento) {
+            Swal.fire({
+                title: 'Excluir Sugestão?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#e74c3c',
+                cancelButtonColor: '#aaa',
+                confirmButtonText: 'Sim, excluir',
+                cancelButtonText: 'Cancelar'
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    await deleteDoc(doc(db, "sugestoes", idDocumento));
+                    buscarMinhasSugestoes(); 
+                    Swal.fire('Excluída!', 'A sugestão foi removida.', 'success');
                 }
             });
         }
@@ -480,6 +549,7 @@
                 Swal.fire('Sucesso!', 'Sugestão enviada para a coordenação.', 'success');
                 document.getElementById('sug_titulo').value = '';
                 document.getElementById('sug_link').value = '';
+                buscarMinhasSugestoes();
             } catch (error) { Swal.fire('Erro', 'Ocorreu um erro ao enviar a sugestão.', 'error'); }
         });
     </script>
