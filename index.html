@@ -1,45 +1,128 @@
 <!DOCTYPE html>
-<html lang="pt-PT">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CLM - Coordenação Pedagógica</title>
+    <title>SGE - Coordenação CLM</title>
+    <!-- Ícones FontAwesome para ficar idêntico ao SGE -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { font-family: Arial, sans-serif; background-color: #f4f7f6; margin: 0; }
-        .header { background: #8e44ad; color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
-        .menu { display: flex; gap: 15px; background: #9b59b6; padding: 10px 20px; }
-        .menu button { background: none; border: none; color: white; font-size: 16px; cursor: pointer; padding: 5px 10px; }
-        .menu button.active { border-bottom: 2px solid #ecf0f1; }
+        body { 
+            margin: 0; 
+            font-family: Arial, sans-serif; 
+            background-color: #f5f6f8; /* Fundo cinza claro */
+            padding-bottom: 40px; /* Espaço para o rodapé fixo */
+        }
+        
+        /* Cabeçalho Principal (Azul Escuro) */
+        .top-header {
+            background-color: #004080; 
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 20px;
+            height: 40px;
+        }
+        .top-header-left { display: flex; align-items: center; gap: 10px; }
+        .top-header-left .logo-icon { font-size: 24px; }
+        .top-header-left .logo-text { line-height: 1.1; }
+        .top-header-left strong { font-size: 16px; letter-spacing: 1px; }
+        .top-header-left span { font-size: 9px; display: block; }
+        
+        .top-header-right { display: flex; align-items: center; gap: 15px; font-size: 14px; }
+        .top-header-right i.fa-birthday-cake { color: #ff9999; cursor: pointer; }
+        .top-header-right i.fa-envelope { cursor: pointer; }
+        .top-header-right i.fa-bell { color: #ffcc00; cursor: pointer; }
+        .top-btn {
+            background: white; color: #333; border: 1px solid #ccc;
+            padding: 5px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer;
+            display: flex; align-items: center; gap: 5px;
+        }
+
+        /* Sub-Cabeçalho (Branco com menus) */
+        .sub-header {
+            background-color: white; border-bottom: 1px solid #ccc;
+            display: flex; align-items: center; height: 45px; padding: 0 20px;
+        }
+        .module-title {
+            color: #0066cc; font-weight: bold; font-size: 15px;
+            display: flex; align-items: center; gap: 8px;
+            padding-right: 20px; border-right: 1px solid #ddd; height: 100%;
+        }
+        .menu { display: flex; height: 100%; }
+        .menu button {
+            background: none; border: none; color: #555;
+            font-size: 13px; cursor: pointer; padding: 0 15px;
+            display: flex; align-items: center; gap: 6px; height: 100%;
+            border-right: 1px solid #eee;
+        }
+        .menu button i { color: #0066cc; }
+        .menu button:hover, .menu button.active {
+            color: #0066cc; background-color: #f0f7ff; font-weight: bold;
+        }
+
+        /* Rodapé Fixo */
+        .footer {
+            background-color: #004080; color: white;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 8px 20px; font-size: 11px;
+            position: fixed; bottom: 0; width: 100%; box-sizing: border-box;
+        }
+        .footer-links { display: flex; gap: 15px; }
+        .footer-links span { display: flex; align-items: center; gap: 5px; cursor: pointer; }
+
+        /* Conteúdo Principal */
         .container { padding: 20px; max-width: 1200px; margin: auto; }
-        .tab-content { display: none; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .tab-content { display: none; background: white; padding: 20px; border-radius: 4px; border: 1px solid #ddd; }
         .tab-content.active { display: block; }
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px; }
         table, th, td { border: 1px solid #ddd; }
-        th, td { padding: 12px; text-align: left; }
-        th { background-color: #f2f2f2; }
-        select { padding: 10px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
-        button.btn { background: #8e44ad; color: white; padding: 10px; cursor: pointer; border: none; border-radius: 4px; }
-        .tag-digital { background: #2ecc71; color: white; padding: 3px 8px; border-radius: 4px; font-size: 12px; }
-        .tag-fisico { background: #e67e22; color: white; padding: 3px 8px; border-radius: 4px; font-size: 12px; }
+        th, td { padding: 10px; text-align: left; }
+        th { background-color: #f9f9f9; color: #333; }
+        select { padding: 8px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
+        button.action-btn { background: #0066cc; color: white; padding: 8px 15px; cursor: pointer; border: none; border-radius: 4px; font-size: 13px; }
+        .tag-digital { background: #2ecc71; color: white; padding: 3px 8px; border-radius: 4px; font-size: 11px; text-decoration: none; }
+        .tag-fisico { background: #e67e22; color: white; padding: 3px 8px; border-radius: 4px; font-size: 11px; }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <h2>Painel da Coordenação - CLM</h2>
-        <span>Prof. Sônia Sena</span>
-    </div>
+    <!-- Cabeçalho Idêntico ao SGE -->
+    <header class="top-header">
+        <div class="top-header-left">
+            <i class="fas fa-graduation-cap logo-icon"></i>
+            <div class="logo-text">
+                <strong>CLM</strong>
+                <span>CENTRO DE LÍNGUAS MARACANAÚ</span>
+            </div>
+        </div>
+        <div class="top-header-right">
+            <i class="fas fa-birthday-cake"></i>
+            <i class="fas fa-envelope"></i>
+            <i class="fas fa-bell"></i>
+            <button class="top-btn"><i class="fas fa-th-large"></i> Módulos</button>
+            <button class="top-btn"><i class="fas fa-user"></i> SÔNIA</button>
+            <button class="top-btn">2026</button>
+        </div>
+    </header>
 
-    <div class="menu">
-        <button class="tab-link active" onclick="openTab('visaogeral', this)">Cronograma Global</button>
-        <button class="tab-link" onclick="openTab('gerenciar', this)">Acervo Fixo</button>
-        <button class="tab-link" onclick="openTab('sugestoes', this)" id="btnCarregarSugestoes">Analisar Sugestões</button>
-    </div>
+    <!-- Sub-Cabeçalho com Menus Idêntico ao SGE -->
+    <nav class="sub-header">
+        <div class="module-title">
+            <i class="fas fa-book-open"></i> Paradidáticos
+        </div>
+        <div class="menu">
+            <button class="tab-link active" onclick="openTab('visaogeral', this)"><i class="fas fa-home"></i> Cronograma Global</button>
+            <button class="tab-link" onclick="openTab('gerenciar', this)"><i class="fas fa-users"></i> Acervo Fixo</button>
+            <button class="tab-link" onclick="openTab('sugestoes', this)" id="btnCarregarSugestoes"><i class="fas fa-file-alt"></i> Analisar Sugestões</button>
+        </div>
+    </nav>
 
     <div class="container">
         <!-- Cronograma Global -->
         <div id="visaogeral" class="tab-content active">
-            <h3>Professores por Semestre</h3>
+            <h3 style="color:#004080; margin-top:0;">Professores por Semestre</h3>
             <div style="margin-bottom: 15px;">
                 <label>Selecione o Semestre:</label>
                 <select id="filtroSemestreCoord" autocomplete="off" onchange="renderizarProfessores()">
@@ -54,7 +137,7 @@
             </div>
             <table>
                 <thead>
-                    <tr><th>Professores Alocados (A aguardar agendamento local)</th></tr>
+                    <tr><th>Professores Alocados (Aguardando agendamento local)</th></tr>
                 </thead>
                 <tbody id="tabelaProfessores"></tbody>
             </table>
@@ -62,7 +145,7 @@
 
         <!-- Acervo Fixo -->
         <div id="gerenciar" class="tab-content">
-            <h3>Lista de Livros Paradidáticos</h3>
+            <h3 style="color:#004080; margin-top:0;">Lista de Livros Paradidáticos</h3>
             <table>
                 <thead>
                     <tr>
@@ -78,7 +161,7 @@
 
         <!-- Sugestões do Firebase -->
         <div id="sugestoes" class="tab-content">
-            <h3>Sugestões Enviadas pelos Professores</h3>
+            <h3 style="color:#004080; margin-top:0;">Sugestões Enviadas pelos Professores</h3>
             <table>
                 <thead>
                     <tr>
@@ -89,11 +172,23 @@
                     </tr>
                 </thead>
                 <tbody id="tabelaSugestoes">
-                    <tr><td colspan="4">A carregar sugestões do Firebase...</td></tr>
+                    <tr><td colspan="4">Carregando sugestões do Firebase...</td></tr>
                 </tbody>
             </table>
         </div>
     </div>
+
+    <!-- Rodapé Idêntico ao SGE -->
+    <footer class="footer">
+        <div class="footer-links">
+            <span><i class="fas fa-video"></i> Tutoriais</span>
+            <span><i class="fas fa-book"></i> BCM</span>
+            <span><i class="fas fa-file-alt"></i> Formar Integralmente</span>
+            <span><i class="fas fa-chart-line"></i> Política Especial de Recuperação</span>
+            <span><i class="fas fa-heart"></i> Qualidade de Vida</span>
+        </div>
+        <div>CLM 1.0.0</div>
+    </footer>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
@@ -155,7 +250,7 @@
             const tbody = document.getElementById('tabelaProfessores');
             tbody.innerHTML = '';
             lista.forEach(prof => {
-                tbody.innerHTML += `<tr><td>${prof}</td></tr>`;
+                tbody.innerHTML += `<tr><td><i class="fas fa-user-circle" style="color:#0066cc; margin-right:8px;"></i> ${prof}</td></tr>`;
             });
         };
 
@@ -163,15 +258,15 @@
             const tbody = document.getElementById('tabelaAcervo');
             acervo.forEach(livro => {
                 const badge = livro.qtd === "Digital" ? '<span class="tag-digital">Digital</span>' : `<span class="tag-fisico">Físico - ${livro.qtd}</span>`;
-                const linkBtn = livro.link ? `<a href="${livro.link}" target="_blank" class="tag-digital" style="text-decoration:none;">Aceder Material</a>` : 'N/A';
+                const linkBtn = livro.link ? `<a href="${livro.link}" target="_blank" class="tag-digital">Acessar Material</a>` : 'N/A';
                 tbody.innerHTML += `<tr><td>Semestre ${livro.sem}</td><td>${livro.titulo}</td><td>${badge}</td><td>${linkBtn}</td></tr>`;
             });
         }
 
-        // --- BUSCA DO FIREBASE (Apenas Sugestões) ---
+        // --- BUSCA DO FIREBASE ---
         document.getElementById('btnCarregarSugestoes').addEventListener('click', async () => {
             const tbody = document.getElementById('tabelaSugestoes');
-            tbody.innerHTML = '<tr><td colspan="4">A carregar...</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="4">Carregando...</td></tr>';
             try {
                 const querySnapshot = await getDocs(collection(db, "sugestoes"));
                 tbody.innerHTML = '';
@@ -180,7 +275,7 @@
                 querySnapshot.forEach((doc) => {
                     const data = doc.data();
                     const link = data.link ? `<a href="${data.link}" target="_blank">Abrir Link</a>` : 'Sem link';
-                    const dataFormatada = data.dataEnvio ? new Date(data.dataEnvio).toLocaleDateString('pt-PT') : '-';
+                    const dataFormatada = data.dataEnvio ? new Date(data.dataEnvio).toLocaleDateString('pt-BR') : '-';
                     tbody.innerHTML += `<tr><td>${data.titulo}</td><td>${data.semestre}</td><td>${link}</td><td>${dataFormatada}</td></tr>`;
                 });
             } catch (error) {
@@ -188,7 +283,6 @@
             }
         });
 
-        // Inicialização
         window.renderizarProfessores();
         renderizarAcervo();
     </script>
