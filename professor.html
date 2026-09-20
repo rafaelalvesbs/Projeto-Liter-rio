@@ -6,53 +6,22 @@
     <title>Projeto Literário - Portal do Professor</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { 
-            margin: 0; 
-            font-family: Arial, sans-serif; 
-            background-color: #f5f6f8; 
-        }
-        
-        /* Cabeçalho Principal */
-        .top-header {
-            background-color: #004080; 
-            color: white;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 20px;
-            height: 40px;
-        }
+        body { margin: 0; font-family: Arial, sans-serif; background-color: #f5f6f8; }
+        .top-header { background-color: #004080; color: white; display: flex; justify-content: space-between; align-items: center; padding: 8px 20px; height: 40px; }
         .top-header-left { display: flex; align-items: center; gap: 10px; }
         .top-header-left .logo-icon { font-size: 24px; }
         .top-header-left .logo-text { line-height: 1.1; display: flex; align-items: center; height: 100%;}
         .top-header-left strong { font-size: 16px; letter-spacing: 1px; }
-        
         .top-header-right { display: flex; align-items: center; gap: 15px; font-size: 14px; }
-        .top-btn {
-            background: white; color: #333; border: 1px solid #ccc;
-            padding: 5px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer;
-            display: flex; align-items: center; gap: 5px;
-        }
-
-        /* Sub-Cabeçalho */
-        .sub-header {
-            background-color: white; border-bottom: 1px solid #ccc;
-            display: flex; align-items: center; height: 45px; padding: 0 20px;
-        }
+        .top-btn { background: white; color: #333; border: 1px solid #ccc; padding: 5px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 5px; }
+        
+        .sub-header { background-color: white; border-bottom: 1px solid #ccc; display: flex; align-items: center; height: 45px; padding: 0 20px; }
         .menu { display: flex; height: 100%; }
-        .menu button {
-            background: none; border: none; color: #555;
-            font-size: 13px; cursor: pointer; padding: 0 15px;
-            display: flex; align-items: center; gap: 6px; height: 100%;
-            border-right: 1px solid #eee;
-        }
+        .menu button { background: none; border: none; color: #555; font-size: 13px; cursor: pointer; padding: 0 15px; display: flex; align-items: center; gap: 6px; height: 100%; border-right: 1px solid #eee; }
         .menu button i { color: #0066cc; }
-        .menu button:hover, .menu button.active {
-            color: #0066cc; background-color: #f0f7ff; font-weight: bold;
-        }
+        .menu button:hover, .menu button.active { color: #0066cc; background-color: #f0f7ff; font-weight: bold; }
 
-        /* Conteúdo Principal */
-        .container { padding: 20px; max-width: 1000px; margin: auto; display: none; } /* Escondido até identificar */
+        .container { padding: 20px; max-width: 1000px; margin: auto; display: none; }
         .tab-content { display: none; background: white; padding: 20px; border-radius: 4px; border: 1px solid #ddd; }
         .tab-content.active { display: block; }
         
@@ -64,24 +33,25 @@
         input, select { width: 100%; padding: 8px; margin-top: 8px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; font-size: 14px;}
         button.action-btn { background: #0066cc; color: white; cursor: pointer; border: none; margin-top: 15px; padding: 10px 20px; border-radius: 4px; font-weight: bold;}
         button.action-btn:hover { background: #00509e; }
-        button.btn-escolher { background: #2ecc71; width: 100%; color: white; padding: 8px; border: none; border-radius: 4px; cursor: pointer; margin-top: 10px; font-weight: bold; }
-        button.btn-escolher:hover { background: #27ae60; }
         
-        .form-group { margin-bottom: 15px; }
+        /* Botões de escolha do Livro */
+        .btn-escolher { background: #0066cc; width: 100%; color: white; padding: 8px; border: none; border-radius: 4px; cursor: pointer; margin-top: 10px; font-weight: bold; transition: 0.3s; }
+        .btn-escolher:hover { background: #00509e; }
+        .btn-escolhido { background: #27ae60 !important; cursor: default; }
 
-        /* Modal de Identificação */
-        #modalIdentificacao {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(0,0,0,0.7); display: flex; justify-content: center; align-items: center; z-index: 1000;
-        }
-        .modal-box { background: white; padding: 30px; border-radius: 8px; width: 350px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
-        .modal-box h3 { color: #004080; margin-top: 0; }
-        
-        /* Tabelas */
+        .btn-excluir { background: #e74c3c; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; }
+        .btn-editar { background: #f39c12; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; margin-right: 5px; }
+
+        .form-group { margin-bottom: 15px; }
         table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px; }
         table, th, td { border: 1px solid #ddd; }
         th, td { padding: 10px; text-align: left; }
         th { background-color: #f9f9f9; color: #333; }
+
+        /* Modal de Identificação */
+        #modalIdentificacao { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: flex; justify-content: center; align-items: center; z-index: 1000; }
+        .modal-box { background: white; padding: 30px; border-radius: 8px; width: 350px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        .modal-box h3 { color: #004080; margin-top: 0; }
     </style>
 </head>
 <body>
@@ -90,7 +60,7 @@
     <div id="modalIdentificacao">
         <div class="modal-box">
             <h3><i class="fas fa-user-circle"></i> Identificação Docente</h3>
-            <p style="font-size: 14px; color: #555;">Por favor, selecione seu nome e semestre de atuação.</p>
+            <p style="font-size: 14px; color: #555;">Bem-vindo(a)! Escolha seu nome e semestre.</p>
             <div class="form-group" style="text-align: left;">
                 <label style="font-weight: bold; color: #555;">Seu Nome:</label>
                 <select id="selectProfessor" autocomplete="off" onchange="carregarSemestresDoProfessor()"></select>
@@ -108,58 +78,55 @@
     <header class="top-header">
         <div class="top-header-left">
             <i class="fas fa-book-open logo-icon"></i>
-            <div class="logo-text">
-                <strong>PROJETO LITERÁRIO</strong>
-            </div>
+            <div class="logo-text"><strong>PROJETO LITERÁRIO</strong></div>
         </div>
         <div class="top-header-right">
-            <button class="top-btn" id="btnTopName"><i class="fas fa-user"></i> PROFESSOR</button>
+            <button class="top-btn" id="btnTopName" onclick="sairSistema()"><i class="fas fa-user"></i> PROFESSOR (Sair)</button>
             <button class="top-btn">2026</button>
         </div>
     </header>
 
     <nav class="sub-header">
         <div class="menu">
-            <button class="tab-link active" onclick="openTab('catalogo', this)"><i class="fas fa-book"></i> Paradidáticos</button>
-            <button class="tab-link" onclick="openTab('sugerir', this)"><i class="fas fa-lightbulb"></i> Sugerir Novo</button>
+            <button class="tab-link active" onclick="openTab('catalogo', this); buscarMinhasEscolhasParaCatalogo();"><i class="fas fa-book"></i> Paradidáticos</button>
             <button class="tab-link" onclick="openTab('minhas-escolhas', this); buscarEscolhas();"><i class="fas fa-check-square"></i> Minhas Escolhas</button>
+            <button class="tab-link" onclick="openTab('sugerir', this)"><i class="fas fa-lightbulb"></i> Sugerir Novo</button>
             <button class="tab-link" onclick="openTab('escolhas-colegas', this); buscarEscolhas();"><i class="fas fa-users"></i> Escolhas dos Colegas</button>
             <button class="tab-link" onclick="openTab('agendar-fisico', this)"><i class="fas fa-calendar-check"></i> Agendar Livros Físicos</button>
         </div>
     </nav>
 
     <div class="container" id="appContainer">
-        <!-- Paradidáticos (Sugestões do Sistema baseadas no Semestre) -->
+        <!-- Paradidáticos -->
         <div id="catalogo" class="tab-content active">
-            <h3 style="color:#004080; margin-top:0;">Livros Disponíveis para o seu Semestre</h3>
-            <p style="color: #666; font-size: 14px;">Selecione o livro que deseja trabalhar. A coordenadora verá a sua escolha no sistema dela.</p>
+            <h3 style="color:#004080; margin-top:0;">Livros Disponíveis para o Semestre <span id="lblSemestreCatalogo"></span></h3>
+            <p style="color: #666; font-size: 14px;">Selecione o livro. A coordenadora verá sua escolha em tempo real.</p>
             <div class="book-grid" id="listaLivrosCatalogo"></div>
+        </div>
+
+        <!-- Minhas Escolhas (Com opção de Editar e Excluir) -->
+        <div id="minhas-escolhas" class="tab-content">
+            <h3 style="color:#004080; margin-top:0;">Livros que eu escolhi</h3>
+            <table>
+                <thead>
+                    <tr><th>Livro</th><th>Semestre</th><th>Data da Escolha</th><th>Ações</th></tr>
+                </thead>
+                <tbody id="tabelaMinhasEscolhas"><tr><td colspan="4">Carregando...</td></tr></tbody>
+            </table>
         </div>
 
         <!-- Sugerir Novo -->
         <div id="sugerir" class="tab-content">
             <h3 style="color:#004080; margin-top:0;">Sugerir Novo Livro Literário</h3>
-            <p style="color: #666; font-size: 14px;">Livro não está na lista? Envie a sugestão para a coordenação avaliar.</p>
             <div class="form-group">
-                <label style="font-weight: bold; color: #555;">Título do Livro e Autor:</label>
+                <label>Título do Livro e Autor:</label>
                 <input type="text" id="sug_titulo" autocomplete="off" placeholder="Ex: The Little Prince - Antoine de Saint-Exupéry">
             </div>
             <div class="form-group">
-                <label style="font-weight: bold; color: #555;">Link (Site, PDF ou YouTube):</label>
+                <label>Link (Site, PDF ou YouTube):</label>
                 <input type="text" id="sug_link" autocomplete="off" placeholder="Cole o URL completo aqui">
             </div>
             <button class="action-btn" id="btnEnviarSugestao"><i class="fas fa-paper-plane"></i> Enviar Sugestão</button>
-        </div>
-
-        <!-- Minhas Escolhas -->
-        <div id="minhas-escolhas" class="tab-content">
-            <h3 style="color:#004080; margin-top:0;">Livros que eu escolhi</h3>
-            <table>
-                <thead>
-                    <tr><th>Livro</th><th>Semestre</th><th>Data da Escolha</th></tr>
-                </thead>
-                <tbody id="tabelaMinhasEscolhas"><tr><td colspan="3">Carregando...</td></tr></tbody>
-            </table>
         </div>
 
         <!-- Escolhas dos Colegas -->
@@ -190,7 +157,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyD5aBrCz8rRAYLyqkD2WIlUwXy6P_U3Roo",
@@ -202,9 +169,9 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // --- DADOS GLOBAIS ---
         window.professorLogado = "";
         window.semestreLogado = "";
+        window.livrosJaEscolhidos = []; // Guarda as escolhas para pintar de verde no catálogo
 
         const mapProfessores = {
             1: ["Lígia", "Luzirene", "João Paulo", "Márcio", "Sônia", "Miguel", "Rafael", "Nelson", "Yasmim", "Angélica", "Guilherme"],
@@ -237,61 +204,66 @@
             { sem: 7, titulo: "Story teller", qtd: "Digital", link: "https://educapes.capes.gov.br/bitstream/capes/63069/1/edgar_allan_poe_storyteller_AE.pdf" }
         ];
 
-        // --- PREPARAÇÃO DO MODAL ---
-        function extrairProfessoresUnicos() {
-            let nomes = new Set();
-            for(let sem in mapProfessores) {
-                mapProfessores[sem].forEach(nome => nomes.add(nome));
-            }
-            return Array.from(nomes).sort();
-        }
-
+        // --- SISTEMA DE LOGIN PERSISTENTE ---
         window.onload = () => {
-            const selectNome = document.getElementById('selectProfessor');
-            selectNome.innerHTML = '<option value="">Selecione...</option>';
-            extrairProfessoresUnicos().forEach(nome => {
-                selectNome.innerHTML += `<option value="${nome}">${nome}</option>`;
-            });
+            const profSalvo = localStorage.getItem('clm_professor');
+            const semSalvo = localStorage.getItem('clm_semestre');
+
+            if(profSalvo && semSalvo) {
+                // Bypass Modal
+                document.getElementById('selectProfessor').innerHTML = `<option value="${profSalvo}">${profSalvo}</option>`;
+                document.getElementById('selectSemestre').innerHTML = `<option value="${semSalvo}">${semSalvo}</option>`;
+                entrarSistema();
+            } else {
+                const selectNome = document.getElementById('selectProfessor');
+                selectNome.innerHTML = '<option value="">Selecione...</option>';
+                let nomes = new Set();
+                for(let s in mapProfessores) mapProfessores[s].forEach(n => nomes.add(n));
+                Array.from(nomes).sort().forEach(nome => { selectNome.innerHTML += `<option value="${nome}">${nome}</option>`; });
+            }
         };
+
+        window.sairSistema = function() {
+            if(confirm("Deseja sair da sua conta?")) {
+                localStorage.removeItem('clm_professor');
+                localStorage.removeItem('clm_semestre');
+                location.reload();
+            }
+        }
 
         window.carregarSemestresDoProfessor = function() {
             const nome = document.getElementById('selectProfessor').value;
             const selectSemestre = document.getElementById('selectSemestre');
             selectSemestre.innerHTML = '';
-            
-            if(!nome) {
-                selectSemestre.innerHTML = '<option value="">Selecione o nome primeiro...</option>';
-                return;
-            }
-
+            if(!nome) { selectSemestre.innerHTML = '<option value="">Selecione o nome primeiro...</option>'; return; }
             for(let sem in mapProfessores) {
-                if(mapProfessores[sem].includes(nome)) {
-                    selectSemestre.innerHTML += `<option value="${sem}">Semestre ${sem}</option>`;
-                }
+                if(mapProfessores[sem].includes(nome)) selectSemestre.innerHTML += `<option value="${sem}">Semestre ${sem}</option>`;
             }
         };
 
         window.entrarSistema = function() {
             const nome = document.getElementById('selectProfessor').value;
             const semestre = document.getElementById('selectSemestre').value;
-
             if(!nome || !semestre) { alert("Preencha as informações para entrar."); return; }
 
             window.professorLogado = nome;
             window.semestreLogado = semestre;
+            
+            // Salvar no navegador para não precisar logar de novo
+            localStorage.setItem('clm_professor', nome);
+            localStorage.setItem('clm_semestre', semestre);
 
             document.getElementById('modalIdentificacao').style.display = 'none';
             document.getElementById('appContainer').style.display = 'block';
-            document.getElementById('btnTopName').innerHTML = `<i class="fas fa-user"></i> ${nome.toUpperCase()}`;
+            document.getElementById('btnTopName').innerHTML = `<i class="fas fa-user"></i> ${nome.toUpperCase()} (Sair)`;
             
-            // Dados aba agendamento físico
+            document.getElementById('lblSemestreCatalogo').innerText = semestre;
             document.getElementById('labelNomeProfessor').innerText = nome;
             document.getElementById('labelSemestreAtual').innerText = "Semestre " + semestre;
 
-            renderizarLivrosDoSemestre();
+            buscarMinhasEscolhasParaCatalogo();
         };
 
-        // --- LÓGICA DE ABAS ---
         window.openTab = function(tabName, element) {
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
             document.querySelectorAll('.tab-link').forEach(link => link.classList.remove('active'));
@@ -299,7 +271,21 @@
             element.classList.add('active');
         };
 
-        // --- RENDERIZAR LIVROS DO SEMESTRE SELECIONADO ---
+        // --- BUSCAR ESCOLHAS E PINTAR DE VERDE ---
+        window.buscarMinhasEscolhasParaCatalogo = async function() {
+            try {
+                const querySnapshot = await getDocs(collection(db, "escolhas"));
+                window.livrosJaEscolhidos = [];
+                querySnapshot.forEach(doc => {
+                    const data = doc.data();
+                    if(data.professor === window.professorLogado && data.semestre === window.semestreLogado) {
+                        window.livrosJaEscolhidos.push(data.livro);
+                    }
+                });
+                renderizarLivrosDoSemestre();
+            } catch(e) { console.error(e); }
+        }
+
         window.renderizarLivrosDoSemestre = function() {
             const sem = parseInt(window.semestreLogado);
             const grid = document.getElementById('listaLivrosCatalogo');
@@ -307,29 +293,30 @@
             
             const livrosFiltrados = acervo.filter(l => l.sem === sem);
             
-            if(livrosFiltrados.length === 0) {
-                grid.innerHTML = "<p>Nenhum livro cadastrado para este semestre.</p>";
-                return;
-            }
-
             livrosFiltrados.forEach(livro => {
                 const badge = livro.qtd === "Digital" ? '<span class="tag-digital"><i class="fas fa-desktop"></i> Digital</span>' : `<span class="tag-fisico"><i class="fas fa-book"></i> Físico</span>`;
                 const linkDiv = livro.link ? `<a href="${livro.link}" target="_blank" style="color:#0066cc; font-size:12px; margin-top:5px; display:block;"><i class="fas fa-external-link-alt"></i> Ver Material</a>` : '';
                 
+                // Botão Azul por padrão, Verde se escolhido
+                let btnHtml = `<button class="btn-escolher" onclick="escolherLivroParaSemestre('${livro.titulo}')"><i class="fas fa-paper-plane"></i> Enviar Escolha para Coordenadora</button>`;
+                
+                if(window.livrosJaEscolhidos.includes(livro.titulo)) {
+                    btnHtml = `<button class="btn-escolher btn-escolhido" disabled><i class="fas fa-check-circle"></i> Escolha Enviada (Verde)</button>`;
+                }
+
                 grid.innerHTML += `
                     <div class="book-card">
                         <h4 style="margin-top:0; color:#333; font-size:15px;">${livro.titulo}</h4>
                         ${badge}
                         ${linkDiv}
-                        <button class="btn-escolher" onclick="escolherLivroParaSemestre('${livro.titulo}')"><i class="fas fa-check"></i> Enviar Escolha para Coordenadora</button>
+                        ${btnHtml}
                     </div>
                 `;
             });
         };
 
-        // --- SALVAR ESCOLHA DO PROFESSOR NO FIREBASE ---
         window.escolherLivroParaSemestre = async function(tituloLivro) {
-            if(confirm(`Deseja enviar "${tituloLivro}" como sua escolha definitiva para a coordenadora?`)) {
+            if(confirm(`Confirmar a escolha definitiva de "${tituloLivro}"?`)) {
                 try {
                     await addDoc(collection(db, "escolhas"), {
                         professor: window.professorLogado,
@@ -337,20 +324,16 @@
                         livro: tituloLivro,
                         dataEscolha: new Date().toISOString()
                     });
-                    alert("A sua escolha foi enviada para o painel da coordenadora com sucesso!");
-                } catch (error) {
-                    console.error("Erro ao enviar escolha:", error);
-                    alert("Erro ao registrar escolha.");
-                }
+                    buscarMinhasEscolhasParaCatalogo(); // Atualiza a tela (fica verde)
+                } catch (error) { alert("Erro ao registrar escolha."); }
             }
         };
 
-        // --- BUSCAR ESCOLHAS (Minhas e dos Colegas) ---
+        // --- ABA MINHAS ESCOLHAS COM EDIÇÃO E EXCLUSÃO ---
         window.buscarEscolhas = async function() {
             const tbMinhas = document.getElementById('tabelaMinhasEscolhas');
             const tbColegas = document.getElementById('tabelaEscolhasColegas');
-            
-            tbMinhas.innerHTML = '<tr><td colspan="3">Carregando...</td></tr>';
+            tbMinhas.innerHTML = '<tr><td colspan="4">Carregando...</td></tr>';
             tbColegas.innerHTML = '<tr><td colspan="3">Carregando...</td></tr>';
 
             try {
@@ -358,46 +341,61 @@
                 let minhasHTML = '';
                 let colegasHTML = '';
 
-                querySnapshot.forEach((doc) => {
-                    const data = doc.data();
+                querySnapshot.forEach((docSnap) => {
+                    const id = docSnap.id;
+                    const data = docSnap.data();
                     const dataFormatada = new Date(data.dataEscolha).toLocaleDateString('pt-BR');
                     
                     if(data.professor === window.professorLogado) {
-                        minhasHTML += `<tr><td>${data.livro}</td><td>Semestre ${data.semestre}</td><td>${dataFormatada}</td></tr>`;
+                        minhasHTML += `<tr>
+                            <td><strong>${data.livro}</strong></td>
+                            <td>Semestre ${data.semestre}</td>
+                            <td>${dataFormatada}</td>
+                            <td>
+                                <button class="btn-editar" onclick="editarEscolha('${id}')" title="Excluir e escolher outro"><i class="fas fa-edit"></i> Editar</button>
+                                <button class="btn-excluir" onclick="excluirEscolha('${id}')" title="Excluir"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>`;
                     } else {
                         colegasHTML += `<tr><td><i class="fas fa-user-circle" style="color:#ccc;"></i> ${data.professor}</td><td>${data.livro}</td><td>Semestre ${data.semestre}</td></tr>`;
                     }
                 });
 
-                tbMinhas.innerHTML = minhasHTML || '<tr><td colspan="3">Você ainda não enviou escolhas.</td></tr>';
+                tbMinhas.innerHTML = minhasHTML || '<tr><td colspan="4">Você ainda não enviou escolhas. Vá até a aba Paradidáticos.</td></tr>';
                 tbColegas.innerHTML = colegasHTML || '<tr><td colspan="3">Nenhum colega enviou escolhas ainda.</td></tr>';
-
-            } catch (error) {
-                console.error("Erro ao buscar", error);
-            }
+            } catch (error) { console.error(error); }
         };
 
-        // --- ENVIAR SUGESTÃO DE NOVO LIVRO (Mantido) ---
+        window.excluirEscolha = async function(idDocumento) {
+            if(confirm("Tem certeza que deseja excluir esta escolha?")) {
+                await deleteDoc(doc(db, "escolhas", idDocumento));
+                buscarEscolhas(); // Atualiza tabela
+                buscarMinhasEscolhasParaCatalogo(); // Atualiza cor do botão no catálogo para azul
+            }
+        }
+
+        window.editarEscolha = async function(idDocumento) {
+            if(confirm("Para editar, a escolha atual será excluída para você fazer uma nova no catálogo. Continuar?")) {
+                await deleteDoc(doc(db, "escolhas", idDocumento));
+                buscarMinhasEscolhasParaCatalogo();
+                openTab('catalogo', document.querySelector('.menu button.tab-link')); // Joga o prof de volta pro catálogo
+            }
+        }
+
+        // Enviar Sugestão
         document.getElementById('btnEnviarSugestao').addEventListener('click', async () => {
             const titulo = document.getElementById('sug_titulo').value;
             const link = document.getElementById('sug_link').value;
-
             if(!titulo) { alert("Preencha o título do livro."); return; }
-
             try {
                 await addDoc(collection(db, "sugestoes"), {
-                    professor: window.professorLogado,
-                    semestre: window.semestreLogado,
-                    titulo: titulo,
-                    link: link || 'Sem link',
-                    dataEnvio: new Date().toISOString()
+                    professor: window.professorLogado, semestre: window.semestreLogado,
+                    titulo: titulo, link: link || 'Sem link', dataEnvio: new Date().toISOString()
                 });
                 alert("Sugestão enviada com sucesso para a coordenação!");
                 document.getElementById('sug_titulo').value = '';
                 document.getElementById('sug_link').value = '';
-            } catch (error) {
-                alert("Ocorreu um erro ao enviar a sugestão.");
-            }
+            } catch (error) { alert("Ocorreu um erro ao enviar a sugestão."); }
         });
     </script>
 </body>
