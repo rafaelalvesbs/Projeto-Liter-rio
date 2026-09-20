@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CLM - Coordenação Pedagógica</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f7f6; margin: 0; }
+        .header { background: #8e44ad; color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
+        .menu { display: flex; gap: 15px; background: #9b59b6; padding: 10px 20px; }
+        .menu button { background: none; border: none; color: white; font-size: 16px; cursor: pointer; padding: 5px 10px; }
+        .menu button.active { border-bottom: 2px solid #ecf0f1; }
+        .container { padding: 20px; max-width: 1200px; margin: auto; }
+        .tab-content { display: none; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .tab-content.active { display: block; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        table, th, td { border: 1px solid #ddd; }
+        th, td { padding: 12px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        input, select, button.btn { padding: 10px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
+        input { width: 100%; }
+        button.btn { background: #8e44ad; color: white; cursor: pointer; border: none; }
+        .form-group { margin-bottom: 15px; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h2>Painel da Coordenação - CLM</h2>
+        <span>Prof. Sônia Sena</span>
+    </div>
+
+    <div class="menu">
+        <button class="tab-link active" onclick="openTab('visaogeral', this)">Cronograma Global</button>
+        <button class="tab-link" onclick="openTab('gerenciar', this)">Gerenciar Acervo</button>
+        <button class="tab-link" onclick="openTab('sugestoes', this)">Analisar Sugestões</button>
+    </div>
+
+    <div class="container">
+        <!-- Tab: Cronograma Global -->
+        <div id="visaogeral" class="tab-content active">
+            <h3>Cronograma de Leituras</h3>
+            <div class="form-group" style="width: 300px;">
+                <label>Filtrar Semestre:</label>
+                <select id="filtroSemestreCoord" autocomplete="off">
+                    <option value="1">Semestre 1</option>
+                    <option value="2">Semestre 2</option>
+                    <option value="3">Semestre 3</option>
+                </select>
+            </div>
+            <p>Os agendamentos confirmados aparecerão aqui.</p>
+        </div>
+
+        <!-- Tab: Gerenciar Acervo -->
+        <div id="gerenciar" class="tab-content">
+            <h3>Adicionar Paradidático ao Acervo</h3>
+            <div style="display: flex; gap: 15px; align-items: flex-end; margin-bottom: 20px;">
+                <div class="form-group" style="flex: 2;">
+                    <label>Título e Autor:</label>
+                    <input type="text" id="cad_titulo" autocomplete="off" placeholder="Ex: This is London">
+                </div>
+                <div class="form-group" style="flex: 1;">
+                    <label>Quantidade (0 se digital):</label>
+                    <input type="number" id="cad_qtd" autocomplete="off" placeholder="Ex: 21">
+                </div>
+                <div class="form-group" style="flex: 1;">
+                    <label>Semestre:</label>
+                    <input type="text" id="cad_semestre" autocomplete="off" placeholder="Ex: 3">
+                </div>
+                <div class="form-group">
+                    <button class="btn" id="btnCadastrarLivro">Cadastrar Livro</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Analisar Sugestões -->
+        <div id="sugestoes" class="tab-content">
+            <h3>Sugestões dos Professores</h3>
+            <p>A lista de sugestões será exibida aqui.</p>
+        </div>
+    </div>
+
+    <!-- Script como módulo para carregar o Firebase corretamente no navegador -->
+    <script type="module">
+        // Importações do Firebase v9 (Modular)
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+        // Configuração do Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyD5aBrCz8rRAYLyqkD2WIlUwXy6P_U3Roo",
+            authDomain: "projeto-literario-f8c24.firebaseapp.com",
+            projectId: "projeto-literario-f8c24",
+            messagingSenderId: "129154242671",
+            appId: "1:129154242671:web:a66a98213e9c4f4f6c159a"
+        };
+
+        // Inicializa o app e o banco de dados (Firestore)
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Torna a função de abas global para ser acessada pelo 'onclick' do HTML
+        window.openTab = function(tabName, element) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-link').forEach(link => link.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            element.classList.add('active');
+        };
+
+        // Lógica para cadastrar um novo livro na coleção "livros"
+        document.getElementById('btnCadastrarLivro').addEventListener('click', async () => {
+            const titulo = document.getElementById('cad_titulo').value;
+            const qtd = document.getElementById('cad_qtd').value;
+            const semestre = document.getElementById('cad_semestre').value;
+
+            if(!titulo || !qtd || !semestre) {
+                alert("Preencha todos os campos do livro.");
+                return;
+            }
+
+            try {
+                await addDoc(collection(db, "livros"), {
+                    titulo: titulo,
+                    quantidade: parseInt(qtd),
+                    semestre: semestre,
+                    tipo: parseInt(qtd) > 0 ? "Físico" : "Digital"
+                });
+                alert("Livro cadastrado com sucesso!");
+                document.getElementById('cad_titulo').value = '';
+                document.getElementById('cad_qtd').value = '';
+                document.getElementById('cad_semestre').value = '';
+            } catch (error) {
+                console.error("Erro ao cadastrar livro: ", error);
+                alert("Erro ao salvar no banco de dados.");
+            }
+        });
+    </script>
+</body>
+</html>
