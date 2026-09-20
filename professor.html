@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-PT">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,9 +13,9 @@
         .container { padding: 20px; max-width: 1000px; margin: auto; }
         .tab-content { display: none; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         .tab-content.active { display: block; }
-        .book-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px; }
-        .book-card { border: 1px solid #ddd; padding: 15px; border-radius: 8px; }
-        .tag-digital { background: #2ecc71; color: white; padding: 3px 8px; border-radius: 4px; font-size: 12px; }
+        .book-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px; margin-top: 15px; }
+        .book-card { border: 1px solid #ddd; padding: 15px; border-radius: 8px; background: #fafafa; }
+        .tag-digital { background: #2ecc71; color: white; padding: 3px 8px; border-radius: 4px; font-size: 12px; text-decoration: none;}
         .tag-fisico { background: #e67e22; color: white; padding: 3px 8px; border-radius: 4px; font-size: 12px; }
         input, select, button.btn { width: 100%; padding: 10px; margin-top: 10px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
         button.btn { background: #3498db; color: white; cursor: pointer; border: none; margin-top: 15px; }
@@ -27,59 +27,61 @@
 
     <div class="header">
         <h2>Centro de Línguas Maracanaú - Professores</h2>
-        <span>Bem-vindo(a), Professor(a)</span>
+        <span>Acesso Docente</span>
     </div>
 
     <div class="menu">
-        <button class="tab-link active" onclick="openTab('catalogo', this)">Catálogo e Agendamento</button>
+        <button class="tab-link active" onclick="openTab('catalogo', this)">Catálogo de Livros</button>
         <button class="tab-link" onclick="openTab('sugerir', this)">Sugerir Paradidático</button>
-        <button class="tab-link" onclick="openTab('meu-cronograma', this)">Meu Cronograma</button>
     </div>
 
     <div class="container">
-        <!-- Tab: Catálogo -->
+        <!-- Catálogo -->
         <div id="catalogo" class="tab-content active">
-            <h3>Livros Disponíveis</h3>
+            <h3>Livros Disponíveis por Semestre</h3>
             <div class="form-group">
-                <label>Filtrar por Semestre:</label>
-                <select id="semestreFilter" autocomplete="off">
+                <label>Filtrar Acervo:</label>
+                <select id="semestreFilter" autocomplete="off" onchange="filtrarLivros()">
                     <option value="1">Semestre 1</option>
                     <option value="2">Semestre 2</option>
                     <option value="3">Semestre 3</option>
+                    <option value="4">Semestre 4</option>
+                    <option value="5">Semestre 5</option>
+                    <option value="6">Semestre 6</option>
+                    <option value="7">Semestre 7</option>
                 </select>
             </div>
-            <div class="book-grid" id="listaLivrosCatalogo">
-                <p>O acervo carregará os dados do banco aqui em breve.</p>
-            </div>
+            <div class="book-grid" id="listaLivrosCatalogo"></div>
         </div>
 
-        <!-- Tab: Sugerir -->
+        <!-- Sugerir -->
         <div id="sugerir" class="tab-content">
             <h3>Sugerir Novo Livro Literário</h3>
-            <p>Envie sua sugestão para a coordenação avaliar.</p>
+            <p>A sua sugestão será enviada e guardada no Firebase para avaliação da coordenação.</p>
             <div class="form-group">
-                <label>Título do Livro:</label>
-                <input type="text" id="sug_titulo" autocomplete="off" placeholder="Ex: The Little Prince">
+                <label>Título do Livro e Autor:</label>
+                <input type="text" id="sug_titulo" autocomplete="off" placeholder="Ex: The Little Prince - Antoine de Saint-Exupéry">
             </div>
             <div class="form-group">
                 <label>Semestre Recomendado:</label>
-                <input type="text" id="sug_semestre" autocomplete="off" placeholder="Ex: Semestre 3">
+                <select id="sug_semestre" autocomplete="off">
+                    <option value="Semestre 1">Semestre 1</option>
+                    <option value="Semestre 2">Semestre 2</option>
+                    <option value="Semestre 3">Semestre 3</option>
+                    <option value="Semestre 4">Semestre 4</option>
+                    <option value="Semestre 5">Semestre 5</option>
+                    <option value="Semestre 6">Semestre 6</option>
+                    <option value="Semestre 7">Semestre 7</option>
+                </select>
             </div>
             <div class="form-group">
-                <label>Link para o material (se digital):</label>
-                <input type="text" id="sug_link" autocomplete="off" placeholder="Cole o URL aqui (opcional)">
+                <label>Link (Site, PDF ou YouTube):</label>
+                <input type="text" id="sug_link" autocomplete="off" placeholder="Cole o URL completo aqui">
             </div>
             <button class="btn" id="btnEnviarSugestao">Enviar Sugestão</button>
         </div>
-
-        <!-- Tab: Meu Cronograma -->
-        <div id="meu-cronograma" class="tab-content">
-            <h3>Minhas Leituras Agendadas</h3>
-            <p>Nenhuma leitura agendada ainda.</p>
-        </div>
     </div>
 
-    <!-- Script como módulo -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
@@ -92,12 +94,32 @@
             messagingSenderId: "129154242671",
             appId: "1:129154242671:web:a66a98213e9c4f4f6c159a"
         };
-
-        // Inicializa o app e o banco de dados (Firestore)
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Torna a função de abas global
+        // --- ACERVO HARDCODED DOS PROFESSORES ---
+        const acervo = [
+            { sem: 1, titulo: "The umbrella - Clare Harris", qtd: "10 livros", link: "https://www.youtube.com/watch?v=4UY9ixf4HiY" },
+            { sem: 1, titulo: "Gulliver's travels in Lilliput - Jonatahn Swift", qtd: "14 livros", link: "" },
+            { sem: 1, titulo: "Rich man, poor man - T.C Jupp", qtd: "16 livros", link: "" },
+            { sem: 1, titulo: "Lucky number -John Milne", qtd: "9 livros", link: "" },
+            { sem: 2, titulo: "The lost ship - Stephen Colbourn", qtd: "12 livros", link: "https://www.youtube.com/watch?v=QK-P6jkXYuk" },
+            { sem: 2, titulo: "Alissa - C.J. Moore", qtd: "11 livros", link: "" },
+            { sem: 2, titulo: "Sara says No! - Norman Whitney", qtd: "14 livros", link: "" },
+            { sem: 3, titulo: "This is London -Philip Prowse", qtd: "21 livros", link: "" },
+            { sem: 3, titulo: "The truth machine -Norman whitney", qtd: "21 livros", link: "" },
+            { sem: 3, titulo: "Anna and the fighter - Elizabeth Laird", qtd: "11 livros", link: "" },
+            { sem: 3, titulo: "Good humor - Hans C. Andersen", qtd: "Digital", link: "http://www.dominiopublico.gov.br/pesquisa/DetalheObraForm.do?select_action=&co_obra=609" },
+            { sem: 3, titulo: "Great grandfather - Hans C. Andersen", qtd: "Digital", link: "http://www.dominiopublico.gov.br/pesquisa/DetalheObraForm.do?select_action=&co_obra=6094" },
+            { sem: 4, titulo: "The last of the Mohicans - James F. Cooper", qtd: "16 livros", link: "" },
+            { sem: 4, titulo: "The wedding gift -Guy de Maupassant", qtd: "Digital", link: "http://www.dominiopublico.gov.br/pesquisa/DetalheObraForm.do?select_action=&co_obra=6996" },
+            { sem: 5, titulo: "A message from the sea - Charles Dickens", qtd: "Digital", link: "http://www.dominiopublico.gov.br/download/texto/gu001407.pdf" },
+            { sem: 5, titulo: "The man in the iron mask -Alexandre Dumas", qtd: "20 livros", link: "" },
+            { sem: 6, titulo: "The three ghost stories -Charles Dickens", qtd: "Digital", link: "http://www.dominiopublico.gov.br/download/texto/pp000007.pdf" },
+            { sem: 7, titulo: "Story teller", qtd: "Digital", link: "https://educapes.capes.gov.br/bitstream/capes/63069/1/edgar_allan_poe_storyteller_AE.pdf" }
+        ];
+
+        // --- FUNÇÕES GLOBAIS ---
         window.openTab = function(tabName, element) {
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
             document.querySelectorAll('.tab-link').forEach(link => link.classList.remove('active'));
@@ -105,14 +127,35 @@
             element.classList.add('active');
         };
 
-        // Lógica de Envio de Sugestão para a coleção "sugestoes"
+        window.filtrarLivros = function() {
+            const sem = parseInt(document.getElementById('semestreFilter').value);
+            const grid = document.getElementById('listaLivrosCatalogo');
+            grid.innerHTML = '';
+            
+            const livrosFiltrados = acervo.filter(l => l.sem === sem);
+            
+            livrosFiltrados.forEach(livro => {
+                const badge = livro.qtd === "Digital" ? '<span class="tag-digital">Livro Digital</span>' : `<span class="tag-fisico">Físico - ${livro.qtd}</span>`;
+                const linkDiv = livro.link ? `<br><br><a href="${livro.link}" target="_blank" class="tag-digital">Aceder Material</a>` : '<p style="color:#7f8c8d; font-size:12px;">Agendar fisicamente.</p>';
+                
+                grid.innerHTML += `
+                    <div class="book-card">
+                        <h4 style="margin-top:0;">${livro.titulo}</h4>
+                        ${badge}
+                        ${linkDiv}
+                    </div>
+                `;
+            });
+        };
+
+        // --- ENVIO APENAS DAS SUGESTÕES ---
         document.getElementById('btnEnviarSugestao').addEventListener('click', async () => {
             const titulo = document.getElementById('sug_titulo').value;
             const semestre = document.getElementById('sug_semestre').value;
             const link = document.getElementById('sug_link').value;
 
-            if(!titulo || !semestre) {
-                alert("Por favor, preencha o título e o semestre.");
+            if(!titulo || !link) {
+                alert("Por favor, preencha o título e o link.");
                 return;
             }
 
@@ -121,18 +164,19 @@
                     titulo: titulo,
                     semestre: semestre,
                     link: link,
-                    status: "Pendente",
                     dataEnvio: new Date().toISOString()
                 });
-                alert("Sugestão enviada para a coordenação!");
+                alert("A sua sugestão foi enviada com sucesso para a coordenação!");
                 document.getElementById('sug_titulo').value = '';
-                document.getElementById('sug_semestre').value = '';
                 document.getElementById('sug_link').value = '';
             } catch (error) {
                 console.error("Erro ao enviar: ", error);
-                alert("Erro ao enviar a sugestão.");
+                alert("Ocorreu um erro ao enviar a sugestão. Tente novamente.");
             }
         });
+
+        // Inicializa a primeira filtragem
+        window.filtrarLivros();
     </script>
 </body>
 </html>
