@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Projeto Literário - Portal do Professor</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Biblioteca SweetAlert2 para alertas modernos -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         body { margin: 0; font-family: Arial, sans-serif; background-color: #f5f6f8; }
         .top-header { background-color: #004080; color: white; display: flex; justify-content: space-between; align-items: center; padding: 8px 20px; height: 40px; }
@@ -26,7 +28,7 @@
         .tab-content.active { display: block; }
         
         .book-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px; margin-top: 15px; }
-        .book-card { border: 1px solid #eee; padding: 15px; border-radius: 4px; background: #fafafa; border-left: 4px solid #0066cc; }
+        .book-card { border: 1px solid #eee; padding: 15px; border-radius: 4px; background: #fafafa; border-left: 4px solid #0066cc; display:flex; flex-direction:column; justify-content:space-between; }
         .tag-digital { background: #2ecc71; color: white; padding: 3px 8px; border-radius: 4px; font-size: 11px; text-decoration: none;}
         .tag-fisico { background: #e67e22; color: white; padding: 3px 8px; border-radius: 4px; font-size: 11px; }
         
@@ -34,13 +36,12 @@
         button.action-btn { background: #0066cc; color: white; cursor: pointer; border: none; margin-top: 15px; padding: 10px 20px; border-radius: 4px; font-weight: bold;}
         button.action-btn:hover { background: #00509e; }
         
-        /* Botões de escolha do Livro */
         .btn-escolher { background: #0066cc; width: 100%; color: white; padding: 8px; border: none; border-radius: 4px; cursor: pointer; margin-top: 10px; font-weight: bold; transition: 0.3s; }
         .btn-escolher:hover { background: #00509e; }
         .btn-escolhido { background: #27ae60 !important; cursor: default; }
 
-        .btn-excluir { background: #e74c3c; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; }
-        .btn-editar { background: #f39c12; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; margin-right: 5px; }
+        .btn-excluir { background: #e74c3c; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; }
+        .btn-editar { background: #f39c12; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; margin-right: 5px; }
 
         .form-group { margin-bottom: 15px; }
         table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px; }
@@ -48,7 +49,6 @@
         th, td { padding: 10px; text-align: left; }
         th { background-color: #f9f9f9; color: #333; }
 
-        /* Modal de Identificação */
         #modalIdentificacao { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: flex; justify-content: center; align-items: center; z-index: 1000; }
         .modal-box { background: white; padding: 30px; border-radius: 8px; width: 350px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
         .modal-box h3 { color: #004080; margin-top: 0; }
@@ -90,8 +90,9 @@
         <div class="menu">
             <button class="tab-link active" onclick="openTab('catalogo', this); buscarMinhasEscolhasParaCatalogo();"><i class="fas fa-book"></i> Paradidáticos</button>
             <button class="tab-link" onclick="openTab('minhas-escolhas', this); buscarEscolhas();"><i class="fas fa-check-square"></i> Minhas Escolhas</button>
-            <button class="tab-link" onclick="openTab('sugerir', this)"><i class="fas fa-lightbulb"></i> Sugerir Novo</button>
             <button class="tab-link" onclick="openTab('escolhas-colegas', this); buscarEscolhas();"><i class="fas fa-users"></i> Escolhas dos Colegas</button>
+            <!-- Sugerir Novo realocado para o lado esquerdo de Agendar -->
+            <button class="tab-link" onclick="openTab('sugerir', this)"><i class="fas fa-lightbulb"></i> Sugerir Novo</button>
             <button class="tab-link" onclick="openTab('agendar-fisico', this)"><i class="fas fa-calendar-check"></i> Agendar Livros Físicos</button>
         </div>
     </nav>
@@ -99,17 +100,30 @@
     <div class="container" id="appContainer">
         <!-- Paradidáticos -->
         <div id="catalogo" class="tab-content active">
-            <h3 style="color:#004080; margin-top:0;">Livros Disponíveis para o Semestre <span id="lblSemestreCatalogo"></span></h3>
-            <p style="color: #666; font-size: 14px;">Selecione o livro. A coordenadora verá sua escolha em tempo real.</p>
+            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                <div>
+                    <h3 style="color:#004080; margin-top:0;">Catálogo de Livros Paradidáticos</h3>
+                    <p style="color: #666; font-size: 14px;">Você está selecionando livros para o seu <strong>Semestre <span id="lblSemestreCatalogo"></span></strong>.</p>
+                </div>
+                <!-- Filtro para permitir escolher livros de outros semestres -->
+                <div style="width: 250px; background: #f0f7ff; padding: 10px; border-radius: 4px; border: 1px solid #0066cc;">
+                    <label style="font-weight: bold; font-size:12px; color:#004080;">VER LIVROS DO:</label>
+                    <select id="filtroNavegarSemestres" onchange="renderizarLivrosDoSemestre()" style="margin-top:5px; padding:5px;">
+                        <option value="1">Semestre 1</option><option value="2">Semestre 2</option>
+                        <option value="3">Semestre 3</option><option value="4">Semestre 4</option>
+                        <option value="5">Semestre 5</option><option value="6">Semestre 6</option><option value="7">Semestre 7</option>
+                    </select>
+                </div>
+            </div>
             <div class="book-grid" id="listaLivrosCatalogo"></div>
         </div>
 
-        <!-- Minhas Escolhas (Com opção de Editar e Excluir) -->
+        <!-- Minhas Escolhas -->
         <div id="minhas-escolhas" class="tab-content">
             <h3 style="color:#004080; margin-top:0;">Livros que eu escolhi</h3>
             <table>
                 <thead>
-                    <tr><th>Livro</th><th>Semestre</th><th>Data da Escolha</th><th>Ações</th></tr>
+                    <tr><th>Livro</th><th>Semestre da Turma</th><th>Data da Escolha</th><th>Ações</th></tr>
                 </thead>
                 <tbody id="tabelaMinhasEscolhas"><tr><td colspan="4">Carregando...</td></tr></tbody>
             </table>
@@ -147,7 +161,6 @@
                 <strong>Nome:</strong> <span id="labelNomeProfessor"></span> <br>
                 <strong>Período (Semestre):</strong> <span id="labelSemestreAtual"></span>
             </div>
-            <h4 style="color: #333;">Livros disponíveis para este período:</h4>
             <div style="border: 2px dashed #ccc; padding: 30px; text-align: center; color: #777; border-radius: 4px;">
                 <i class="fas fa-box-open" style="font-size: 30px; margin-bottom: 10px;"></i><br>
                 A lista de agendamento de livros físicos para este período será adicionada aqui em breve.
@@ -171,7 +184,7 @@
 
         window.professorLogado = "";
         window.semestreLogado = "";
-        window.livrosJaEscolhidos = []; // Guarda as escolhas para pintar de verde no catálogo
+        window.livrosJaEscolhidos = [];
 
         const mapProfessores = {
             1: ["Lígia", "Luzirene", "João Paulo", "Márcio", "Sônia", "Miguel", "Rafael", "Nelson", "Yasmim", "Angélica", "Guilherme"],
@@ -204,13 +217,11 @@
             { sem: 7, titulo: "Story teller", qtd: "Digital", link: "https://educapes.capes.gov.br/bitstream/capes/63069/1/edgar_allan_poe_storyteller_AE.pdf" }
         ];
 
-        // --- SISTEMA DE LOGIN PERSISTENTE ---
         window.onload = () => {
             const profSalvo = localStorage.getItem('clm_professor');
             const semSalvo = localStorage.getItem('clm_semestre');
 
             if(profSalvo && semSalvo) {
-                // Bypass Modal
                 document.getElementById('selectProfessor').innerHTML = `<option value="${profSalvo}">${profSalvo}</option>`;
                 document.getElementById('selectSemestre').innerHTML = `<option value="${semSalvo}">${semSalvo}</option>`;
                 entrarSistema();
@@ -224,11 +235,21 @@
         };
 
         window.sairSistema = function() {
-            if(confirm("Deseja sair da sua conta?")) {
-                localStorage.removeItem('clm_professor');
-                localStorage.removeItem('clm_semestre');
-                location.reload();
-            }
+            Swal.fire({
+                title: 'Sair da conta?',
+                text: "Você precisará selecionar seu nome novamente.",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#0066cc',
+                cancelButtonColor: '#aaa',
+                confirmButtonText: 'Sim, sair'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    localStorage.removeItem('clm_professor');
+                    localStorage.removeItem('clm_semestre');
+                    location.reload();
+                }
+            });
         }
 
         window.carregarSemestresDoProfessor = function() {
@@ -244,12 +265,15 @@
         window.entrarSistema = function() {
             const nome = document.getElementById('selectProfessor').value;
             const semestre = document.getElementById('selectSemestre').value;
-            if(!nome || !semestre) { alert("Preencha as informações para entrar."); return; }
+            
+            if(!nome || !semestre) { 
+                Swal.fire('Atenção', 'Selecione seu nome e semestre para entrar.', 'warning'); 
+                return; 
+            }
 
             window.professorLogado = nome;
             window.semestreLogado = semestre;
             
-            // Salvar no navegador para não precisar logar de novo
             localStorage.setItem('clm_professor', nome);
             localStorage.setItem('clm_semestre', semestre);
 
@@ -260,6 +284,9 @@
             document.getElementById('lblSemestreCatalogo').innerText = semestre;
             document.getElementById('labelNomeProfessor').innerText = nome;
             document.getElementById('labelSemestreAtual').innerText = "Semestre " + semestre;
+            
+            // Seta o dropdown de navegar semestres para o semestre atual do professor
+            document.getElementById('filtroNavegarSemestres').value = semestre;
 
             buscarMinhasEscolhasParaCatalogo();
         };
@@ -271,14 +298,13 @@
             element.classList.add('active');
         };
 
-        // --- BUSCAR ESCOLHAS E PINTAR DE VERDE ---
         window.buscarMinhasEscolhasParaCatalogo = async function() {
             try {
                 const querySnapshot = await getDocs(collection(db, "escolhas"));
                 window.livrosJaEscolhidos = [];
                 querySnapshot.forEach(doc => {
                     const data = doc.data();
-                    if(data.professor === window.professorLogado && data.semestre === window.semestreLogado) {
+                    if(data.professor === window.professorLogado && data.semestre.toString() === window.semestreLogado.toString()) {
                         window.livrosJaEscolhidos.push(data.livro);
                     }
                 });
@@ -287,28 +313,30 @@
         }
 
         window.renderizarLivrosDoSemestre = function() {
-            const sem = parseInt(window.semestreLogado);
+            // Pega o semestre que o professor quer ver no catálogo
+            const semParaVisualizar = parseInt(document.getElementById('filtroNavegarSemestres').value);
             const grid = document.getElementById('listaLivrosCatalogo');
             grid.innerHTML = '';
             
-            const livrosFiltrados = acervo.filter(l => l.sem === sem);
+            const livrosFiltrados = acervo.filter(l => l.sem === semParaVisualizar);
             
             livrosFiltrados.forEach(livro => {
                 const badge = livro.qtd === "Digital" ? '<span class="tag-digital"><i class="fas fa-desktop"></i> Digital</span>' : `<span class="tag-fisico"><i class="fas fa-book"></i> Físico</span>`;
-                const linkDiv = livro.link ? `<a href="${livro.link}" target="_blank" style="color:#0066cc; font-size:12px; margin-top:5px; display:block;"><i class="fas fa-external-link-alt"></i> Ver Material</a>` : '';
+                const linkDiv = livro.link ? `<a href="${livro.link}" target="_blank" style="color:#0066cc; font-size:12px; margin-top:5px; display:block;"><i class="fas fa-external-link-alt"></i> Ver Material</a>` : '<div style="height:20px;"></div>';
                 
-                // Botão Azul por padrão, Verde se escolhido
                 let btnHtml = `<button class="btn-escolher" onclick="escolherLivroParaSemestre('${livro.titulo}')"><i class="fas fa-paper-plane"></i> Enviar Escolha para Coordenadora</button>`;
                 
                 if(window.livrosJaEscolhidos.includes(livro.titulo)) {
-                    btnHtml = `<button class="btn-escolher btn-escolhido" disabled><i class="fas fa-check-circle"></i> Escolha Enviada (Verde)</button>`;
+                    btnHtml = `<button class="btn-escolher btn-escolhido" disabled><i class="fas fa-check-circle"></i> Escolha Enviada</button>`;
                 }
 
                 grid.innerHTML += `
                     <div class="book-card">
-                        <h4 style="margin-top:0; color:#333; font-size:15px;">${livro.titulo}</h4>
-                        ${badge}
-                        ${linkDiv}
+                        <div>
+                            <h4 style="margin-top:0; color:#333; font-size:15px;">${livro.titulo}</h4>
+                            ${badge}
+                            ${linkDiv}
+                        </div>
                         ${btnHtml}
                     </div>
                 `;
@@ -316,20 +344,32 @@
         };
 
         window.escolherLivroParaSemestre = async function(tituloLivro) {
-            if(confirm(`Confirmar a escolha definitiva de "${tituloLivro}"?`)) {
-                try {
-                    await addDoc(collection(db, "escolhas"), {
-                        professor: window.professorLogado,
-                        semestre: window.semestreLogado,
-                        livro: tituloLivro,
-                        dataEscolha: new Date().toISOString()
-                    });
-                    buscarMinhasEscolhasParaCatalogo(); // Atualiza a tela (fica verde)
-                } catch (error) { alert("Erro ao registrar escolha."); }
-            }
+            Swal.fire({
+                title: 'Confirmar Escolha',
+                text: `Deseja enviar "${tituloLivro}" como escolha para a sua turma do Semestre ${window.semestreLogado}?`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#0066cc',
+                cancelButtonColor: '#aaa',
+                confirmButtonText: 'Sim, enviar'
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    try {
+                        await addDoc(collection(db, "escolhas"), {
+                            professor: window.professorLogado,
+                            semestre: window.semestreLogado, // Associa à turma do professor
+                            livro: tituloLivro,
+                            dataEscolha: new Date().toISOString()
+                        });
+                        buscarMinhasEscolhasParaCatalogo();
+                        Swal.fire('Sucesso!', 'Escolha enviada para a coordenação.', 'success');
+                    } catch (error) { 
+                        Swal.fire('Erro', 'Ocorreu um erro ao registrar escolha.', 'error');
+                    }
+                }
+            });
         };
 
-        // --- ABA MINHAS ESCOLHAS COM EDIÇÃO E EXCLUSÃO ---
         window.buscarEscolhas = async function() {
             const tbMinhas = document.getElementById('tabelaMinhasEscolhas');
             const tbColegas = document.getElementById('tabelaEscolhasColegas');
@@ -352,7 +392,7 @@
                             <td>Semestre ${data.semestre}</td>
                             <td>${dataFormatada}</td>
                             <td>
-                                <button class="btn-editar" onclick="editarEscolha('${id}')" title="Excluir e escolher outro"><i class="fas fa-edit"></i> Editar</button>
+                                <button class="btn-editar" onclick="editarEscolha('${id}')" title="Editar"><i class="fas fa-edit"></i> Editar</button>
                                 <button class="btn-excluir" onclick="excluirEscolha('${id}')" title="Excluir"><i class="fas fa-trash"></i></button>
                             </td>
                         </tr>`;
@@ -366,36 +406,56 @@
             } catch (error) { console.error(error); }
         };
 
-        window.excluirEscolha = async function(idDocumento) {
-            if(confirm("Tem certeza que deseja excluir esta escolha?")) {
-                await deleteDoc(doc(db, "escolhas", idDocumento));
-                buscarEscolhas(); // Atualiza tabela
-                buscarMinhasEscolhasParaCatalogo(); // Atualiza cor do botão no catálogo para azul
-            }
+        window.excluirEscolha = function(idDocumento) {
+            Swal.fire({
+                title: 'Excluir Escolha?',
+                text: "Sua escolha será apagada do painel da coordenação.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#e74c3c',
+                cancelButtonColor: '#aaa',
+                confirmButtonText: 'Sim, excluir'
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    await deleteDoc(doc(db, "escolhas", idDocumento));
+                    buscarEscolhas(); 
+                    buscarMinhasEscolhasParaCatalogo(); 
+                    Swal.fire('Excluído!', 'Sua escolha foi removida.', 'success');
+                }
+            });
         }
 
-        window.editarEscolha = async function(idDocumento) {
-            if(confirm("Para editar, a escolha atual será excluída para você fazer uma nova no catálogo. Continuar?")) {
-                await deleteDoc(doc(db, "escolhas", idDocumento));
-                buscarMinhasEscolhasParaCatalogo();
-                openTab('catalogo', document.querySelector('.menu button.tab-link')); // Joga o prof de volta pro catálogo
-            }
+        window.editarEscolha = function(idDocumento) {
+            Swal.fire({
+                title: 'Editar Escolha?',
+                text: "A escolha atual será removida para você fazer uma nova no catálogo. Deseja continuar?",
+                icon: 'info',
+                showCancelButton: true,
+                confirmButtonColor: '#f39c12',
+                cancelButtonColor: '#aaa',
+                confirmButtonText: 'Sim, editar'
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    await deleteDoc(doc(db, "escolhas", idDocumento));
+                    buscarMinhasEscolhasParaCatalogo();
+                    openTab('catalogo', document.querySelector('.menu button.tab-link')); 
+                }
+            });
         }
 
-        // Enviar Sugestão
         document.getElementById('btnEnviarSugestao').addEventListener('click', async () => {
             const titulo = document.getElementById('sug_titulo').value;
             const link = document.getElementById('sug_link').value;
-            if(!titulo) { alert("Preencha o título do livro."); return; }
+            if(!titulo) { Swal.fire('Atenção', 'Preencha o título do livro.', 'warning'); return; }
             try {
                 await addDoc(collection(db, "sugestoes"), {
                     professor: window.professorLogado, semestre: window.semestreLogado,
                     titulo: titulo, link: link || 'Sem link', dataEnvio: new Date().toISOString()
                 });
-                alert("Sugestão enviada com sucesso para a coordenação!");
+                Swal.fire('Sucesso!', 'Sugestão enviada para a coordenação.', 'success');
                 document.getElementById('sug_titulo').value = '';
                 document.getElementById('sug_link').value = '';
-            } catch (error) { alert("Ocorreu um erro ao enviar a sugestão."); }
+            } catch (error) { Swal.fire('Erro', 'Ocorreu um erro ao enviar a sugestão.', 'error'); }
         });
     </script>
 </body>
