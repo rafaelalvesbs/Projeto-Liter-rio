@@ -14,7 +14,7 @@
             padding-bottom: 40px; 
         }
         
-        /* Cabeçalho Principal (Azul Escuro) */
+        /* Cabeçalho Principal */
         .top-header {
             background-color: #004080; 
             color: white;
@@ -28,19 +28,16 @@
         .top-header-left .logo-icon { font-size: 24px; }
         .top-header-left .logo-text { line-height: 1.1; }
         .top-header-left strong { font-size: 16px; letter-spacing: 1px; }
-        .top-header-left span { font-size: 9px; display: block; }
+        .top-header-left span { font-size: 9px; display: block; text-transform: uppercase; }
         
         .top-header-right { display: flex; align-items: center; gap: 15px; font-size: 14px; }
-        .top-header-right i.fa-birthday-cake { color: #ff9999; cursor: pointer; }
-        .top-header-right i.fa-envelope { cursor: pointer; }
-        .top-header-right i.fa-bell { color: #ffcc00; cursor: pointer; }
         .top-btn {
             background: white; color: #333; border: 1px solid #ccc;
             padding: 5px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer;
             display: flex; align-items: center; gap: 5px;
         }
 
-        /* Sub-Cabeçalho (Branco com menus) */
+        /* Sub-Cabeçalho */
         .sub-header {
             background-color: white; border-bottom: 1px solid #ccc;
             display: flex; align-items: center; height: 45px; padding: 0 20px;
@@ -90,26 +87,21 @@
 </head>
 <body>
 
-    <!-- Cabeçalho Idêntico ao SGE -->
     <header class="top-header">
         <div class="top-header-left">
             <i class="fas fa-graduation-cap logo-icon"></i>
             <div class="logo-text">
-                <strong>CLM</strong>
-                <span>CENTRO DE LÍNGUAS MARACANAÚ</span>
+                <strong>SGE</strong>
+                <span>PROJETO LITERÁRIO</span>
             </div>
         </div>
         <div class="top-header-right">
-            <i class="fas fa-birthday-cake"></i>
-            <i class="fas fa-envelope"></i>
-            <i class="fas fa-bell"></i>
             <button class="top-btn"><i class="fas fa-th-large"></i> Módulos</button>
             <button class="top-btn"><i class="fas fa-user"></i> PROFESSOR</button>
             <button class="top-btn">2026</button>
         </div>
     </header>
 
-    <!-- Sub-Cabeçalho com Menus Idêntico ao SGE -->
     <nav class="sub-header">
         <div class="module-title">
             <i class="fas fa-book-open"></i> Paradidáticos
@@ -167,7 +159,6 @@
         </div>
     </div>
 
-    <!-- Rodapé Idêntico ao SGE -->
     <footer class="footer">
         <div class="footer-links">
             <span><i class="fas fa-video"></i> Tutoriais</span>
@@ -183,7 +174,6 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-        // Configuração do Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyD5aBrCz8rRAYLyqkD2WIlUwXy6P_U3Roo",
             authDomain: "projeto-literario-f8c24.firebaseapp.com",
@@ -216,7 +206,6 @@
             { sem: 7, titulo: "Story teller", qtd: "Digital", link: "https://educapes.capes.gov.br/bitstream/capes/63069/1/edgar_allan_poe_storyteller_AE.pdf" }
         ];
 
-        // --- FUNÇÕES GLOBAIS ---
         window.openTab = function(tabName, element) {
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
             document.querySelectorAll('.tab-link').forEach(link => link.classList.remove('active'));
@@ -245,7 +234,6 @@
             });
         };
 
-        // --- ENVIO DA SUGESTÃO ---
         document.getElementById('btnEnviarSugestao').addEventListener('click', async () => {
             const titulo = document.getElementById('sug_titulo').value;
             const semestre = document.getElementById('sug_semestre').value;
@@ -272,7 +260,6 @@
             }
         });
 
-        // Inicializa a primeira filtragem
         window.filtrarLivros();
     </script>
 </body>
