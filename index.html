@@ -73,7 +73,6 @@
             <button class="tab-link active" onclick="openTab('visaogeral', this); renderizarProfessores();"><i class="fas fa-home"></i> Cronograma Global</button>
             <button class="tab-link" onclick="openTab('gerenciar', this)"><i class="fas fa-book"></i> Paradidáticos</button>
             <button class="tab-link" onclick="openTab('sugestoes', this)" id="btnCarregarSugestoes"><i class="fas fa-lightbulb"></i> Analisar Sugestões</button>
-            <!-- Novo menu solicitado -->
             <button class="tab-link" onclick="openTab('agendados', this)"><i class="fas fa-calendar-check"></i> Livros Agendados</button>
         </div>
     </nav>
@@ -88,12 +87,9 @@
             <div style="margin-bottom: 15px;">
                 <label style="font-weight: bold; color: #555; font-size: 14px; display: block; margin-bottom: 5px;">Selecione o Semestre da Turma:</label>
                 <select id="filtroSemestreCoord" autocomplete="off" onchange="renderizarProfessores()">
-                    <option value="1">Semestre 1</option>
-                    <option value="2">Semestre 2</option>
-                    <option value="3">Semestre 3</option>
-                    <option value="4">Semestre 4</option>
-                    <option value="5">Semestre 5</option>
-                    <option value="6">Semestre 6</option>
+                    <option value="1">Semestre 1</option><option value="2">Semestre 2</option>
+                    <option value="3">Semestre 3</option><option value="4">Semestre 4</option>
+                    <option value="5">Semestre 5</option><option value="6">Semestre 6</option>
                     <option value="7">Semestre 7</option>
                 </select>
             </div>
@@ -123,13 +119,13 @@
             </div>
         </div>
 
-        <!-- Sugestões -->
+        <!-- Sugestões (Com Semestre Selecionado pelo Professor) -->
         <div id="sugestoes" class="tab-content">
             <h3 style="color:#004080; margin-top:0; font-size: 18px;">Sugestões Enviadas pelos Professores</h3>
             <div class="table-responsive">
                 <table>
                     <thead>
-                        <tr><th>Professor</th><th>Título</th><th>Semestre da Turma</th><th>Link</th></tr>
+                        <tr><th>Professor</th><th>Título</th><th>Semestre Indicado</th><th>Link</th></tr>
                     </thead>
                     <tbody id="tabelaSugestoes">
                         <tr><td colspan="4">Carregando sugestões do Firebase...</td></tr>
@@ -148,7 +144,7 @@
                         <tr><th>Professor</th><th>Livro</th><th>Semestre</th><th>Data Agendada</th></tr>
                     </thead>
                     <tbody id="tabelaAgendados">
-                        <tr><td colspan="4" style="text-align: center; color: #777;"><i class="fas fa-tools"></i> Recurso de agendamento de datas em construção...</td></tr>
+                        <tr><td colspan="4" style="text-align: center; color: #777;"><i class="fas fa-tools"></i> Recurso em construção...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -163,6 +159,7 @@
             apiKey: "AIzaSyD5aBrCz8rRAYLyqkD2WIlUwXy6P_U3Roo",
             authDomain: "projeto-literario-f8c24.firebaseapp.com",
             projectId: "projeto-literario-f8c24",
+            storageBucket: "projeto-literario-f8c24.firebasestorage.app",
             messagingSenderId: "129154242671",
             appId: "1:129154242671:web:a66a98213e9c4f4f6c159a"
         };
@@ -252,7 +249,7 @@
         function renderizarAcervo() {
             const tbody = document.getElementById('tabelaAcervo');
             acervo.forEach(livro => {
-                const badge = livro.qtd === "Digital" ? '<span class="tag-digital"><i class="fas fa-desktop"></i> Digital</span>' : `<span class="tag-fisico"><i class="fas fa-book"></i> Físico - ${livro.qtd}</span>`;
+                const badge = livro.qtd === "Digital" ? '<span class="tag-digital">Digital</span>' : `<span class="tag-fisico">Físico - ${livro.qtd}</span>`;
                 const linkBtn = livro.link ? `<a href="${livro.link}" target="_blank" class="tag-digital" style="background:#3498db;"><i class="fas fa-external-link-alt"></i> Acessar Material</a>` : 'N/A';
                 tbody.innerHTML += `<tr><td>Semestre ${livro.sem}</td><td><strong>${livro.titulo}</strong></td><td>${badge}</td><td>${linkBtn}</td></tr>`;
             });
@@ -281,7 +278,6 @@
             }
         });
 
-        // Inicializar a tela
         renderizarProfessores();
         renderizarAcervo();
     </script>
