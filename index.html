@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SGE - Projeto Literário</title>
-    <!-- Ícones FontAwesome para ficar idêntico ao SGE -->
+    <title>Projeto Literário - Coordenação CLM</title>
+    <!-- Ícones FontAwesome para o visual -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body { 
             margin: 0; 
             font-family: Arial, sans-serif; 
             background-color: #f5f6f8; 
-            padding-bottom: 40px; 
+            /* Rodapé excluído, logo não precisamos mais do padding-bottom */
         }
         
         /* Cabeçalho Principal */
@@ -26,9 +26,8 @@
         }
         .top-header-left { display: flex; align-items: center; gap: 10px; }
         .top-header-left .logo-icon { font-size: 24px; }
-        .top-header-left .logo-text { line-height: 1.1; }
+        .top-header-left .logo-text { line-height: 1.1; display: flex; align-items: center; height: 100%;}
         .top-header-left strong { font-size: 16px; letter-spacing: 1px; }
-        .top-header-left span { font-size: 9px; display: block; text-transform: uppercase; }
         
         .top-header-right { display: flex; align-items: center; gap: 15px; font-size: 14px; }
         .top-btn {
@@ -42,11 +41,6 @@
             background-color: white; border-bottom: 1px solid #ccc;
             display: flex; align-items: center; height: 45px; padding: 0 20px;
         }
-        .module-title {
-            color: #0066cc; font-weight: bold; font-size: 15px;
-            display: flex; align-items: center; gap: 8px;
-            padding-right: 20px; border-right: 1px solid #ddd; height: 100%;
-        }
         .menu { display: flex; height: 100%; }
         .menu button {
             background: none; border: none; color: #555;
@@ -58,16 +52,6 @@
         .menu button:hover, .menu button.active {
             color: #0066cc; background-color: #f0f7ff; font-weight: bold;
         }
-
-        /* Rodapé Fixo */
-        .footer {
-            background-color: #004080; color: white;
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 8px 20px; font-size: 11px;
-            position: fixed; bottom: 0; width: 100%; box-sizing: border-box;
-        }
-        .footer-links { display: flex; gap: 15px; }
-        .footer-links span { display: flex; align-items: center; gap: 5px; cursor: pointer; }
 
         /* Conteúdo Principal */
         .container { padding: 20px; max-width: 1200px; margin: auto; }
@@ -87,26 +71,24 @@
 
     <header class="top-header">
         <div class="top-header-left">
-            <i class="fas fa-graduation-cap logo-icon"></i>
+            <!-- Título atualizado com ícone de livro aberto -->
+            <i class="fas fa-book-open logo-icon"></i>
             <div class="logo-text">
-                <strong>SGE</strong>
-                <span>PROJETO LITERÁRIO</span>
+                <strong>PROJETO LITERÁRIO</strong>
             </div>
         </div>
         <div class="top-header-right">
-            <button class="top-btn"><i class="fas fa-th-large"></i> Módulos</button>
+            <!-- Botão módulos excluído -->
             <button class="top-btn"><i class="fas fa-user"></i> SÔNIA</button>
             <button class="top-btn">2026</button>
         </div>
     </header>
 
     <nav class="sub-header">
-        <div class="module-title">
-            <i class="fas fa-book-open"></i> Paradidáticos
-        </div>
+        <!-- O menu 'Paradidáticos' que ficava isolado à esquerda foi removido -->
         <div class="menu">
             <button class="tab-link active" onclick="openTab('visaogeral', this)"><i class="fas fa-home"></i> Cronograma Global</button>
-            <button class="tab-link" onclick="openTab('gerenciar', this)"><i class="fas fa-users"></i> Acervo Fixo</button>
+            <button class="tab-link" onclick="openTab('gerenciar', this)"><i class="fas fa-book"></i> Paradidáticos</button>
             <button class="tab-link" onclick="openTab('sugestoes', this)" id="btnCarregarSugestoes"><i class="fas fa-file-alt"></i> Analisar Sugestões</button>
         </div>
     </nav>
@@ -135,7 +117,7 @@
             </table>
         </div>
 
-        <!-- Acervo Fixo -->
+        <!-- Paradidáticos (Antigo Acervo Fixo) -->
         <div id="gerenciar" class="tab-content">
             <h3 style="color:#004080; margin-top:0;">Lista de Livros Paradidáticos</h3>
             <table>
@@ -170,17 +152,6 @@
         </div>
     </div>
 
-    <footer class="footer">
-        <div class="footer-links">
-            <span><i class="fas fa-video"></i> Tutoriais</span>
-            <span><i class="fas fa-book"></i> BCM</span>
-            <span><i class="fas fa-file-alt"></i> Formar Integralmente</span>
-            <span><i class="fas fa-chart-line"></i> Política Especial de Recuperação</span>
-            <span><i class="fas fa-heart"></i> Qualidade de Vida</span>
-        </div>
-        <div>CLM 1.0.0</div>
-    </footer>
-
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
@@ -195,15 +166,15 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // --- DADOS HARDCODED ---
+        // --- DADOS HARDCODED (Agora com acentuação correta nos nomes) ---
         const professores = {
-            1: ["Ligia", "Luzirene", "João Paulo", "Marcio", "Sônia", "Miguel", "Rafael", "Nelson", "Yasmim", "Angelica", "Guilherme"],
-            2: ["Ligia", "Luzirene", "João Paulo", "Sônia", "Miguel", "Kethlleen", "Rafael", "Nelson", "Yasmin", "Angelica"],
-            3: ["Ligia", "Luzirene", "Sônia", "Miguel", "Nelson", "Yasmin", "Angelica"],
-            4: ["Rômulo", "João Paulo", "Luzirene", "Marcio", "Sônia", "Guilherme"],
-            5: ["Ligia", "João Paulo", "Rômulo", "Marcio/Guilherme", "Kethlleen"],
-            6: ["Rômulo", "Márcio/Guilherme", "Kethlleen", "Miguel"],
-            7: ["Keyle", "Marcio/Guilherme", "Miguel"]
+            1: ["Lígia", "Luzirene", "João Paulo", "Márcio", "Sônia", "Miguel", "Rafael", "Nelson", "Yasmim", "Angélica", "Guilherme"],
+            2: ["Lígia", "Luzirene", "João Paulo", "Sônia", "Miguel", "Kethleen", "Rafael", "Nelson", "Yasmin", "Angélica"],
+            3: ["Lígia", "Luzirene", "Sônia", "Miguel", "Nelson", "Yasmin", "Angélica"],
+            4: ["Rômulo", "João Paulo", "Luzirene", "Márcio", "Sônia", "Guilherme"],
+            5: ["Lígia", "João Paulo", "Rômulo", "Márcio/Guilherme", "Kethleen"],
+            6: ["Rômulo", "Márcio/Guilherme", "Kethleen", "Miguel"],
+            7: ["Keyle", "Márcio/Guilherme", "Miguel"]
         };
 
         const acervo = [
