@@ -286,7 +286,6 @@
             }
         });
 
-        // --- RENDERIZAR QUADRO DE AGENDAMENTOS (COORDENADORA) ---
         window.renderizarAgendamentosCoordenadora = async function() {
             const sem = parseInt(document.getElementById('filtroAgendamentoCoord').value);
             const area = document.getElementById('areaTabelasAgendamento');
@@ -309,12 +308,12 @@
                 livrosFisicos.forEach(livro => {
                     let linhasSemanas = '';
                     
-                    semanasAgendamento.forEach(sem => {
-                        const reserva = agendaData.find(a => a.livro === livro.titulo && a.semana === sem && parseInt(a.semestre) === livro.sem);
+                    semanasAgendamento.forEach(semana => {
+                        const reserva = agendaData.find(a => a.livro === livro.titulo && a.semana === semana && parseInt(a.semestre) === livro.sem);
                         const prof = reserva ? `<strong style="color:#27ae60;">${reserva.professor}</strong>` : '<span style="color:#aaa;">--- Disponível ---</span>';
                         
                         linhasSemanas += `<tr>
-                            <td style="width: 150px; background: #fdfdfd; font-weight: bold; color: #555;">${sem}</td>
+                            <td style="width: 150px; background: #fdfdfd; font-weight: bold; color: #555;">${semana}</td>
                             <td>${prof}</td>
                         </tr>`;
                     });
