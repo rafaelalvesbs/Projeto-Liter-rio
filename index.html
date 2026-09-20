@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-PT">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,10 +17,10 @@
         table, th, td { border: 1px solid #ddd; }
         th, td { padding: 12px; text-align: left; }
         th { background-color: #f2f2f2; }
-        input, select, button.btn { padding: 10px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
-        input { width: 100%; }
-        button.btn { background: #8e44ad; color: white; cursor: pointer; border: none; }
-        .form-group { margin-bottom: 15px; }
+        select { padding: 10px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
+        button.btn { background: #8e44ad; color: white; padding: 10px; cursor: pointer; border: none; border-radius: 4px; }
+        .tag-digital { background: #2ecc71; color: white; padding: 3px 8px; border-radius: 4px; font-size: 12px; }
+        .tag-fisico { background: #e67e22; color: white; padding: 3px 8px; border-radius: 4px; font-size: 12px; }
     </style>
 </head>
 <body>
@@ -32,61 +32,73 @@
 
     <div class="menu">
         <button class="tab-link active" onclick="openTab('visaogeral', this)">Cronograma Global</button>
-        <button class="tab-link" onclick="openTab('gerenciar', this)">Gerenciar Acervo</button>
-        <button class="tab-link" onclick="openTab('sugestoes', this)">Analisar Sugestões</button>
+        <button class="tab-link" onclick="openTab('gerenciar', this)">Acervo Fixo</button>
+        <button class="tab-link" onclick="openTab('sugestoes', this)" id="btnCarregarSugestoes">Analisar Sugestões</button>
     </div>
 
     <div class="container">
-        <!-- Tab: Cronograma Global -->
+        <!-- Cronograma Global -->
         <div id="visaogeral" class="tab-content active">
-            <h3>Cronograma de Leituras</h3>
-            <div class="form-group" style="width: 300px;">
-                <label>Filtrar Semestre:</label>
-                <select id="filtroSemestreCoord" autocomplete="off">
+            <h3>Professores por Semestre</h3>
+            <div style="margin-bottom: 15px;">
+                <label>Selecione o Semestre:</label>
+                <select id="filtroSemestreCoord" autocomplete="off" onchange="renderizarProfessores()">
                     <option value="1">Semestre 1</option>
                     <option value="2">Semestre 2</option>
                     <option value="3">Semestre 3</option>
+                    <option value="4">Semestre 4</option>
+                    <option value="5">Semestre 5</option>
+                    <option value="6">Semestre 6</option>
+                    <option value="7">Semestre 7</option>
                 </select>
             </div>
-            <p>Os agendamentos confirmados aparecerão aqui.</p>
+            <table>
+                <thead>
+                    <tr><th>Professores Alocados (A aguardar agendamento local)</th></tr>
+                </thead>
+                <tbody id="tabelaProfessores"></tbody>
+            </table>
         </div>
 
-        <!-- Tab: Gerenciar Acervo -->
+        <!-- Acervo Fixo -->
         <div id="gerenciar" class="tab-content">
-            <h3>Adicionar Paradidático ao Acervo</h3>
-            <div style="display: flex; gap: 15px; align-items: flex-end; margin-bottom: 20px;">
-                <div class="form-group" style="flex: 2;">
-                    <label>Título e Autor:</label>
-                    <input type="text" id="cad_titulo" autocomplete="off" placeholder="Ex: This is London">
-                </div>
-                <div class="form-group" style="flex: 1;">
-                    <label>Quantidade (0 se digital):</label>
-                    <input type="number" id="cad_qtd" autocomplete="off" placeholder="Ex: 21">
-                </div>
-                <div class="form-group" style="flex: 1;">
-                    <label>Semestre:</label>
-                    <input type="text" id="cad_semestre" autocomplete="off" placeholder="Ex: 3">
-                </div>
-                <div class="form-group">
-                    <button class="btn" id="btnCadastrarLivro">Cadastrar Livro</button>
-                </div>
-            </div>
+            <h3>Lista de Livros Paradidáticos</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Semestre</th>
+                        <th>Livro</th>
+                        <th>Tipo / Quantidade</th>
+                        <th>Link / Material</th>
+                    </tr>
+                </thead>
+                <tbody id="tabelaAcervo"></tbody>
+            </table>
         </div>
 
-        <!-- Tab: Analisar Sugestões -->
+        <!-- Sugestões do Firebase -->
         <div id="sugestoes" class="tab-content">
-            <h3>Sugestões dos Professores</h3>
-            <p>A lista de sugestões será exibida aqui.</p>
+            <h3>Sugestões Enviadas pelos Professores</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Título</th>
+                        <th>Semestre</th>
+                        <th>Link</th>
+                        <th>Data</th>
+                    </tr>
+                </thead>
+                <tbody id="tabelaSugestoes">
+                    <tr><td colspan="4">A carregar sugestões do Firebase...</td></tr>
+                </tbody>
+            </table>
         </div>
     </div>
 
-    <!-- Script como módulo para carregar o Firebase corretamente no navegador -->
     <script type="module">
-        // Importações do Firebase v9 (Modular)
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-        // Configuração do Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyD5aBrCz8rRAYLyqkD2WIlUwXy6P_U3Roo",
             authDomain: "projeto-literario-f8c24.firebaseapp.com",
@@ -94,12 +106,42 @@
             messagingSenderId: "129154242671",
             appId: "1:129154242671:web:a66a98213e9c4f4f6c159a"
         };
-
-        // Inicializa o app e o banco de dados (Firestore)
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Torna a função de abas global para ser acessada pelo 'onclick' do HTML
+        // --- DADOS HARDCODED ---
+        const professores = {
+            1: ["Ligia", "Luzirene", "João Paulo", "Marcio", "Sônia", "Miguel", "Rafael", "Nelson", "Yasmim", "Angelica", "Guilherme"],
+            2: ["Ligia", "Luzirene", "João Paulo", "Sônia", "Miguel", "Kethlleen", "Rafael", "Nelson", "Yasmin", "Angelica"],
+            3: ["Ligia", "Luzirene", "Sônia", "Miguel", "Nelson", "Yasmin", "Angelica"],
+            4: ["Rômulo", "João Paulo", "Luzirene", "Marcio", "Sônia", "Guilherme"],
+            5: ["Ligia", "João Paulo", "Rômulo", "Marcio/Guilherme", "Kethlleen"],
+            6: ["Rômulo", "Márcio/Guilherme", "Kethlleen", "Miguel"],
+            7: ["Keyle", "Marcio/Guilherme", "Miguel"]
+        };
+
+        const acervo = [
+            { sem: 1, titulo: "The umbrella - Clare Harris", qtd: "10 livros", link: "https://www.youtube.com/watch?v=4UY9ixf4HiY" },
+            { sem: 1, titulo: "Gulliver's travels in Lilliput - Jonatahn Swift", qtd: "14 livros", link: "" },
+            { sem: 1, titulo: "Rich man, poor man - T.C Jupp", qtd: "16 livros", link: "" },
+            { sem: 1, titulo: "Lucky number -John Milne", qtd: "9 livros", link: "" },
+            { sem: 2, titulo: "The lost ship - Stephen Colbourn", qtd: "12 livros", link: "https://www.youtube.com/watch?v=QK-P6jkXYuk" },
+            { sem: 2, titulo: "Alissa - C.J. Moore", qtd: "11 livros", link: "" },
+            { sem: 2, titulo: "Sara says No! - Norman Whitney", qtd: "14 livros", link: "" },
+            { sem: 3, titulo: "This is London -Philip Prowse", qtd: "21 livros", link: "" },
+            { sem: 3, titulo: "The truth machine -Norman whitney", qtd: "21 livros", link: "" },
+            { sem: 3, titulo: "Anna and the fighter - Elizabeth Laird", qtd: "11 livros", link: "" },
+            { sem: 3, titulo: "Good humor - Hans C. Andersen", qtd: "Digital", link: "http://www.dominiopublico.gov.br/pesquisa/DetalheObraForm.do?select_action=&co_obra=609" },
+            { sem: 3, titulo: "Great grandfather - Hans C. Andersen", qtd: "Digital", link: "http://www.dominiopublico.gov.br/pesquisa/DetalheObraForm.do?select_action=&co_obra=6094" },
+            { sem: 4, titulo: "The last of the Mohicans - James F. Cooper", qtd: "16 livros", link: "" },
+            { sem: 4, titulo: "The wedding gift -Guy de Maupassant", qtd: "Digital", link: "http://www.dominiopublico.gov.br/pesquisa/DetalheObraForm.do?select_action=&co_obra=6996" },
+            { sem: 5, titulo: "A message from the sea - Charles Dickens", qtd: "Digital", link: "http://www.dominiopublico.gov.br/download/texto/gu001407.pdf" },
+            { sem: 5, titulo: "The man in the iron mask -Alexandre Dumas", qtd: "20 livros", link: "" },
+            { sem: 6, titulo: "The three ghost stories -Charles Dickens", qtd: "Digital", link: "http://www.dominiopublico.gov.br/download/texto/pp000007.pdf" },
+            { sem: 7, titulo: "Story teller", qtd: "Digital", link: "https://educapes.capes.gov.br/bitstream/capes/63069/1/edgar_allan_poe_storyteller_AE.pdf" }
+        ];
+
+        // --- FUNÇÕES GLOBAIS ---
         window.openTab = function(tabName, element) {
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
             document.querySelectorAll('.tab-link').forEach(link => link.classList.remove('active'));
@@ -107,33 +149,48 @@
             element.classList.add('active');
         };
 
-        // Lógica para cadastrar um novo livro na coleção "livros"
-        document.getElementById('btnCadastrarLivro').addEventListener('click', async () => {
-            const titulo = document.getElementById('cad_titulo').value;
-            const qtd = document.getElementById('cad_qtd').value;
-            const semestre = document.getElementById('cad_semestre').value;
+        window.renderizarProfessores = function() {
+            const sem = document.getElementById('filtroSemestreCoord').value;
+            const lista = professores[sem];
+            const tbody = document.getElementById('tabelaProfessores');
+            tbody.innerHTML = '';
+            lista.forEach(prof => {
+                tbody.innerHTML += `<tr><td>${prof}</td></tr>`;
+            });
+        };
 
-            if(!titulo || !qtd || !semestre) {
-                alert("Preencha todos os campos do livro.");
-                return;
-            }
+        function renderizarAcervo() {
+            const tbody = document.getElementById('tabelaAcervo');
+            acervo.forEach(livro => {
+                const badge = livro.qtd === "Digital" ? '<span class="tag-digital">Digital</span>' : `<span class="tag-fisico">Físico - ${livro.qtd}</span>`;
+                const linkBtn = livro.link ? `<a href="${livro.link}" target="_blank" class="tag-digital" style="text-decoration:none;">Aceder Material</a>` : 'N/A';
+                tbody.innerHTML += `<tr><td>Semestre ${livro.sem}</td><td>${livro.titulo}</td><td>${badge}</td><td>${linkBtn}</td></tr>`;
+            });
+        }
 
+        // --- BUSCA DO FIREBASE (Apenas Sugestões) ---
+        document.getElementById('btnCarregarSugestoes').addEventListener('click', async () => {
+            const tbody = document.getElementById('tabelaSugestoes');
+            tbody.innerHTML = '<tr><td colspan="4">A carregar...</td></tr>';
             try {
-                await addDoc(collection(db, "livros"), {
-                    titulo: titulo,
-                    quantidade: parseInt(qtd),
-                    semestre: semestre,
-                    tipo: parseInt(qtd) > 0 ? "Físico" : "Digital"
+                const querySnapshot = await getDocs(collection(db, "sugestoes"));
+                tbody.innerHTML = '';
+                if(querySnapshot.empty) { tbody.innerHTML = '<tr><td colspan="4">Nenhuma sugestão encontrada.</td></tr>'; return; }
+                
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    const link = data.link ? `<a href="${data.link}" target="_blank">Abrir Link</a>` : 'Sem link';
+                    const dataFormatada = data.dataEnvio ? new Date(data.dataEnvio).toLocaleDateString('pt-PT') : '-';
+                    tbody.innerHTML += `<tr><td>${data.titulo}</td><td>${data.semestre}</td><td>${link}</td><td>${dataFormatada}</td></tr>`;
                 });
-                alert("Livro cadastrado com sucesso!");
-                document.getElementById('cad_titulo').value = '';
-                document.getElementById('cad_qtd').value = '';
-                document.getElementById('cad_semestre').value = '';
             } catch (error) {
-                console.error("Erro ao cadastrar livro: ", error);
-                alert("Erro ao salvar no banco de dados.");
+                tbody.innerHTML = '<tr><td colspan="4">Erro ao carregar as sugestões.</td></tr>';
             }
         });
+
+        // Inicialização
+        window.renderizarProfessores();
+        renderizarAcervo();
     </script>
 </body>
 </html>
