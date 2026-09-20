@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Projeto Literário - Coordenação CLM</title>
+    <title>Projeto Literário - Coordenação</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Biblioteca SweetAlert2 para alertas modernos -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         body { margin: 0; font-family: Arial, sans-serif; background-color: #f5f6f8; }
@@ -124,14 +123,15 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
+        // Nomes normalizados para o cruzamento de dados exatos
         const professores = {
-            1: ["Lígia", "Luzirene", "João Paulo", "Márcio", "Sônia", "Miguel", "Rafael", "Nelson", "Yasmim", "Angélica", "Guilherme"],
+            1: ["Lígia", "Luzirene", "João Paulo", "Márcio", "Sônia", "Miguel", "Rafael", "Nelson", "Yasmin", "Angélica", "Guilherme"],
             2: ["Lígia", "Luzirene", "João Paulo", "Sônia", "Miguel", "Kethleen", "Rafael", "Nelson", "Yasmin", "Angélica"],
             3: ["Lígia", "Luzirene", "Sônia", "Miguel", "Nelson", "Yasmin", "Angélica"],
             4: ["Rômulo", "João Paulo", "Luzirene", "Márcio", "Sônia", "Guilherme"],
-            5: ["Lígia", "João Paulo", "Rômulo", "Márcio/Guilherme", "Kethleen"],
-            6: ["Rômulo", "Márcio/Guilherme", "Kethleen", "Miguel"],
-            7: ["Keyle", "Márcio/Guilherme", "Miguel"]
+            5: ["Lígia", "João Paulo", "Rômulo", "Márcio", "Guilherme", "Kethleen"],
+            6: ["Rômulo", "Márcio", "Guilherme", "Kethleen", "Miguel"],
+            7: ["Keyle", "Márcio", "Guilherme", "Miguel"]
         };
 
         const acervo = [
@@ -173,7 +173,6 @@
                 const querySnapshot = await getDocs(collection(db, "escolhas"));
                 querySnapshot.forEach(doc => {
                     const data = doc.data();
-                    // Conversão rigorosa para garantir correspondência do Semestre
                     if(data.semestre.toString().trim() === sem) {
                         const profNome = data.professor.trim();
                         if(escolhasFeitas[profNome]) {
@@ -228,7 +227,6 @@
             }
         });
 
-        // Inicializar a tela
         renderizarProfessores();
         renderizarAcervo();
     </script>
