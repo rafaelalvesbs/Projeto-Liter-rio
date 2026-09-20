@@ -5,12 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Projeto Literário - Coordenação CLM</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- SweetAlert2 para Alertas Modernos -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         body { margin: 0; font-family: Arial, sans-serif; background-color: #f5f6f8; }
         
-        /* Cabeçalho Flexível e Responsivo */
         .top-header { background-color: #004080; color: white; display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; flex-wrap: wrap; gap: 10px; }
         .top-header-left { display: flex; align-items: center; gap: 10px; }
         .top-header-left .logo-icon { font-size: 24px; }
@@ -19,7 +17,6 @@
         .top-header-right { display: flex; align-items: center; gap: 10px; font-size: 14px; flex-wrap: wrap; }
         .top-btn { background: white; color: #333; border: 1px solid #ccc; padding: 6px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 5px; }
         
-        /* Menu Rolável no Mobile */
         .sub-header { background-color: white; border-bottom: 1px solid #ccc; display: flex; align-items: center; padding: 0; }
         .menu { display: flex; width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; -ms-overflow-style: none; }
         .menu::-webkit-scrollbar { display: none; }
@@ -27,16 +24,13 @@
         .menu button i { color: #0066cc; }
         .menu button:hover, .menu button.active { color: #0066cc; background-color: #f0f7ff; font-weight: bold; border-bottom: 3px solid #0066cc; }
         
-        /* Contêiner Principal */
         .container { padding: 20px; max-width: 1200px; margin: auto; box-sizing: border-box; }
         .tab-content { display: none; background: white; padding: 20px; border-radius: 4px; border: 1px solid #ddd; box-sizing: border-box; }
         .tab-content.active { display: block; }
         
-        /* Cabeçalhos internos flexíveis */
         .flex-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px; }
         .flex-header h3 { margin: 0; color: #004080; font-size: 18px; }
         
-        /* Tabelas Responsivas */
         .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; margin-top: 15px; border: 1px solid #ddd; border-radius: 4px; }
         table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 600px; }
         table, th, td { border-bottom: 1px solid #ddd; }
@@ -79,7 +73,6 @@
     </nav>
 
     <div class="container">
-        <!-- Cronograma Global -->
         <div id="visaogeral" class="tab-content active">
             <div class="flex-header">
                 <h3>Professores por Semestre e Escolhas</h3>
@@ -110,7 +103,6 @@
             </div>
         </div>
 
-        <!-- Paradidáticos -->
         <div id="gerenciar" class="tab-content">
             <h3 style="color:#004080; margin-top:0; font-size: 18px;">Lista de Livros Paradidáticos</h3>
             <div class="table-responsive">
@@ -123,7 +115,6 @@
             </div>
         </div>
 
-        <!-- Sugestões -->
         <div id="sugestoes" class="tab-content">
             <h3 style="color:#004080; margin-top:0; font-size: 18px;">Sugestões Enviadas pelos Professores</h3>
             <div class="table-responsive">
@@ -154,9 +145,9 @@
         const db = getFirestore(app);
 
         const professores = {
-            1: ["Lígia", "Luzirene", "João Paulo", "Márcio", "Sônia", "Miguel", "Rafael", "Nelson", "Yasmim", "Angélica", "Guilherme"],
-            2: ["Lígia", "Luzirene", "João Paulo", "Sônia", "Miguel", "Kethleen", "Rafael", "Nelson", "Yasmin", "Angélica"],
-            3: ["Lígia", "Luzirene", "Sônia", "Miguel", "Nelson", "Yasmin", "Angélica"],
+            1: ["Lígia", "Luzirene", "João Paulo", "Márcio", "Sônia", "Miguel", "Rafael", "Nelson", "Iasmin", "Angélica", "Guilherme"],
+            2: ["Lígia", "Luzirene", "João Paulo", "Sônia", "Miguel", "Kethleen", "Rafael", "Nelson", "Iasmin", "Angélica"],
+            3: ["Lígia", "Luzirene", "Sônia", "Miguel", "Nelson", "Iasmin", "Angélica"],
             4: ["Rômulo", "João Paulo", "Luzirene", "Márcio", "Sônia", "Guilherme"],
             5: ["Lígia", "João Paulo", "Rômulo", "Márcio/Guilherme", "Kethleen"],
             6: ["Rômulo", "Márcio/Guilherme", "Kethleen", "Miguel"],
@@ -265,7 +256,6 @@
             }
         });
 
-        // Inicializar a tela
         renderizarProfessores();
         renderizarAcervo();
     </script>
