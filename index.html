@@ -73,7 +73,7 @@
             <button class="tab-link active" onclick="openTab('visaogeral', this); renderizarProfessores();"><i class="fas fa-home"></i> Cronograma Global</button>
             <button class="tab-link" onclick="openTab('gerenciar', this)"><i class="fas fa-book"></i> Paradidáticos</button>
             <button class="tab-link" onclick="openTab('sugestoes', this)" id="btnCarregarSugestoes"><i class="fas fa-lightbulb"></i> Analisar Sugestões</button>
-            <button class="tab-link" onclick="openTab('agendados', this)"><i class="fas fa-calendar-check"></i> Livros Agendados</button>
+            <button class="tab-link" onclick="openTab('agendados', this); renderizarAgendamentosCoordenadora();"><i class="fas fa-calendar-check"></i> Livros Agendados</button>
         </div>
     </nav>
 
@@ -119,7 +119,7 @@
             </div>
         </div>
 
-        <!-- Sugestões (Com Semestre Selecionado pelo Professor) -->
+        <!-- Sugestões -->
         <div id="sugestoes" class="tab-content">
             <h3 style="color:#004080; margin-top:0; font-size: 18px;">Sugestões Enviadas pelos Professores</h3>
             <div class="table-responsive">
@@ -136,17 +136,21 @@
 
         <!-- Livros Agendados -->
         <div id="agendados" class="tab-content">
-            <h3 style="color:#004080; margin-top:0; font-size: 18px;">Livros Físicos Agendados</h3>
-            <p style="color: #666; font-size: 14px;">Controle dos livros físicos reservados para leitura em sala de aula.</p>
-            <div class="table-responsive">
-                <table>
-                    <thead>
-                        <tr><th>Professor</th><th>Livro</th><th>Semestre</th><th>Data Agendada</th></tr>
-                    </thead>
-                    <tbody id="tabelaAgendados">
-                        <tr><td colspan="4" style="text-align: center; color: #777;"><i class="fas fa-tools"></i> Recurso em construção...</td></tr>
-                    </tbody>
-                </table>
+            <div class="flex-header">
+                <h3>Livros Físicos Agendados</h3>
+                <button class="top-btn" style="background:#0066cc; color:white; border:none;" onclick="renderizarAgendamentosCoordenadora()"><i class="fas fa-sync-alt"></i> Atualizar Agenda</button>
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label style="font-weight: bold; color: #555; font-size: 14px; display: block; margin-bottom: 5px;">Filtrar por Semestre:</label>
+                <select id="filtroAgendamentoCoord" autocomplete="off" onchange="renderizarAgendamentosCoordenadora()">
+                    <option value="1">Semestre 1</option><option value="2">Semestre 2</option>
+                    <option value="3">Semestre 3</option><option value="4">Semestre 4</option>
+                    <option value="5">Semestre 5</option><option value="6">Semestre 6</option>
+                    <option value="7">Semestre 7</option>
+                </select>
+            </div>
+            <div id="areaTabelasAgendamento">
+                <!-- Construído via JS -->
             </div>
         </div>
     </div>
@@ -177,24 +181,29 @@
         };
 
         const acervo = [
-            { sem: 1, titulo: "The umbrella - Clare Harris", qtd: "10 livros", link: "https://www.youtube.com/watch?v=4UY9ixf4HiY" },
-            { sem: 1, titulo: "Gulliver's travels in Lilliput - Jonatahn Swift", qtd: "14 livros", link: "" },
-            { sem: 1, titulo: "Rich man, poor man - T.C Jupp", qtd: "16 livros", link: "" },
-            { sem: 1, titulo: "Lucky number -John Milne", qtd: "9 livros", link: "" },
-            { sem: 2, titulo: "The lost ship - Stephen Colbourn", qtd: "12 livros", link: "https://www.youtube.com/watch?v=QK-P6jkXYuk" },
-            { sem: 2, titulo: "Alissa - C.J. Moore", qtd: "11 livros", link: "" },
-            { sem: 2, titulo: "Sara says No! - Norman Whitney", qtd: "14 livros", link: "" },
-            { sem: 3, titulo: "This is London -Philip Prowse", qtd: "21 livros", link: "" },
-            { sem: 3, titulo: "The truth machine -Norman whitney", qtd: "21 livros", link: "" },
-            { sem: 3, titulo: "Anna and the fighter - Elizabeth Laird", qtd: "11 livros", link: "" },
+            { sem: 1, titulo: "The umbrella - Clare Harris", qtd: "10", link: "https://www.youtube.com/watch?v=4UY9ixf4HiY" },
+            { sem: 1, titulo: "Gulliver's travels in Lilliput - Jonatahn Swift", qtd: "14", link: "https://www.youtube.com/watch?v=dcOdIDDi2K4" },
+            { sem: 1, titulo: "Rich man, poor man - T.C Jupp", qtd: "16", link: "https://www.youtube.com/watch?v=4ojquasazqU" },
+            { sem: 1, titulo: "Lucky number -John Milne", qtd: "9", link: "" },
+            { sem: 2, titulo: "The lost ship - Stephen Colbourn", qtd: "12", link: "https://www.youtube.com/watch?v=QK-P6jkXYuk" },
+            { sem: 2, titulo: "Alissa - C.J. Moore", qtd: "11", link: "https://www.youtube.com/watch?v=uCpbVFMvADU&t=70s" },
+            { sem: 2, titulo: "Sara says No! - Norman Whitney", qtd: "14", link: "https://www.youtube.com/watch?v=u4j4bReUsw0" },
+            { sem: 3, titulo: "This is London -Philip Prowse", qtd: "21", link: "" },
+            { sem: 3, titulo: "The truth machine -Norman whitney", qtd: "21", link: "" },
+            { sem: 3, titulo: "Anna and the fighter - Elizabeth Laird", qtd: "11", link: "https://www.youtube.com/watch?v=8v35DEtoTWM" },
             { sem: 3, titulo: "Good humor - Hans C. Andersen", qtd: "Digital", link: "http://www.dominiopublico.gov.br/pesquisa/DetalheObraForm.do?select_action=&co_obra=609" },
             { sem: 3, titulo: "Great grandfather - Hans C. Andersen", qtd: "Digital", link: "http://www.dominiopublico.gov.br/pesquisa/DetalheObraForm.do?select_action=&co_obra=6094" },
-            { sem: 4, titulo: "The last of the Mohicans - James F. Cooper", qtd: "16 livros", link: "" },
+            { sem: 4, titulo: "The last of the Mohicans - James F. Cooper", qtd: "16", link: "" },
             { sem: 4, titulo: "The wedding gift -Guy de Maupassant", qtd: "Digital", link: "http://www.dominiopublico.gov.br/pesquisa/DetalheObraForm.do?select_action=&co_obra=6996" },
             { sem: 5, titulo: "A message from the sea - Charles Dickens", qtd: "Digital", link: "http://www.dominiopublico.gov.br/download/texto/gu001407.pdf" },
-            { sem: 5, titulo: "The man in the iron mask -Alexandre Dumas", qtd: "20 livros", link: "" },
+            { sem: 5, titulo: "The man in the iron mask -Alexandre Dumas", qtd: "20", link: "" },
             { sem: 6, titulo: "The three ghost stories -Charles Dickens", qtd: "Digital", link: "http://www.dominiopublico.gov.br/download/texto/pp000007.pdf" },
             { sem: 7, titulo: "Story teller", qtd: "Digital", link: "https://educapes.capes.gov.br/bitstream/capes/63069/1/edgar_allan_poe_storyteller_AE.pdf" }
+        ];
+
+        const semanasAgendamento = [
+            "28/09 a 02/10", "05/10 a 09/10", "12/10 a 16/10", "19/10 a 23/10",
+            "26/10 a 30/10", "02/11 a 06/11", "09/11 a 13/11", "16/11 a 19/11"
         ];
 
         window.openTab = function(tabName, element) {
@@ -225,7 +234,6 @@
                     }
                 });
             } catch(e) {
-                console.error("Erro ao buscar escolhas", e);
                 Swal.fire('Erro', 'Falha ao sincronizar com o banco de dados.', 'error');
             }
 
@@ -277,6 +285,59 @@
                 tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: red;">Erro ao carregar as sugestões.</td></tr>';
             }
         });
+
+        // --- RENDERIZAR QUADRO DE AGENDAMENTOS (COORDENADORA) ---
+        window.renderizarAgendamentosCoordenadora = async function() {
+            const sem = parseInt(document.getElementById('filtroAgendamentoCoord').value);
+            const area = document.getElementById('areaTabelasAgendamento');
+            area.innerHTML = '<div style="text-align:center;"><i class="fas fa-spinner fa-spin"></i> Buscando quadro de agendamentos no banco...</div>';
+
+            const livrosFisicos = acervo.filter(l => l.sem === sem && l.qtd !== "Digital");
+
+            if(livrosFisicos.length === 0) {
+                area.innerHTML = `<div style="border: 2px dashed #ccc; padding: 20px; text-align: center; color: #777; border-radius: 4px;">Nenhum livro físico para controle neste semestre.</div>`;
+                return;
+            }
+
+            try {
+                const snap = await getDocs(collection(db, "agendamentos"));
+                let agendaData = [];
+                snap.forEach(doc => agendaData.push(doc.data()));
+
+                let htmlFinal = '';
+
+                livrosFisicos.forEach(livro => {
+                    let linhasSemanas = '';
+                    
+                    semanasAgendamento.forEach(sem => {
+                        const reserva = agendaData.find(a => a.livro === livro.titulo && a.semana === sem && parseInt(a.semestre) === livro.sem);
+                        const prof = reserva ? `<strong style="color:#27ae60;">${reserva.professor}</strong>` : '<span style="color:#aaa;">--- Disponível ---</span>';
+                        
+                        linhasSemanas += `<tr>
+                            <td style="width: 150px; background: #fdfdfd; font-weight: bold; color: #555;">${sem}</td>
+                            <td>${prof}</td>
+                        </tr>`;
+                    });
+
+                    htmlFinal += `
+                    <div style="margin-bottom: 25px; border: 1px solid #0066cc; border-radius: 4px; overflow: hidden;">
+                        <h4 style="background: #0066cc; color: white; margin: 0; padding: 10px 15px;"><i class="fas fa-book"></i> ${livro.titulo} (Estoque: ${livro.qtd})</h4>
+                        <div class="table-responsive" style="margin: 0; border: none;">
+                            <table style="margin: 0;">
+                                <tbody>
+                                    ${linhasSemanas}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>`;
+                });
+
+                area.innerHTML = htmlFinal;
+
+            } catch(e) {
+                area.innerHTML = '<div style="color:red; text-align:center;">Erro ao sincronizar agendamentos.</div>';
+            }
+        };
 
         renderizarProfessores();
         renderizarAcervo();
