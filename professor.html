@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Projeto Literário - Portal do Professor</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Biblioteca SweetAlert2 para alertas modernos -->
+    <!-- SweetAlert2 para Alertas Modernos -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         body { margin: 0; font-family: Arial, sans-serif; background-color: #f5f6f8; }
@@ -60,16 +60,10 @@
     <div id="modalIdentificacao">
         <div class="modal-box">
             <h3><i class="fas fa-user-circle"></i> Identificação Docente</h3>
-            <p style="font-size: 14px; color: #555;">Bem-vindo(a)! Escolha seu nome e semestre.</p>
+            <p style="font-size: 14px; color: #555;">Selecione seu nome para acessar seus semestres correspondentes.</p>
             <div class="form-group" style="text-align: left;">
                 <label style="font-weight: bold; color: #555;">Seu Nome:</label>
-                <select id="selectProfessor" autocomplete="off" onchange="carregarSemestresDoProfessor()"></select>
-            </div>
-            <div class="form-group" style="text-align: left;">
-                <label style="font-weight: bold; color: #555;">Semestre a acessar:</label>
-                <select id="selectSemestre" autocomplete="off">
-                    <option value="">Selecione o nome primeiro...</option>
-                </select>
+                <select id="selectProfessor" autocomplete="off"></select>
             </div>
             <button class="action-btn" style="width: 100%;" onclick="entrarSistema()">Entrar no Portal</button>
         </div>
@@ -90,9 +84,8 @@
         <div class="menu">
             <button class="tab-link active" onclick="openTab('catalogo', this); buscarMinhasEscolhasParaCatalogo();"><i class="fas fa-book"></i> Paradidáticos</button>
             <button class="tab-link" onclick="openTab('minhas-escolhas', this); buscarEscolhas();"><i class="fas fa-check-square"></i> Minhas Escolhas</button>
-            <button class="tab-link" onclick="openTab('escolhas-colegas', this); buscarEscolhas();"><i class="fas fa-users"></i> Escolhas dos Colegas</button>
-            <!-- Sugerir Novo realocado para o lado esquerdo de Agendar -->
             <button class="tab-link" onclick="openTab('sugerir', this)"><i class="fas fa-lightbulb"></i> Sugerir Novo</button>
+            <button class="tab-link" onclick="openTab('escolhas-colegas', this); buscarEscolhas();"><i class="fas fa-users"></i> Escolhas dos Colegas</button>
             <button class="tab-link" onclick="openTab('agendar-fisico', this)"><i class="fas fa-calendar-check"></i> Agendar Livros Físicos</button>
         </div>
     </nav>
@@ -102,16 +95,13 @@
         <div id="catalogo" class="tab-content active">
             <div style="display:flex; justify-content:space-between; align-items:flex-start;">
                 <div>
-                    <h3 style="color:#004080; margin-top:0;">Catálogo de Livros Paradidáticos</h3>
-                    <p style="color: #666; font-size: 14px;">Você está selecionando livros para o seu <strong>Semestre <span id="lblSemestreCatalogo"></span></strong>.</p>
+                    <h3 style="color:#004080; margin:0;">Catálogo de Livros Paradidáticos</h3>
+                    <p style="color: #666; font-size: 14px;">Você está selecionando livros para o <strong>Semestre <span id="lblSemestreCatalogo"></span></strong>.</p>
                 </div>
-                <!-- Filtro para permitir escolher livros de outros semestres -->
                 <div style="width: 250px; background: #f0f7ff; padding: 10px; border-radius: 4px; border: 1px solid #0066cc;">
-                    <label style="font-weight: bold; font-size:12px; color:#004080;">VER LIVROS DO:</label>
-                    <select id="filtroNavegarSemestres" onchange="renderizarLivrosDoSemestre()" style="margin-top:5px; padding:5px;">
-                        <option value="1">Semestre 1</option><option value="2">Semestre 2</option>
-                        <option value="3">Semestre 3</option><option value="4">Semestre 4</option>
-                        <option value="5">Semestre 5</option><option value="6">Semestre 6</option><option value="7">Semestre 7</option>
+                    <label style="font-weight: bold; font-size:12px; color:#004080;">VER LIVROS DO SEMESTRE:</label>
+                    <select id="filtroNavegarSemestres" autocomplete="off" onchange="buscarMinhasEscolhasParaCatalogo()" style="margin-top:5px; padding:5px;">
+                        <!-- Options carregadas via JS baseadas no professor -->
                     </select>
                 </div>
             </div>
@@ -159,7 +149,8 @@
             <h3 style="color:#004080; margin-top:0;">Agendamento Físico de Livros</h3>
             <div style="background: #e9f2fa; padding: 15px; border-radius: 4px; border-left: 4px solid #0066cc; margin-bottom: 20px;">
                 <strong>Nome:</strong> <span id="labelNomeProfessor"></span> <br>
-                <strong>Período (Semestre):</strong> <span id="labelSemestreAtual"></span>
+                <strong>Selecione o Semestre:</strong> 
+                <select id="filtroSemestreAgendamento" autocomplete="off" style="width: auto; display: inline-block; padding: 3px;"></select>
             </div>
             <div style="border: 2px dashed #ccc; padding: 30px; text-align: center; color: #777; border-radius: 4px;">
                 <i class="fas fa-box-open" style="font-size: 30px; margin-bottom: 10px;"></i><br>
@@ -183,7 +174,6 @@
         const db = getFirestore(app);
 
         window.professorLogado = "";
-        window.semestreLogado = "";
         window.livrosJaEscolhidos = [];
 
         const mapProfessores = {
@@ -217,20 +207,30 @@
             { sem: 7, titulo: "Story teller", qtd: "Digital", link: "https://educapes.capes.gov.br/bitstream/capes/63069/1/edgar_allan_poe_storyteller_AE.pdf" }
         ];
 
+        window.getSemestresPorProfessor = function(nome) {
+            let sems = [];
+            for(let s in mapProfessores) {
+                if(mapProfessores[s].some(n => n.split('/').map(x => x.trim()).includes(nome))) {
+                    sems.push(s);
+                }
+            }
+            return sems;
+        };
+
         window.onload = () => {
             const profSalvo = localStorage.getItem('clm_professor');
-            const semSalvo = localStorage.getItem('clm_semestre');
 
-            if(profSalvo && semSalvo) {
-                document.getElementById('selectProfessor').innerHTML = `<option value="${profSalvo}">${profSalvo}</option>`;
-                document.getElementById('selectSemestre').innerHTML = `<option value="${semSalvo}">${semSalvo}</option>`;
+            const selectNome = document.getElementById('selectProfessor');
+            selectNome.innerHTML = '<option value="">Selecione...</option>';
+            let nomes = new Set();
+            for(let s in mapProfessores) {
+                mapProfessores[s].forEach(n => { n.split('/').forEach(part => nomes.add(part.trim())); });
+            }
+            Array.from(nomes).sort().forEach(nome => { selectNome.innerHTML += `<option value="${nome}">${nome}</option>`; });
+
+            if(profSalvo) {
+                document.getElementById('selectProfessor').value = profSalvo;
                 entrarSistema();
-            } else {
-                const selectNome = document.getElementById('selectProfessor');
-                selectNome.innerHTML = '<option value="">Selecione...</option>';
-                let nomes = new Set();
-                for(let s in mapProfessores) mapProfessores[s].forEach(n => nomes.add(n));
-                Array.from(nomes).sort().forEach(nome => { selectNome.innerHTML += `<option value="${nome}">${nome}</option>`; });
             }
         };
 
@@ -246,47 +246,34 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     localStorage.removeItem('clm_professor');
-                    localStorage.removeItem('clm_semestre');
                     location.reload();
                 }
             });
         }
 
-        window.carregarSemestresDoProfessor = function() {
-            const nome = document.getElementById('selectProfessor').value;
-            const selectSemestre = document.getElementById('selectSemestre');
-            selectSemestre.innerHTML = '';
-            if(!nome) { selectSemestre.innerHTML = '<option value="">Selecione o nome primeiro...</option>'; return; }
-            for(let sem in mapProfessores) {
-                if(mapProfessores[sem].includes(nome)) selectSemestre.innerHTML += `<option value="${sem}">Semestre ${sem}</option>`;
-            }
-        };
-
         window.entrarSistema = function() {
             const nome = document.getElementById('selectProfessor').value;
-            const semestre = document.getElementById('selectSemestre').value;
-            
-            if(!nome || !semestre) { 
-                Swal.fire('Atenção', 'Selecione seu nome e semestre para entrar.', 'warning'); 
-                return; 
-            }
+            if(!nome) { Swal.fire('Atenção', 'Selecione seu nome para entrar.', 'warning'); return; }
 
             window.professorLogado = nome;
-            window.semestreLogado = semestre;
-            
             localStorage.setItem('clm_professor', nome);
-            localStorage.setItem('clm_semestre', semestre);
+
+            // Filtra os semestres exclusivos do professor logado
+            const meusSemestres = getSemestresPorProfessor(nome);
+            const selectNavegar = document.getElementById('filtroNavegarSemestres');
+            const selectAgendamento = document.getElementById('filtroSemestreAgendamento');
+            selectNavegar.innerHTML = '';
+            selectAgendamento.innerHTML = '';
+
+            meusSemestres.forEach(sem => {
+                selectNavegar.innerHTML += `<option value="${sem}">Semestre ${sem}</option>`;
+                selectAgendamento.innerHTML += `<option value="${sem}">Semestre ${sem}</option>`;
+            });
 
             document.getElementById('modalIdentificacao').style.display = 'none';
             document.getElementById('appContainer').style.display = 'block';
             document.getElementById('btnTopName').innerHTML = `<i class="fas fa-user"></i> ${nome.toUpperCase()} (Sair)`;
-            
-            document.getElementById('lblSemestreCatalogo').innerText = semestre;
             document.getElementById('labelNomeProfessor').innerText = nome;
-            document.getElementById('labelSemestreAtual').innerText = "Semestre " + semestre;
-            
-            // Seta o dropdown de navegar semestres para o semestre atual do professor
-            document.getElementById('filtroNavegarSemestres').value = semestre;
 
             buscarMinhasEscolhasParaCatalogo();
         };
@@ -302,9 +289,11 @@
             try {
                 const querySnapshot = await getDocs(collection(db, "escolhas"));
                 window.livrosJaEscolhidos = [];
+                const semAtualDoFiltro = document.getElementById('filtroNavegarSemestres').value;
+                
                 querySnapshot.forEach(doc => {
                     const data = doc.data();
-                    if(data.professor === window.professorLogado && data.semestre.toString() === window.semestreLogado.toString()) {
+                    if(data.professor === window.professorLogado && data.semestre.toString() === semAtualDoFiltro.toString()) {
                         window.livrosJaEscolhidos.push(data.livro);
                     }
                 });
@@ -313,8 +302,9 @@
         }
 
         window.renderizarLivrosDoSemestre = function() {
-            // Pega o semestre que o professor quer ver no catálogo
             const semParaVisualizar = parseInt(document.getElementById('filtroNavegarSemestres').value);
+            document.getElementById('lblSemestreCatalogo').innerText = semParaVisualizar;
+            
             const grid = document.getElementById('listaLivrosCatalogo');
             grid.innerHTML = '';
             
@@ -344,20 +334,21 @@
         };
 
         window.escolherLivroParaSemestre = async function(tituloLivro) {
+            const semSelecionado = document.getElementById('filtroNavegarSemestres').value;
             Swal.fire({
                 title: 'Confirmar Escolha',
-                text: `Deseja enviar "${tituloLivro}" como escolha para a sua turma do Semestre ${window.semestreLogado}?`,
+                text: `Deseja escolher "${tituloLivro}" para a sua turma do Semestre ${semSelecionado}?`,
                 icon: 'question',
                 showCancelButton: true,
                 confirmButtonColor: '#0066cc',
                 cancelButtonColor: '#aaa',
-                confirmButtonText: 'Sim, enviar'
+                confirmButtonText: 'Sim, confirmar'
             }).then(async (result) => {
                 if (result.isConfirmed) {
                     try {
                         await addDoc(collection(db, "escolhas"), {
                             professor: window.professorLogado,
-                            semestre: window.semestreLogado, // Associa à turma do professor
+                            semestre: semSelecionado,
                             livro: tituloLivro,
                             dataEscolha: new Date().toISOString()
                         });
@@ -401,7 +392,7 @@
                     }
                 });
 
-                tbMinhas.innerHTML = minhasHTML || '<tr><td colspan="4">Você ainda não enviou escolhas. Vá até a aba Paradidáticos.</td></tr>';
+                tbMinhas.innerHTML = minhasHTML || '<tr><td colspan="4">Você ainda não enviou escolhas.</td></tr>';
                 tbColegas.innerHTML = colegasHTML || '<tr><td colspan="3">Nenhum colega enviou escolhas ainda.</td></tr>';
             } catch (error) { console.error(error); }
         };
@@ -448,8 +439,9 @@
             const link = document.getElementById('sug_link').value;
             if(!titulo) { Swal.fire('Atenção', 'Preencha o título do livro.', 'warning'); return; }
             try {
+                const semAtualFiltro = document.getElementById('filtroNavegarSemestres').value;
                 await addDoc(collection(db, "sugestoes"), {
-                    professor: window.professorLogado, semestre: window.semestreLogado,
+                    professor: window.professorLogado, semestre: semAtualFiltro,
                     titulo: titulo, link: link || 'Sem link', dataEnvio: new Date().toISOString()
                 });
                 Swal.fire('Sucesso!', 'Sugestão enviada para a coordenação.', 'success');
