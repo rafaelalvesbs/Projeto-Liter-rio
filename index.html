@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Projeto Literário - Coordenação</title>
+    <title>Projeto Literário - Coordenação CLM</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- SweetAlert2 para Alertas Modernos -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         body { margin: 0; font-family: Arial, sans-serif; background-color: #f5f6f8; }
@@ -123,15 +124,14 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Nomes normalizados para o cruzamento de dados exatos
         const professores = {
-            1: ["Lígia", "Luzirene", "João Paulo", "Márcio", "Sônia", "Miguel", "Rafael", "Nelson", "Yasmin", "Angélica", "Guilherme"],
+            1: ["Lígia", "Luzirene", "João Paulo", "Márcio", "Sônia", "Miguel", "Rafael", "Nelson", "Yasmim", "Angélica", "Guilherme"],
             2: ["Lígia", "Luzirene", "João Paulo", "Sônia", "Miguel", "Kethleen", "Rafael", "Nelson", "Yasmin", "Angélica"],
             3: ["Lígia", "Luzirene", "Sônia", "Miguel", "Nelson", "Yasmin", "Angélica"],
             4: ["Rômulo", "João Paulo", "Luzirene", "Márcio", "Sônia", "Guilherme"],
-            5: ["Lígia", "João Paulo", "Rômulo", "Márcio", "Guilherme", "Kethleen"],
-            6: ["Rômulo", "Márcio", "Guilherme", "Kethleen", "Miguel"],
-            7: ["Keyle", "Márcio", "Guilherme", "Miguel"]
+            5: ["Lígia", "João Paulo", "Rômulo", "Márcio/Guilherme", "Kethleen"],
+            6: ["Rômulo", "Márcio/Guilherme", "Kethleen", "Miguel"],
+            7: ["Keyle", "Márcio/Guilherme", "Miguel"]
         };
 
         const acervo = [
@@ -189,13 +189,17 @@
 
             tbody.innerHTML = '';
             lista.forEach(prof => {
-                const statusHtml = escolhasFeitas[prof.trim()] 
-                    ? `<span class="status-escolhido">${escolhasFeitas[prof.trim()]}</span>` 
-                    : `<span class="status-aguardando"><i class="fas fa-clock"></i> Aguardando escolha</span>`;
+                let profNomes = prof.split('/');
+                let statusParts = profNomes.map(pn => {
+                    pn = pn.trim();
+                    return escolhasFeitas[pn] 
+                        ? `<span class="status-escolhido">${escolhasFeitas[pn]} ${profNomes.length > 1 ? '('+pn+')' : ''}</span>` 
+                        : `<span class="status-aguardando"><i class="fas fa-clock"></i> Aguardando ${profNomes.length > 1 ? pn : 'escolha'}</span>`;
+                });
                 
                 tbody.innerHTML += `<tr>
                     <td><i class="fas fa-user-circle" style="color:#0066cc; margin-right:8px;"></i> <strong>${prof}</strong></td>
-                    <td>${statusHtml}</td>
+                    <td>${statusParts.join('<br>')}</td>
                 </tr>`;
             });
         };
@@ -227,6 +231,7 @@
             }
         });
 
+        // Inicializar a tela
         renderizarProfessores();
         renderizarAcervo();
     </script>
