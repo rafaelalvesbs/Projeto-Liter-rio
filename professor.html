@@ -5,12 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Projeto Literário - Portal do Professor</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- SweetAlert2 para Alertas Modernos -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         body { margin: 0; font-family: Arial, sans-serif; background-color: #f5f6f8; }
         
-        /* Cabeçalho */
         .top-header { background-color: #004080; color: white; display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; flex-wrap: wrap; gap: 10px; }
         .top-header-left { display: flex; align-items: center; gap: 10px; }
         .top-header-left .logo-icon { font-size: 24px; }
@@ -19,30 +17,24 @@
         .top-header-right { display: flex; align-items: center; gap: 15px; font-size: 14px; flex-wrap: wrap; }
         .top-btn { background: white; color: #333; border: 1px solid #ccc; padding: 6px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 5px; }
         
-        /* Menu de Navegação (Sub-header) */
         .sub-header { background-color: white; border-bottom: 1px solid #ccc; display: flex; align-items: center; padding: 0; }
-        .menu { display: flex; width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; -ms-overflow-style: none; }
-        .menu::-webkit-scrollbar { display: none; /* Oculta a barra de rolagem visualmente no mobile, mas permite rolar com o dedo */ }
-        .menu button { background: none; border: none; color: #555; font-size: 13px; cursor: pointer; padding: 15px; display: flex; align-items: center; gap: 6px; white-space: nowrap; border-bottom: 3px solid transparent; transition: 0.2s; }
+        .menu { display: flex; width: 100%; }
+        .menu button { background: none; border: none; color: #555; font-size: 13px; cursor: pointer; padding: 15px; display: flex; align-items: center; gap: 6px; white-space: nowrap; border-bottom: 3px solid transparent; transition: 0.2s; box-sizing: border-box; }
         .menu button i { color: #0066cc; }
         .menu button:hover, .menu button.active { color: #0066cc; background-color: #f0f7ff; font-weight: bold; border-bottom: 3px solid #0066cc; }
 
-        /* Conteúdo */
         .container { padding: 20px; max-width: 1000px; margin: auto; display: none; box-sizing: border-box; }
         .tab-content { display: none; background: white; padding: 20px; border-radius: 4px; border: 1px solid #ddd; box-sizing: border-box; }
         .tab-content.active { display: block; }
         
-        /* Cabeçalho do Catálogo com Filtro */
         .catalogo-header { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 15px; }
         .catalogo-filtro { width: 100%; max-width: 250px; background: #f0f7ff; padding: 10px; border-radius: 4px; border: 1px solid #0066cc; box-sizing: border-box; }
 
-        /* Grelha de Livros */
         .book-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px; margin-top: 15px; }
         .book-card { border: 1px solid #eee; padding: 15px; border-radius: 4px; background: #fafafa; border-left: 4px solid #0066cc; display:flex; flex-direction:column; justify-content:space-between; box-sizing: border-box; }
         .tag-digital { background: #2ecc71; color: white; padding: 3px 8px; border-radius: 4px; font-size: 11px; text-decoration: none; display: inline-block;}
         .tag-fisico { background: #e67e22; color: white; padding: 3px 8px; border-radius: 4px; font-size: 11px; display: inline-block;}
         
-        /* Formulários e Botões */
         input, select { width: 100%; padding: 10px; margin-top: 8px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; font-size: 14px;}
         button.action-btn { background: #0066cc; color: white; cursor: pointer; border: none; margin-top: 15px; padding: 12px 20px; border-radius: 4px; font-weight: bold; font-size: 14px; width: 100%;}
         button.action-btn:hover { background: #00509e; }
@@ -55,30 +47,51 @@
         .btn-editar { background: #f39c12; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; margin-right: 5px; margin-top: 5px; }
         .form-group { margin-bottom: 15px; }
 
-        /* Tabelas Responsivas */
-        .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; margin-top: 15px; border: 1px solid #ddd; border-radius: 4px; }
-        table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 500px; }
+        .table-responsive { width: 100%; margin-top: 15px; border-radius: 4px; }
+        table { width: 100%; border-collapse: collapse; font-size: 14px; }
         table, th, td { border-bottom: 1px solid #ddd; }
         th, td { padding: 12px; text-align: left; }
         th { background-color: #f9f9f9; color: #333; }
 
-        /* Modal */
         #modalIdentificacao { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: flex; justify-content: center; align-items: center; z-index: 1000; padding: 15px; box-sizing: border-box; }
         .modal-box { background: white; padding: 30px; border-radius: 8px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.2); box-sizing: border-box; }
         .modal-box h3 { color: #004080; margin-top: 0; font-size: 20px;}
 
-        /* Media Queries para Telas Menores (Mobile) */
         @media (max-width: 768px) {
+            .btn-ano { display: none !important; }
             .top-header-right { width: 100%; justify-content: flex-start; }
+            
+            .menu { flex-wrap: wrap; }
+            .menu button { width: 33.33%; flex-direction: column; justify-content: center; padding: 10px 5px; font-size: 11px; border-right: 1px solid #eee; border-bottom: 1px solid #eee !important; }
+            .menu button:nth-child(4), .menu button:nth-child(5) { width: 50%; border-bottom: none !important; }
+            .menu button:nth-child(3), .menu button:nth-child(5) { border-right: none; }
+
             .catalogo-filtro { max-width: 100%; }
-            .book-grid { grid-template-columns: 1fr; } /* No mobile, uma coluna por linha */
+            .book-grid { grid-template-columns: 1fr; }
             .tab-content { padding: 15px; }
+
+            /* Tabelas em formato de Cards (Empilhadas) */
+            table, thead, tbody, th, td, tr { display: block; width: 100%; box-sizing: border-box; }
+            thead tr { display: none; }
+            tr { margin-bottom: 15px; border: 1px solid #ddd; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+            td { text-align: left !important; border: none; border-bottom: 1px solid #eee; padding: 10px 15px; display: flex; flex-direction: column; gap: 2px; }
+            td:last-child { border-bottom: none; }
+
+            #tabelaMinhasEscolhas td:nth-of-type(1)::before { content: "LIVRO:"; font-size: 10px; color: #888; font-weight: bold; }
+            #tabelaMinhasEscolhas td:nth-of-type(2)::before { content: "SEMESTRE:"; font-size: 10px; color: #888; font-weight: bold; }
+            #tabelaMinhasEscolhas td:nth-of-type(3)::before { content: "DATA DA ESCOLHA:"; font-size: 10px; color: #888; font-weight: bold; }
+            #tabelaMinhasEscolhas td:nth-of-type(4) { flex-direction: row; gap: 10px; padding-top: 10px; }
+            
+            #tabelaEscolhasColegas td:nth-of-type(1)::before { content: "PROFESSOR(A):"; font-size: 10px; color: #888; font-weight: bold; }
+            #tabelaEscolhasColegas td:nth-of-type(2)::before { content: "LIVRO:"; font-size: 10px; color: #888; font-weight: bold; }
+            #tabelaEscolhasColegas td:nth-of-type(3)::before { content: "SEMESTRE:"; font-size: 10px; color: #888; font-weight: bold; }
+
+            .table-responsive { border: none; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Modal de Entrada -->
     <div id="modalIdentificacao">
         <div class="modal-box">
             <h3><i class="fas fa-user-circle"></i> Identificação Docente</h3>
@@ -91,7 +104,6 @@
         </div>
     </div>
 
-    <!-- Cabeçalho -->
     <header class="top-header">
         <div class="top-header-left">
             <i class="fas fa-book-open logo-icon"></i>
@@ -99,23 +111,21 @@
         </div>
         <div class="top-header-right">
             <button class="top-btn" id="btnTopName" onclick="sairSistema()"><i class="fas fa-user"></i> PROFESSOR (Sair)</button>
-            <button class="top-btn">2026</button>
+            <button class="top-btn btn-ano">2026</button>
         </div>
     </header>
 
-    <!-- Navegação (Com rolagem horizontal suave no mobile) -->
     <nav class="sub-header">
         <div class="menu">
             <button class="tab-link active" onclick="openTab('catalogo', this); buscarMinhasEscolhasParaCatalogo();"><i class="fas fa-book"></i> Paradidáticos</button>
             <button class="tab-link" onclick="openTab('minhas-escolhas', this); buscarEscolhas();"><i class="fas fa-check-square"></i> Minhas Escolhas</button>
+            <button class="tab-link" onclick="openTab('escolhas-colegas', this); buscarEscolhas();"><i class="fas fa-users"></i> Escolhas Colegas</button>
             <button class="tab-link" onclick="openTab('sugerir', this)"><i class="fas fa-lightbulb"></i> Sugerir Novo</button>
-            <button class="tab-link" onclick="openTab('escolhas-colegas', this); buscarEscolhas();"><i class="fas fa-users"></i> Escolhas dos Colegas</button>
-            <button class="tab-link" onclick="openTab('agendar-fisico', this)"><i class="fas fa-calendar-check"></i> Agendar Livros Físicos</button>
+            <button class="tab-link" onclick="openTab('agendar-fisico', this)"><i class="fas fa-calendar-check"></i> Agendar Físicos</button>
         </div>
     </nav>
 
     <div class="container" id="appContainer">
-        <!-- Paradidáticos -->
         <div id="catalogo" class="tab-content active">
             <div class="catalogo-header">
                 <div style="flex: 1;">
@@ -125,14 +135,12 @@
                 <div class="catalogo-filtro">
                     <label style="font-weight: bold; font-size:12px; color:#004080;">VER LIVROS DO SEMESTRE:</label>
                     <select id="filtroNavegarSemestres" autocomplete="off" onchange="buscarMinhasEscolhasParaCatalogo()">
-                        <!-- Options carregadas via JS baseadas no professor -->
                     </select>
                 </div>
             </div>
             <div class="book-grid" id="listaLivrosCatalogo"></div>
         </div>
 
-        <!-- Minhas Escolhas -->
         <div id="minhas-escolhas" class="tab-content">
             <h3 style="color:#004080; margin-top:0;">Livros que eu escolhi</h3>
             <div class="table-responsive">
@@ -145,7 +153,6 @@
             </div>
         </div>
 
-        <!-- Sugerir Novo -->
         <div id="sugerir" class="tab-content">
             <h3 style="color:#004080; margin-top:0;">Sugerir Novo Livro Literário</h3>
             <div class="form-group">
@@ -159,7 +166,6 @@
             <button class="action-btn" id="btnEnviarSugestao" style="width: auto;"><i class="fas fa-paper-plane"></i> Enviar Sugestão</button>
         </div>
 
-        <!-- Escolhas dos Colegas -->
         <div id="escolhas-colegas" class="tab-content">
             <h3 style="color:#004080; margin-top:0;">Livros escolhidos pelos colegas</h3>
             <div class="table-responsive">
@@ -172,7 +178,6 @@
             </div>
         </div>
 
-        <!-- Agendar Livros Físicos -->
         <div id="agendar-fisico" class="tab-content">
             <h3 style="color:#004080; margin-top:0;">Agendamento Físico de Livros</h3>
             <div style="background: #e9f2fa; padding: 15px; border-radius: 4px; border-left: 4px solid #0066cc; margin-bottom: 20px;">
@@ -189,7 +194,6 @@
         </div>
     </div>
 
-    <!-- SCRIPTS E LÓGICA FIREBASE -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
@@ -208,9 +212,9 @@
         window.livrosJaEscolhidos = [];
 
         const mapProfessores = {
-            1: ["Lígia", "Luzirene", "João Paulo", "Márcio", "Sônia", "Miguel", "Rafael", "Nelson", "Yasmim", "Angélica", "Guilherme"],
-            2: ["Lígia", "Luzirene", "João Paulo", "Sônia", "Miguel", "Kethleen", "Rafael", "Nelson", "Yasmin", "Angélica"],
-            3: ["Lígia", "Luzirene", "Sônia", "Miguel", "Nelson", "Yasmin", "Angélica"],
+            1: ["Lígia", "Luzirene", "João Paulo", "Márcio", "Sônia", "Miguel", "Rafael", "Nelson", "Iasmin", "Angélica", "Guilherme"],
+            2: ["Lígia", "Luzirene", "João Paulo", "Sônia", "Miguel", "Kethleen", "Rafael", "Nelson", "Iasmin", "Angélica"],
+            3: ["Lígia", "Luzirene", "Sônia", "Miguel", "Nelson", "Iasmin", "Angélica"],
             4: ["Rômulo", "João Paulo", "Luzirene", "Márcio", "Sônia", "Guilherme"],
             5: ["Lígia", "João Paulo", "Rômulo", "Márcio/Guilherme", "Kethleen"],
             6: ["Rômulo", "Márcio/Guilherme", "Kethleen", "Miguel"],
@@ -250,7 +254,6 @@
 
         window.onload = () => {
             const profSalvo = localStorage.getItem('clm_professor');
-
             const selectNome = document.getElementById('selectProfessor');
             selectNome.innerHTML = '<option value="">Selecione...</option>';
             let nomes = new Set();
@@ -412,7 +415,7 @@
                             <td><strong>${data.livro}</strong></td>
                             <td>Semestre ${data.semestre}</td>
                             <td>${dataFormatada}</td>
-                            <td style="white-space: nowrap;">
+                            <td style="white-space: nowrap; display: flex; gap: 5px;">
                                 <button class="btn-editar" onclick="editarEscolha('${id}')" title="Editar"><i class="fas fa-edit"></i> Editar</button>
                                 <button class="btn-excluir" onclick="excluirEscolha('${id}')" title="Excluir"><i class="fas fa-trash"></i></button>
                             </td>
