@@ -31,7 +31,8 @@
         .catalogo-filtro { width: 100%; max-width: 250px; background: #f0f7ff; padding: 10px; border-radius: 4px; border: 1px solid #0066cc; box-sizing: border-box; }
 
         .book-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px; margin-top: 15px; }
-        .book-card { border: 1px solid #eee; padding: 15px; border-radius: 4px; background: #fafafa; border-left: 4px solid #0066cc; display:flex; flex-direction:column; justify-content:space-between; box-sizing: border-box; }
+        .book-card { border: 1px solid #eee; padding: 15px; border-radius: 4px; background: #fafafa; border-left: 4px solid #0066cc; display:flex; flex-direction:column; justify-content:space-between; box-sizing: border-box; position: relative; }
+        .tag-opcao { background: #004080; color: white; padding: 2px 6px; border-radius: 3px; font-size: 10px; font-weight: bold; display: inline-block; margin-bottom: 5px; }
         .tag-digital { background: #2ecc71; color: white; padding: 3px 8px; border-radius: 4px; font-size: 11px; text-decoration: none; display: inline-block;}
         .tag-fisico { background: #e67e22; color: white; padding: 3px 8px; border-radius: 4px; font-size: 11px; display: inline-block;}
         
@@ -57,7 +58,6 @@
         .modal-box { background: white; padding: 25px; border-radius: 8px; width: 100%; max-width: 350px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.2); box-sizing: border-box; }
         .modal-box h3 { color: #004080; margin-top: 0; font-size: 18px;}
 
-        /* Exclusivo Mobile */
         @media (max-width: 768px) {
             .top-header { padding: 8px 10px; flex-wrap: nowrap !important; }
             .top-header-left .logo-icon { font-size: 18px; }
@@ -76,23 +76,19 @@
             .book-card h4 { font-size: 14px; margin-bottom: 5px !important; }
             .btn-escolher { padding: 6px; font-size: 12px; margin-top: 6px; }
 
-            /* Tabelas em formato de Cards Compactos (Empilhadas) */
             table, thead, tbody, th, td, tr { display: block; width: 100%; box-sizing: border-box; }
             thead tr { display: none; }
             tr { margin-bottom: 10px; border: 1px solid #ddd; border-radius: 4px; padding: 5px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
             td { text-align: left !important; border: none; border-bottom: 1px solid #f0f0f0; padding: 6px 8px !important; display: flex; flex-direction: column; gap: 1px; font-size: 13px;}
             td:last-child { border-bottom: none; flex-direction: row; gap: 8px; align-items: center;}
 
-            /* Rótulos para Minhas Escolhas */
             #tabelaMinhasEscolhas td:nth-of-type(1)::before { content: "LIVRO:"; font-size: 10px; color: #888; font-weight: bold; }
             #tabelaMinhasEscolhas td:nth-of-type(2)::before { content: "SEMESTRE:"; font-size: 10px; color: #888; font-weight: bold; }
             #tabelaMinhasEscolhas td:nth-of-type(3)::before { content: "DATA:"; font-size: 10px; color: #888; font-weight: bold; }
             
-            /* Rótulos para Minhas Sugestões */
             #tabelaMinhasSugestoes td:nth-of-type(1)::before { content: "LIVRO SUGERIDO:"; font-size: 10px; color: #888; font-weight: bold; }
             #tabelaMinhasSugestoes td:nth-of-type(2)::before { content: "SEMESTRE:"; font-size: 10px; color: #888; font-weight: bold; }
 
-            /* Rótulos para Escolha dos Colegas */
             #tabelaEscolhasColegas td:nth-of-type(1)::before { content: "PROFESSOR(A):"; font-size: 10px; color: #888; font-weight: bold; }
             #tabelaEscolhasColegas td:nth-of-type(2)::before { content: "LIVRO:"; font-size: 10px; color: #888; font-weight: bold; }
             #tabelaEscolhasColegas td:nth-of-type(3)::before { content: "SEMESTRE:"; font-size: 10px; color: #888; font-weight: bold; }
@@ -129,7 +125,7 @@
         <div class="menu">
             <button class="tab-link active" onclick="openTab('catalogo', this); buscarMinhasEscolhasParaCatalogo();"><i class="fas fa-book"></i> Paradidáticos</button>
             <button class="tab-link" onclick="openTab('minhas-escolhas', this); buscarEscolhas();"><i class="fas fa-check-square"></i> Minhas Escolhas</button>
-            <button class="tab-link" onclick="openTab('escolhas-colegas', this); buscarEscolhas();"><i class="fas fa-users"></i> Escolhas Colegas</button>
+            <button class="tab-link" onclick="openTab('escolhas-colegas', this); carregarEscolhasColegas();"><i class="fas fa-users"></i> Escolhas Colegas</button>
             <button class="tab-link" onclick="openTab('sugerir', this); buscarMinhasSugestoes();"><i class="fas fa-lightbulb"></i> Sugerir Novo</button>
             <button class="tab-link" onclick="openTab('agendar-fisico', this)"><i class="fas fa-calendar-check"></i> Agendar Físicos</button>
         </div>
@@ -165,12 +161,21 @@
             </div>
         </div>
 
-        <!-- Sugerir Novo com Opção de Excluir -->
+        <!-- Sugerir Novo com Seleção de Semestre -->
         <div id="sugerir" class="tab-content">
             <h3 style="color:#004080; margin-top:0; font-size:16px;">Sugerir Novo Livro Literário</h3>
             <div class="form-group">
                 <label style="font-weight: bold; color: #555; font-size: 13px;">Título do Livro e Autor:</label>
                 <input type="text" id="sug_titulo" autocomplete="off" placeholder="Ex: The Little Prince - Antoine de Saint-Exupéry">
+            </div>
+            <div class="form-group">
+                <label style="font-weight: bold; color: #555; font-size: 13px;">Semestre Correspondente:</label>
+                <select id="sug_semestre" autocomplete="off">
+                    <option value="1">Semestre 1</option><option value="2">Semestre 2</option>
+                    <option value="3">Semestre 3</option><option value="4">Semestre 4</option>
+                    <option value="5">Semestre 5</option><option value="6">Semestre 6</option>
+                    <option value="7">Semestre 7</option>
+                </select>
             </div>
             <div class="form-group">
                 <label style="font-weight: bold; color: #555; font-size: 13px;">Link (Site, PDF ou YouTube):</label>
@@ -190,9 +195,21 @@
             </div>
         </div>
 
-        <!-- Escolhas dos Colegas -->
+        <!-- Escolhas dos Colegas com Filtro por Semestre -->
         <div id="escolhas-colegas" class="tab-content">
-            <h3 style="color:#004080; margin-top:0; font-size:16px;">Livros escolhidos pelos colegas</h3>
+            <div class="flex-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+                <h3 style="color:#004080; margin:0; font-size:16px;">Livros escolhidos pelos colegas</h3>
+                <div style="width: 200px;">
+                    <label style="font-weight: bold; font-size:11px; color:#004080;">FILTRAR SEMESTRE:</label>
+                    <select id="filtroColegasSemestre" autocomplete="off" onchange="carregarEscolhasColegas()" style="padding: 5px; margin-top:2px;">
+                        <option value="todos">Todos os Semestres</option>
+                        <option value="1">Semestre 1</option><option value="2">Semestre 2</option>
+                        <option value="3">Semestre 3</option><option value="4">Semestre 4</option>
+                        <option value="5">Semestre 5</option><option value="6">Semestre 6</option>
+                        <option value="7">Semestre 7</option>
+                    </select>
+                </div>
+            </div>
             <div class="table-responsive">
                 <table>
                     <thead>
@@ -203,9 +220,9 @@
             </div>
         </div>
 
-        <!-- Agendar Livros Físicos -->
+        <!-- Agendar Livros Físicos (Título alterado) -->
         <div id="agendar-fisico" class="tab-content">
-            <h3 style="color:#004080; margin-top:0; font-size:16px;">Agendamento Físico de Livros</h3>
+            <h3 style="color:#004080; margin-top:0; font-size:16px;">Agendamento de livros físicos</h3>
             <div style="background: #e9f2fa; padding: 15px; border-radius: 4px; border-left: 4px solid #0066cc; margin-bottom: 15px; font-size: 13px;">
                 <strong>Nome:</strong> <span id="labelNomeProfessor"></span> <br>
                 <div style="margin-top: 8px;">
@@ -228,6 +245,7 @@
             apiKey: "AIzaSyD5aBrCz8rRAYLyqkD2WIlUwXy6P_U3Roo",
             authDomain: "projeto-literario-f8c24.firebaseapp.com",
             projectId: "projeto-literario-f8c24",
+            storageBucket: "projeto-literario-f8c24.firebasestorage.app",
             messagingSenderId: "129154242671",
             appId: "1:129154242671:web:a66a98213e9c4f4f6c159a"
         };
@@ -286,7 +304,10 @@
             for(let s in mapProfessores) {
                 mapProfessores[s].forEach(n => { n.split('/').forEach(part => nomes.add(part.trim())); });
             }
-            Array.from(nomes).sort().forEach(nome => { selectNome.innerHTML += `<option value="${nome}">${nome}</option>`; });
+            // Ordem alfabética estrita
+            Array.from(nomes).sort((a, b) => a.localeCompare(b, 'pt-BR')).forEach(nome => { 
+                selectNome.innerHTML += `<option value="${nome}">${nome}</option>`; 
+            });
 
             if(profSalvo) {
                 document.getElementById('selectProfessor').value = profSalvo;
@@ -301,7 +322,8 @@
                 showCancelButton: true,
                 confirmButtonColor: '#0066cc',
                 cancelButtonColor: '#aaa',
-                confirmButtonText: 'Sim, sair'
+                confirmButtonText: 'Sim, sair',
+                cancelButtonText: 'Cancelar'
             }).then((result) => {
                 if (result.isConfirmed) {
                     localStorage.removeItem('clm_professor');
@@ -331,7 +353,6 @@
             document.getElementById('modalIdentificacao').style.display = 'none';
             document.getElementById('appContainer').style.display = 'block';
             
-            // Ajuste para mobile caber na mesma linha
             let shortName = nome.split(' ')[0];
             document.getElementById('btnTopName').innerHTML = `<i class="fas fa-user"></i> ${shortName.toUpperCase()}`;
             document.getElementById('labelNomeProfessor').innerText = nome;
@@ -371,7 +392,7 @@
             
             const livrosFiltrados = acervo.filter(l => l.sem === semParaVisualizar);
             
-            livrosFiltrados.forEach(livro => {
+            livrosFiltrados.forEach((livro, index) => {
                 const badge = livro.qtd === "Digital" ? '<span class="tag-digital"><i class="fas fa-desktop"></i> Digital</span>' : `<span class="tag-fisico"><i class="fas fa-book"></i> Físico</span>`;
                 const linkDiv = livro.link ? `<a href="${livro.link}" target="_blank" style="color:#0066cc; font-size:12px; margin-top:5px; display:inline-block;"><i class="fas fa-external-link-alt"></i> Ver Material</a>` : '<div style="height:20px;"></div>';
                 
@@ -384,6 +405,7 @@
                 grid.innerHTML += `
                     <div class="book-card">
                         <div>
+                            <span class="tag-opcao">OPÇÃO ${index + 1}</span>
                             <h4 style="margin-top:0; color:#333; font-size:14px; margin-bottom: 5px;">${livro.titulo}</h4>
                             ${badge} <br>
                             ${linkDiv}
@@ -396,6 +418,24 @@
 
         window.escolherLivroParaSemestre = async function(tituloLivro) {
             const semSelecionado = document.getElementById('filtroNavegarSemestres').value;
+            
+            // Regra: Professor só pode escolher 1 livro por semestre
+            try {
+                const querySnapshot = await getDocs(collection(db, "escolhas"));
+                let jaTemEscolhaNesteSemestre = false;
+                querySnapshot.forEach(doc => {
+                    const data = doc.data();
+                    if(data.professor === window.professorLogado && data.semestre.toString() === semSelecionado.toString()) {
+                        jaTemEscolhaNesteSemestre = true;
+                    }
+                });
+
+                if(jaTemEscolhaNesteSemestre) {
+                    Swal.fire('Atenção', `Você já escolheu um livro para o Semestre ${semSelecionado}. Só é permitido 1 livro por semestre.`, 'warning');
+                    return;
+                }
+            } catch(e) { console.error(e); }
+
             Swal.fire({
                 title: 'Confirmar Escolha',
                 text: `Deseja escolher "${tituloLivro}" para a sua turma do Semestre ${semSelecionado}?`,
@@ -425,14 +465,11 @@
 
         window.buscarEscolhas = async function() {
             const tbMinhas = document.getElementById('tabelaMinhasEscolhas');
-            const tbColegas = document.getElementById('tabelaEscolhasColegas');
             tbMinhas.innerHTML = '<tr><td colspan="4">Carregando...</td></tr>';
-            tbColegas.innerHTML = '<tr><td colspan="3">Carregando...</td></tr>';
 
             try {
                 const querySnapshot = await getDocs(collection(db, "escolhas"));
                 let minhasHTML = '';
-                let colegasHTML = '';
 
                 querySnapshot.forEach((docSnap) => {
                     const id = docSnap.id;
@@ -449,13 +486,33 @@
                                 <button class="btn-excluir" onclick="excluirEscolha('${id}')"><i class="fas fa-trash"></i> Excluir</button>
                             </td>
                         </tr>`;
-                    } else {
-                        colegasHTML += `<tr><td><i class="fas fa-user-circle" style="color:#ccc;"></i> ${data.professor}</td><td>${data.livro}</td><td>Semestre ${data.semestre}</td></tr>`;
                     }
                 });
 
                 tbMinhas.innerHTML = minhasHTML || '<tr><td colspan="4">Você ainda não enviou escolhas.</td></tr>';
-                tbColegas.innerHTML = colegasHTML || '<tr><td colspan="3">Nenhum colega enviou escolhas ainda.</td></tr>';
+            } catch (error) { console.error(error); }
+        };
+
+        // --- ABA ESCOLHAS DOS COLEGAS COM FILTRO POR SEMESTRE ---
+        window.carregarEscolhasColegas = async function() {
+            const tbColegas = document.getElementById('tabelaEscolhasColegas');
+            tbColegas.innerHTML = '<tr><td colspan="3">Carregando...</td></tr>';
+            const filtroSem = document.getElementById('filtroColegasSemestre').value;
+
+            try {
+                const querySnapshot = await getDocs(collection(db, "escolhas"));
+                let colegasHTML = '';
+
+                querySnapshot.forEach((docSnap) => {
+                    const data = docSnap.data();
+                    if(data.professor !== window.professorLogado) {
+                        if(filtroSem === 'todos' || data.semestre.toString() === filtroSem.toString()) {
+                            colegasHTML += `<tr><td><i class="fas fa-user-circle" style="color:#ccc;"></i> ${data.professor}</td><td>${data.livro}</td><td>Semestre ${data.semestre}</td></tr>`;
+                        }
+                    }
+                });
+
+                tbColegas.innerHTML = colegasHTML || '<tr><td colspan="3">Nenhum colega encontrou escolhas para este filtro.</td></tr>';
             } catch (error) { console.error(error); }
         };
 
@@ -497,7 +554,7 @@
             });
         }
 
-        // --- SISTEMA DE SUGESTÕES (Buscar, Adicionar, Excluir) ---
+        // --- SISTEMA DE SUGESTÕES (Com Semestre Selecionado) ---
         window.buscarMinhasSugestoes = async function() {
             const tbSugestoes = document.getElementById('tabelaMinhasSugestoes');
             tbSugestoes.innerHTML = '<tr><td colspan="3">Carregando...</td></tr>';
@@ -538,12 +595,13 @@
 
         document.getElementById('btnEnviarSugestao').addEventListener('click', async () => {
             const titulo = document.getElementById('sug_titulo').value;
+            const semestre = document.getElementById('sug_semestre').value;
             const link = document.getElementById('sug_link').value;
+            
             if(!titulo) { Swal.fire('Atenção', 'Preencha o título do livro.', 'warning'); return; }
             try {
-                const semAtualFiltro = document.getElementById('filtroNavegarSemestres').value;
                 await addDoc(collection(db, "sugestoes"), {
-                    professor: window.professorLogado, semestre: semAtualFiltro,
+                    professor: window.professorLogado, semestre: semestre,
                     titulo: titulo, link: link || 'Sem link', dataEnvio: new Date().toISOString()
                 });
                 Swal.fire('Sucesso!', 'Sugestão enviada para a coordenação.', 'success');
