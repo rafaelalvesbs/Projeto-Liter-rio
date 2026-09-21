@@ -31,8 +31,8 @@
         .flex-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px; }
         .flex-header h3 { margin: 0; color: #004080; font-size: 18px; }
         
-        .table-responsive { width: 100%; margin-top: 15px; border-radius: 4px; }
-        table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; margin-top: 15px; border: 1px solid #ddd; border-radius: 4px; }
+        table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 600px; }
         table, th, td { border-bottom: 1px solid #ddd; }
         th, td { padding: 12px; text-align: left; }
         th { background-color: #f9f9f9; color: #333; }
@@ -56,7 +56,7 @@
             .menu button:nth-child(2n) { border-right: none; }
             .menu button:nth-last-child(-n+2) { border-bottom: none !important; }
 
-            .tab-content { padding: 12px; }
+            .tab-content { padding: 15px; }
             select { max-width: 100%; }
             .flex-header button { width: 100%; justify-content: center; padding: 10px; }
 
@@ -67,7 +67,7 @@
             td:last-child { border-bottom: none; }
 
             #tabelaProfessores td:nth-of-type(1)::before { content: "PROFESSOR(A):"; font-size: 10px; color: #888; font-weight: bold; }
-            #tabelaProfessores td:nth-of-type(2)::before { content: "LIVRO ESCOLHIDO / STATUS:"; font-size: 10px; color: #888; font-weight: bold; }
+            #tabelaProfessores td:nth-of-type(2)::before { content: "LIVRO ESCOLHIDO:"; font-size: 10px; color: #888; font-weight: bold; }
 
             #tabelaAcervo td:nth-of-type(1)::before { content: "SEMESTRE:"; font-size: 10px; color: #888; font-weight: bold; }
             #tabelaAcervo td:nth-of-type(2)::before { content: "LIVRO:"; font-size: 10px; color: #888; font-weight: bold; }
@@ -100,7 +100,7 @@
     <nav class="sub-header">
         <div class="menu">
             <button class="tab-link active" onclick="openTab('visaogeral', this); renderizarProfessores();"><i class="fas fa-home"></i> Cronograma Global</button>
-            <button class="tab-link" onclick="openTab('gerenciar', this)"><i class="fas fa-book"></i> Paradidáticos</button>
+            <button class="tab-link" onclick="openTab('gerenciar', this); renderizarAcervo();"><i class="fas fa-book"></i> Paradidáticos</button>
             <button class="tab-link" onclick="openTab('sugestoes', this)" id="btnCarregarSugestoes"><i class="fas fa-lightbulb"></i> Analisar Sugestões</button>
             <button class="tab-link" onclick="openTab('agendados', this); renderizarAgendamentosCoordenadora();"><i class="fas fa-calendar-check"></i> Livros Agendados</button>
         </div>
@@ -127,7 +127,7 @@
                     <thead>
                         <tr>
                             <th style="width: 35%;">Professor(a)</th>
-                            <th>Livro Escolhido / Status</th>
+                            <th>Livro Escolhido</th>
                         </tr>
                     </thead>
                     <tbody id="tabelaProfessores"></tbody>
@@ -137,7 +137,17 @@
 
         <!-- Paradidáticos -->
         <div id="gerenciar" class="tab-content">
-            <h3 style="color:#004080; margin-top:0; font-size: 18px;">Lista de Livros Paradidáticos</h3>
+            <h3 style="color:#004080; margin-top:0; font-size: 18px; margin-bottom: 15px;">Lista de Livros Paradidáticos</h3>
+            <div style="margin-bottom: 15px;">
+                <label style="font-weight: bold; color: #555; font-size: 14px; display: block; margin-bottom: 5px;">Filtrar por Semestre:</label>
+                <select id="filtroAcervoCoord" autocomplete="off" onchange="renderizarAcervo()">
+                    <option value="todos">Todos os Semestres</option>
+                    <option value="1">Semestre 1</option><option value="2">Semestre 2</option>
+                    <option value="3">Semestre 3</option><option value="4">Semestre 4</option>
+                    <option value="5">Semestre 5</option><option value="6">Semestre 6</option>
+                    <option value="7">Semestre 7</option>
+                </select>
+            </div>
             <div class="table-responsive">
                 <table>
                     <thead>
@@ -255,14 +265,32 @@
                     const data = doc.data();
                     if(data.semestre.toString().trim() === sem) {
                         const profNome = data.professor.trim();
+                        const livroEncontrado = acervo.find(l => l.titulo === data.livro && l.sem.toString() === sem);
+                        
+                        let infoExtra = '';
+                        if(livroEncontrado) {
+                            if(livroEncontrado.qtd === "Digital") {
+                                infoExtra += `<br><span style="font-size: 11px; color: #27ae60; display:inline-block; margin-top:4px; padding: 2px 6px; background: #e9f7ef; border-radius: 4px;"><i class="fas fa-desktop"></i> Formato 100% Digital</span>`;
+                            } else {
+                                infoExtra += `<br><span style="font-size: 11px; color: #d35400; display:inline-block; margin-top:4px; padding: 2px 6px; background: #fdf2e9; border-radius: 4px;"><i class="fas fa-book"></i> Biblioteca: ${livroEncontrado.qtd} cópias</span>`;
+                            }
+                            
+                            if(livroEncontrado.link && livroEncontrado.link !== "Sem link") {
+                                infoExtra += `<br><span style="font-size: 11px; color: #2980b9; display:inline-block; margin-top:4px; padding: 2px 6px; background: #ebf5fb; border-radius: 4px;"><i class="fas fa-link"></i> Link Online Disponível</span>`;
+                            }
+                        }
+
+                        const formatado = `<div style="margin-bottom: 10px;"><i class="fas fa-check-circle" style="color:#27ae60;"></i> <strong style="color:#27ae60;">${data.livro}</strong>${infoExtra}</div>`;
+
                         if(escolhasFeitas[profNome]) {
-                            escolhasFeitas[profNome] += `<br><i class="fas fa-check-circle"></i> ${data.livro}`;
+                            escolhasFeitas[profNome] += formatado;
                         } else {
-                            escolhasFeitas[profNome] = `<i class="fas fa-check-circle"></i> ${data.livro}`;
+                            escolhasFeitas[profNome] = formatado;
                         }
                     }
                 });
             } catch(e) {
+                console.error("Erro ao buscar escolhas", e);
                 Swal.fire('Erro', 'Falha ao sincronizar com o banco de dados.', 'error');
             }
 
@@ -272,8 +300,8 @@
                 let statusParts = profNomes.map(pn => {
                     pn = pn.trim();
                     return escolhasFeitas[pn] 
-                        ? `<span class="status-escolhido">${escolhasFeitas[pn]} ${profNomes.length > 1 ? '('+pn+')' : ''}</span>` 
-                        : `<span class="status-aguardando"><i class="fas fa-clock"></i> Aguardando ${profNomes.length > 1 ? pn : 'escolha'}</span>`;
+                        ? `<div style="margin-bottom:5px;">${escolhasFeitas[pn]} ${profNomes.length > 1 ? '<span style="font-size:11px; color:#7f8c8d;">('+pn+')</span>' : ''}</div>` 
+                        : `<div class="status-aguardando" style="margin-bottom:5px;"><i class="fas fa-clock"></i> Aguardando ${profNomes.length > 1 ? pn : 'escolha'}</div>`;
                 });
                 
                 tbody.innerHTML += `<tr>
@@ -283,14 +311,27 @@
                             <strong>${prof}</strong>
                         </div>
                     </td>
-                    <td style="line-height: 1.5;">${statusParts.join('<br>')}</td>
+                    <td style="line-height: 1.5; padding: 12px 10px;">${statusParts.join('')}</td>
                 </tr>`;
             });
         };
 
-        function renderizarAcervo() {
+        window.renderizarAcervo = function() {
             const tbody = document.getElementById('tabelaAcervo');
-            acervo.forEach(livro => {
+            const filtro = document.getElementById('filtroAcervoCoord').value;
+            tbody.innerHTML = '';
+
+            let livrosFiltrados = acervo;
+            if (filtro !== 'todos') {
+                livrosFiltrados = acervo.filter(l => l.sem.toString() === filtro);
+            }
+
+            if (livrosFiltrados.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">Nenhum livro cadastrado para este semestre.</td></tr>';
+                return;
+            }
+
+            livrosFiltrados.forEach(livro => {
                 const badge = livro.qtd === "Digital" ? '<span class="tag-digital"><i class="fas fa-desktop"></i> Digital</span>' : `<span class="tag-fisico"><i class="fas fa-book"></i> Físico - ${livro.qtd}</span>`;
                 const linkBtn = livro.link ? `<a href="${livro.link}" target="_blank" class="tag-digital" style="background:#3498db;"><i class="fas fa-external-link-alt"></i> Acessar Material</a>` : 'N/A';
                 tbody.innerHTML += `<tr><td>Semestre ${livro.sem}</td><td><strong>${livro.titulo}</strong></td><td>${badge}</td><td>${linkBtn}</td></tr>`;
