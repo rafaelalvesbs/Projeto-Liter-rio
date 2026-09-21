@@ -18,9 +18,8 @@
         .top-btn { background: white; color: #333; border: 1px solid #ccc; padding: 6px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 5px; }
         
         .sub-header { background-color: white; border-bottom: 1px solid #ccc; display: flex; align-items: center; padding: 0; }
-        .menu { display: flex; width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; -ms-overflow-style: none; }
-        .menu::-webkit-scrollbar { display: none; }
-        .menu button { background: none; border: none; color: #555; font-size: 13px; cursor: pointer; padding: 15px; display: flex; align-items: center; gap: 6px; white-space: nowrap; border-bottom: 3px solid transparent; transition: 0.2s; }
+        .menu { display: flex; width: 100%; }
+        .menu button { background: none; border: none; color: #555; font-size: 13px; cursor: pointer; padding: 15px; display: flex; align-items: center; justify-content: center; gap: 6px; white-space: nowrap; border-bottom: 3px solid transparent; transition: 0.2s; box-sizing: border-box;}
         .menu button i { color: #0066cc; }
         .menu button:hover, .menu button.active { color: #0066cc; background-color: #f0f7ff; font-weight: bold; border-bottom: 3px solid #0066cc; }
         
@@ -31,8 +30,8 @@
         .flex-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px; }
         .flex-header h3 { margin: 0; color: #004080; font-size: 18px; }
         
-        .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; margin-top: 15px; border: 1px solid #ddd; border-radius: 4px; }
-        table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 600px; }
+        .table-responsive { width: 100%; margin-top: 15px; border-radius: 4px; }
+        table { width: 100%; border-collapse: collapse; font-size: 14px; }
         table, th, td { border-bottom: 1px solid #ddd; }
         th, td { padding: 12px; text-align: left; }
         th { background-color: #f9f9f9; color: #333; }
@@ -44,6 +43,7 @@
         .status-aguardando { color: #e67e22; font-style: italic; }
         .status-escolhido { color: #27ae60; font-weight: bold; }
 
+        /* Estilos e Responsividade para Mobile */
         @media (max-width: 768px) {
             .top-header { flex-wrap: nowrap !important; padding: 10px; }
             .top-header-left .logo-icon { font-size: 18px; }
@@ -51,9 +51,41 @@
             .top-header-right { width: auto; justify-content: flex-end; }
             .top-btn { font-size: 10px; padding: 5px 8px; white-space: nowrap; }
 
-            .tab-content { padding: 15px; }
+            /* 2 Menus em cima e 2 em baixo */
+            .menu { flex-wrap: wrap; }
+            .menu button { width: 50%; flex-direction: column; padding: 12px 5px; font-size: 11px; border-right: 1px solid #eee; border-bottom: 1px solid #eee !important; gap: 5px; }
+            .menu button:nth-child(2n) { border-right: none; }
+            .menu button:nth-last-child(-n+2) { border-bottom: none !important; }
+
+            .tab-content { padding: 12px; }
             select { max-width: 100%; }
             .flex-header button { width: 100%; justify-content: center; padding: 10px; }
+
+            /* Tabelas Responsivas: Transformando em Cards Dinâmicos */
+            table, thead, tbody, th, td, tr { display: block; width: 100%; box-sizing: border-box; }
+            thead tr { display: none; }
+            tr { margin-bottom: 12px; border: 1px solid #ddd; border-radius: 6px; padding: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); background: white;}
+            td { text-align: left !important; border: none; border-bottom: 1px solid #f0f0f0; padding: 8px 10px !important; display: flex; flex-direction: column; gap: 3px; font-size: 13px; }
+            td:last-child { border-bottom: none; }
+
+            /* Injetando Rótulos Dinâmicos via CSS no Mobile */
+            #tabelaProfessores td:nth-of-type(1)::before { content: "PROFESSOR(A):"; font-size: 10px; color: #888; font-weight: bold; }
+            #tabelaProfessores td:nth-of-type(2)::before { content: "LIVRO ESCOLHIDO / STATUS:"; font-size: 10px; color: #888; font-weight: bold; }
+
+            #tabelaAcervo td:nth-of-type(1)::before { content: "SEMESTRE:"; font-size: 10px; color: #888; font-weight: bold; }
+            #tabelaAcervo td:nth-of-type(2)::before { content: "LIVRO:"; font-size: 10px; color: #888; font-weight: bold; }
+            #tabelaAcervo td:nth-of-type(3)::before { content: "TIPO / QUANTIDADE:"; font-size: 10px; color: #888; font-weight: bold; }
+            #tabelaAcervo td:nth-of-type(4)::before { content: "LINK / MATERIAL:"; font-size: 10px; color: #888; font-weight: bold; }
+
+            #tabelaSugestoes td:nth-of-type(1)::before { content: "PROFESSOR:"; font-size: 10px; color: #888; font-weight: bold; }
+            #tabelaSugestoes td:nth-of-type(2)::before { content: "TÍTULO:"; font-size: 10px; color: #888; font-weight: bold; }
+            #tabelaSugestoes td:nth-of-type(3)::before { content: "SEMESTRE INDICADO:"; font-size: 10px; color: #888; font-weight: bold; }
+            #tabelaSugestoes td:nth-of-type(4)::before { content: "LINK:"; font-size: 10px; color: #888; font-weight: bold; }
+
+            #areaTabelasAgendamento table td:nth-of-type(1)::before { content: "SEMANA:"; font-size: 10px; color: #888; font-weight: bold; }
+            #areaTabelasAgendamento table td:nth-of-type(2)::before { content: "STATUS / PROFESSOR:"; font-size: 10px; color: #888; font-weight: bold; }
+
+            .table-responsive { border: none; margin-top: 5px; }
         }
     </style>
 </head>
@@ -64,7 +96,7 @@
             <div class="logo-text"><strong>PROJETO LITERÁRIO</strong></div>
         </div>
         <div class="top-header-right">
-            <button class="top-btn"><i class="fas fa-user"></i> SÔNIA</button>
+            <button class="top-btn"><i class="fas fa-user-circle"></i> SÔNIA</button>
         </div>
     </header>
 
@@ -234,6 +266,7 @@
                     }
                 });
             } catch(e) {
+                console.error("Erro ao buscar escolhas", e);
                 Swal.fire('Erro', 'Falha ao sincronizar com o banco de dados.', 'error');
             }
 
@@ -257,7 +290,7 @@
         function renderizarAcervo() {
             const tbody = document.getElementById('tabelaAcervo');
             acervo.forEach(livro => {
-                const badge = livro.qtd === "Digital" ? '<span class="tag-digital">Digital</span>' : `<span class="tag-fisico">Físico - ${livro.qtd}</span>`;
+                const badge = livro.qtd === "Digital" ? '<span class="tag-digital"><i class="fas fa-desktop"></i> Digital</span>' : `<span class="tag-fisico"><i class="fas fa-book"></i> Físico - ${livro.qtd}</span>`;
                 const linkBtn = livro.link ? `<a href="${livro.link}" target="_blank" class="tag-digital" style="background:#3498db;"><i class="fas fa-external-link-alt"></i> Acessar Material</a>` : 'N/A';
                 tbody.innerHTML += `<tr><td>Semestre ${livro.sem}</td><td><strong>${livro.titulo}</strong></td><td>${badge}</td><td>${linkBtn}</td></tr>`;
             });
@@ -319,7 +352,7 @@
                     });
 
                     htmlFinal += `
-                    <div style="margin-bottom: 25px; border: 1px solid #0066cc; border-radius: 4px; overflow: hidden;">
+                    <div style="margin-bottom: 25px; border: 1px solid #0066cc; border-radius: 4px; overflow: hidden; background: white;">
                         <h4 style="background: #0066cc; color: white; margin: 0; padding: 10px 15px;"><i class="fas fa-book"></i> ${livro.titulo} (Estoque: ${livro.qtd})</h4>
                         <div class="table-responsive" style="margin: 0; border: none;">
                             <table style="margin: 0;">
