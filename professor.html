@@ -97,6 +97,8 @@
             #tabelaEscolhasColegas td:nth-of-type(1)::before { content: "PROFESSOR(A):"; font-size: 10px; color: #888; font-weight: bold; }
             #tabelaEscolhasColegas td:nth-of-type(2)::before { content: "LIVRO:"; font-size: 10px; color: #888; font-weight: bold; }
             #tabelaEscolhasColegas td:nth-of-type(3)::before { content: "SEMESTRE:"; font-size: 10px; color: #888; font-weight: bold; }
+
+            .table-responsive { border: none; margin-top: 5px;}
         }
     </style>
 </head>
@@ -198,7 +200,7 @@
             </div>
         </div>
 
-        <!-- Escolhas dos Colegas -->
+        <!-- Escolhas Colegas -->
         <div id="escolhas-colegas" class="tab-content">
             <div class="catalogo-header" style="align-items:center;">
                 <h3 style="color:#004080; margin:0; font-size:16px;">Livros escolhidos pelos colegas</h3>
@@ -261,9 +263,9 @@
             2: ["Lígia", "Luzirene", "João Paulo", "Sônia", "Miguel", "Kethleen", "Rafael", "Nelson", "Iasmin", "Angélica"],
             3: ["Lígia", "Luzirene", "Sônia", "Miguel", "Nelson", "Iasmin", "Angélica"],
             4: ["Rômulo", "João Paulo", "Luzirene", "Márcio", "Sônia", "Guilherme"],
-            5: ["Lígia", "João Paulo", "Rômulo", "Márcio/Guilherme", "Kethleen"],
-            6: ["Rômulo", "Márcio/Guilherme", "Kethleen", "Miguel"],
-            7: ["Keyle", "Márcio/Guilherme", "Miguel"]
+            5: ["Lígia", "João Paulo", "Rômulo", "Guilherme", "Kethleen"],
+            6: ["Rômulo", "Guilherme", "Kethleen", "Miguel"],
+            7: ["Keyle", "Guilherme", "Miguel"]
         };
 
         const acervo = [
@@ -305,7 +307,9 @@
             const selectNome = document.getElementById('selectProfessor');
             selectNome.innerHTML = '<option value="">Selecione...</option>';
             let nomes = new Set();
-            for(let s in mapProfessores) mapProfessores[s].forEach(n => { n.split('/').forEach(part => nomes.add(part.trim())); });
+            for(let s in mapProfessores) {
+                mapProfessores[s].forEach(n => { n.split('/').forEach(part => nomes.add(part.trim())); });
+            }
             Array.from(nomes).sort((a, b) => a.localeCompare(b, 'pt-BR')).forEach(nome => { selectNome.innerHTML += `<option value="${nome}">${nome}</option>`; });
 
             if(profSalvo) {
@@ -444,8 +448,10 @@
                         minhasHTML += `<tr>
                             <td><strong>${data.livro}</strong></td><td>Semestre ${data.semestre}</td><td>${dataFormatada}</td>
                             <td>
-                                <button class="btn-editar" onclick="editarEscolha('${id}')"><i class="fas fa-edit"></i> Editar</button>
-                                <button class="btn-excluir" onclick="excluirEscolha('${id}')"><i class="fas fa-trash"></i> Excluir</button>
+                                <div style="display:flex; gap:5px;">
+                                    <button class="btn-editar" onclick="editarEscolha('${id}')"><i class="fas fa-edit"></i> Editar</button>
+                                    <button class="btn-excluir" onclick="excluirEscolha('${id}')"><i class="fas fa-trash"></i> Excluir</button>
+                                </div>
                             </td>
                         </tr>`;
                     }
@@ -465,7 +471,11 @@
                     const data = docSnap.data();
                     if(data.professor !== window.professorLogado) {
                         if(filtroSem === 'todos' || data.semestre.toString() === filtroSem.toString()) {
-                            colegasHTML += `<tr><td><i class="fas fa-user-circle" style="color:#ccc;"></i> ${data.professor}</td><td>${data.livro}</td><td>Semestre ${data.semestre}</td></tr>`;
+                            colegasHTML += `<tr><td>
+                                <div style="display:flex; align-items:center; gap:8px;">
+                                    <i class="fas fa-user-circle" style="color:#ccc;"></i> ${data.professor}
+                                </div>
+                            </td><td>${data.livro}</td><td>Semestre ${data.semestre}</td></tr>`;
                         }
                     }
                 });
