@@ -18,7 +18,8 @@
         .top-btn { background: white; color: #333; border: 1px solid #ccc; padding: 6px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 5px; }
         
         .sub-header { background-color: white; border-bottom: 1px solid #ccc; display: flex; align-items: center; padding: 0; }
-        .menu { display: flex; width: 100%; }
+        .menu { display: flex; width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; -ms-overflow-style: none; }
+        .menu::-webkit-scrollbar { display: none; }
         .menu button { background: none; border: none; color: #555; font-size: 13px; cursor: pointer; padding: 15px; display: flex; align-items: center; justify-content: center; gap: 6px; white-space: nowrap; border-bottom: 3px solid transparent; transition: 0.2s; box-sizing: border-box;}
         .menu button i { color: #0066cc; }
         .menu button:hover, .menu button.active { color: #0066cc; background-color: #f0f7ff; font-weight: bold; border-bottom: 3px solid #0066cc; }
@@ -43,7 +44,6 @@
         .status-aguardando { color: #e67e22; font-style: italic; }
         .status-escolhido { color: #27ae60; font-weight: bold; }
 
-        /* Estilos e Responsividade para Mobile */
         @media (max-width: 768px) {
             .top-header { flex-wrap: nowrap !important; padding: 10px; }
             .top-header-left .logo-icon { font-size: 18px; }
@@ -51,7 +51,6 @@
             .top-header-right { width: auto; justify-content: flex-end; }
             .top-btn { font-size: 10px; padding: 5px 8px; white-space: nowrap; }
 
-            /* 2 Menus em cima e 2 em baixo */
             .menu { flex-wrap: wrap; }
             .menu button { width: 50%; flex-direction: column; padding: 12px 5px; font-size: 11px; border-right: 1px solid #eee; border-bottom: 1px solid #eee !important; gap: 5px; }
             .menu button:nth-child(2n) { border-right: none; }
@@ -61,14 +60,12 @@
             select { max-width: 100%; }
             .flex-header button { width: 100%; justify-content: center; padding: 10px; }
 
-            /* Tabelas Responsivas: Transformando em Cards Dinâmicos */
             table, thead, tbody, th, td, tr { display: block; width: 100%; box-sizing: border-box; }
             thead tr { display: none; }
             tr { margin-bottom: 12px; border: 1px solid #ddd; border-radius: 6px; padding: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); background: white;}
             td { text-align: left !important; border: none; border-bottom: 1px solid #f0f0f0; padding: 8px 10px !important; display: flex; flex-direction: column; gap: 3px; font-size: 13px; }
             td:last-child { border-bottom: none; }
 
-            /* Injetando Rótulos Dinâmicos via CSS no Mobile */
             #tabelaProfessores td:nth-of-type(1)::before { content: "PROFESSOR(A):"; font-size: 10px; color: #888; font-weight: bold; }
             #tabelaProfessores td:nth-of-type(2)::before { content: "LIVRO ESCOLHIDO / STATUS:"; font-size: 10px; color: #888; font-weight: bold; }
 
@@ -207,9 +204,9 @@
             2: ["Lígia", "Luzirene", "João Paulo", "Sônia", "Miguel", "Kethleen", "Rafael", "Nelson", "Iasmin", "Angélica"],
             3: ["Lígia", "Luzirene", "Sônia", "Miguel", "Nelson", "Iasmin", "Angélica"],
             4: ["Rômulo", "João Paulo", "Luzirene", "Márcio", "Sônia", "Guilherme"],
-            5: ["Lígia", "João Paulo", "Rômulo", "Márcio/Guilherme", "Kethleen"],
-            6: ["Rômulo", "Márcio/Guilherme", "Kethleen", "Miguel"],
-            7: ["Keyle", "Márcio/Guilherme", "Miguel"]
+            5: ["Lígia", "João Paulo", "Rômulo", "Guilherme", "Kethleen"],
+            6: ["Rômulo", "Guilherme", "Kethleen", "Miguel"],
+            7: ["Keyle", "Guilherme", "Miguel"]
         };
 
         const acervo = [
@@ -266,7 +263,6 @@
                     }
                 });
             } catch(e) {
-                console.error("Erro ao buscar escolhas", e);
                 Swal.fire('Erro', 'Falha ao sincronizar com o banco de dados.', 'error');
             }
 
@@ -281,7 +277,12 @@
                 });
                 
                 tbody.innerHTML += `<tr>
-                    <td><i class="fas fa-user-circle" style="color:#0066cc; margin-right:8px; font-size:16px;"></i> <strong>${prof}</strong></td>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <i class="fas fa-user-circle" style="color:#0066cc; font-size:16px;"></i> 
+                            <strong>${prof}</strong>
+                        </div>
+                    </td>
                     <td style="line-height: 1.5;">${statusParts.join('<br>')}</td>
                 </tr>`;
             });
@@ -308,7 +309,12 @@
                     const data = doc.data();
                     const link = data.link !== 'Sem link' ? `<a href="${data.link}" target="_blank" style="color:#0066cc;"><i class="fas fa-external-link-alt"></i> Abrir Link</a>` : 'Sem link';
                     tbody.innerHTML += `<tr>
-                        <td><i class="fas fa-user-circle" style="color:#ccc;"></i> ${data.professor}</td>
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <i class="fas fa-user-circle" style="color:#ccc;"></i> 
+                                ${data.professor}
+                            </div>
+                        </td>
                         <td><strong>${data.titulo}</strong></td>
                         <td>Semestre ${data.semestre}</td>
                         <td>${link}</td>
