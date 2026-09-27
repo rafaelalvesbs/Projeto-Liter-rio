@@ -34,7 +34,7 @@
         .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; margin-top: 15px; border: 1px solid #ddd; border-radius: 4px; }
         table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 600px; }
         table, th, td { border-bottom: 1px solid #ddd; }
-        th, td { padding: 12px; text-align: left; }
+        th, td { padding: 12px; text-align: left; vertical-align: middle; }
         th { background-color: #f9f9f9; color: #333; }
         
         select { padding: 10px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; width: 100%; max-width: 300px; font-size: 14px; }
@@ -43,6 +43,12 @@
         .tag-fisico { background: #e67e22; color: white; padding: 4px 10px; border-radius: 4px; font-size: 11px; display: inline-block; }
         .status-aguardando { color: #e67e22; font-style: italic; }
         .status-escolhido { color: #27ae60; font-weight: bold; }
+
+        /* Botões de Entrega e Devolução */
+        .btn-acao { border: 1px solid #ccc; background: white; color: #555; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; transition: 0.2s; width: 100%; text-align: left; display: block; box-sizing: border-box; font-weight: bold; }
+        .btn-acao:hover { background: #f0f0f0; }
+        .btn-entregue-ativo { background: #27ae60; color: white; border: 1px solid #27ae60; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; width: 100%; text-align: left; display: block; box-sizing: border-box; font-weight: bold; }
+        .btn-devolvido-ativo { background: #2980b9; color: white; border: 1px solid #2980b9; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; width: 100%; text-align: left; display: block; box-sizing: border-box; font-weight: bold; }
 
         @media (max-width: 768px) {
             .top-header { flex-wrap: nowrap !important; padding: 10px; }
@@ -54,7 +60,7 @@
             .menu { flex-wrap: wrap; }
             .menu button { width: 50%; flex-direction: column; padding: 12px 5px; font-size: 11px; border-right: 1px solid #eee; border-bottom: 1px solid #eee !important; gap: 5px; }
             .menu button:nth-child(2n) { border-right: none; }
-            .menu button:nth-last-child(-n+2) { border-bottom: none !important; }
+            .menu button:last-child:nth-child(odd) { width: 100%; border-right: none; } /* Ajuste para o 5º botão ocupar a linha toda */
 
             .tab-content { padding: 15px; }
             select { max-width: 100%; }
@@ -82,6 +88,12 @@
             #areaTabelasAgendamento table td:nth-of-type(1)::before { content: "SEMANA:"; font-size: 10px; color: #888; font-weight: bold; }
             #areaTabelasAgendamento table td:nth-of-type(2)::before { content: "STATUS / PROFESSOR:"; font-size: 10px; color: #888; font-weight: bold; }
 
+            #tabelaEntregas td:nth-of-type(1)::before { content: "PROFESSOR:"; font-size: 10px; color: #888; font-weight: bold; }
+            #tabelaEntregas td:nth-of-type(2)::before { content: "LIVRO:"; font-size: 10px; color: #888; font-weight: bold; }
+            #tabelaEntregas td:nth-of-type(3)::before { content: "SEMANA AGENDADA:"; font-size: 10px; color: #888; font-weight: bold; }
+            #tabelaEntregas td:nth-of-type(4)::before { content: "STATUS DE ENTREGA:"; font-size: 10px; color: #888; font-weight: bold; }
+            #tabelaEntregas td:nth-of-type(5)::before { content: "STATUS DE DEVOLUÇÃO:"; font-size: 10px; color: #888; font-weight: bold; }
+
             .table-responsive { border: none; margin-top: 5px; }
         }
     </style>
@@ -103,6 +115,8 @@
             <button class="tab-link" onclick="openTab('gerenciar', this); renderizarAcervo();"><i class="fas fa-book"></i> Paradidáticos</button>
             <button class="tab-link" onclick="openTab('sugestoes', this)" id="btnCarregarSugestoes"><i class="fas fa-lightbulb"></i> Analisar Sugestões</button>
             <button class="tab-link" onclick="openTab('agendados', this); renderizarAgendamentosCoordenadora();"><i class="fas fa-calendar-check"></i> Livros Agendados</button>
+            <!-- NOVA ABA: CONTROLE DE ENTREGAS -->
+            <button class="tab-link" onclick="openTab('controle-entregas', this); renderizarControleEntregas();"><i class="fas fa-box-open"></i> Controle de Entregas</button>
         </div>
     </nav>
 
@@ -192,11 +206,47 @@
                 <!-- Construído via JS -->
             </div>
         </div>
+
+        <!-- NOVA ABA: Controle de Entregas -->
+        <div id="controle-entregas" class="tab-content">
+            <div class="flex-header">
+                <h3>Controle de Entrega e Devolução (Livros Físicos)</h3>
+                <button class="top-btn" style="background:#0066cc; color:white; border:none;" onclick="renderizarControleEntregas()"><i class="fas fa-sync-alt"></i> Atualizar Dados</button>
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label style="font-weight: bold; color: #555; font-size: 14px; display: block; margin-bottom: 5px;">Filtrar por Semestre:</label>
+                <select id="filtroControleEntregas" autocomplete="off" onchange="renderizarControleEntregas()">
+                    <option value="todos">Todos os Semestres</option>
+                    <option value="1">Semestre 1</option><option value="2">Semestre 2</option>
+                    <option value="3">Semestre 3</option><option value="4">Semestre 4</option>
+                    <option value="5">Semestre 5</option><option value="6">Semestre 6</option>
+                    <option value="7">Semestre 7</option>
+                </select>
+            </div>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Professor</th>
+                            <th>Livro</th>
+                            <th>Semana Agendada</th>
+                            <th style="width: 200px;">Status Entrega</th>
+                            <th style="width: 200px;">Status Devolução</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelaEntregas">
+                        <tr><td colspan="5" style="text-align: center;">Carregando dados...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        // Importamos também o doc e updateDoc para atualizar o status dinamicamente
+        import { getFirestore, collection, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyD5aBrCz8rRAYLyqkD2WIlUwXy6P_U3Roo",
@@ -418,6 +468,82 @@
             }
         };
 
+        // --- NOVA FUNÇÃO: CONTROLE DE ENTREGAS ---
+        window.renderizarControleEntregas = async function() {
+            const tbody = document.getElementById('tabelaEntregas');
+            const filtro = document.getElementById('filtroControleEntregas').value;
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;"><i class="fas fa-spinner fa-spin"></i> Buscando agendamentos...</td></tr>';
+
+            try {
+                // Como as entregas ocorrem baseadas nos agendamentos de livros físicos
+                const snap = await getDocs(collection(db, "agendamentos"));
+                let agendamentosLista = [];
+                snap.forEach(doc => {
+                    agendamentosLista.push({ id: doc.id, ...doc.data() });
+                });
+
+                // Ordena por semana para melhor organização
+                agendamentosLista.sort((a, b) => a.semana.localeCompare(b.semana));
+
+                let html = '';
+                agendamentosLista.forEach(item => {
+                    if (filtro === 'todos' || item.semestre.toString() === filtro) {
+                        
+                        const entregue = !!item.entregue;
+                        const devolvido = !!item.devolvido;
+
+                        const btnEntregaClass = entregue ? 'btn-entregue-ativo' : 'btn-acao';
+                        const txtEntrega = entregue ? '<i class="fas fa-check"></i> Entregue ao Prof.' : '<i class="fas fa-box"></i> Marcar Entrega';
+
+                        const btnDevolucaoClass = devolvido ? 'btn-devolvido-ativo' : 'btn-acao';
+                        const txtDevolucao = devolvido ? '<i class="fas fa-check-double"></i> Devolvido à Coord.' : '<i class="fas fa-undo"></i> Marcar Devolução';
+
+                        html += `<tr>
+                            <td>
+                                <strong>${item.professor}</strong><br>
+                                <span style="font-size: 11px; color:#777;">Semestre ${item.semestre}</span>
+                            </td>
+                            <td>${item.livro}</td>
+                            <td>${item.semana}</td>
+                            <td>
+                                <button class="${btnEntregaClass}" onclick="alternarStatusEntrega('${item.id}', 'entregue', ${entregue})">${txtEntrega}</button>
+                            </td>
+                            <td>
+                                <button class="${btnDevolucaoClass}" onclick="alternarStatusEntrega('${item.id}', 'devolvido', ${devolvido})">${txtDevolucao}</button>
+                            </td>
+                        </tr>`;
+                    }
+                });
+
+                if (html === '') {
+                    html = '<tr><td colspan="5" style="text-align: center;">Nenhum agendamento encontrado neste semestre.</td></tr>';
+                }
+
+                tbody.innerHTML = html;
+
+            } catch (error) {
+                console.error("Erro ao carregar entregas:", error);
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: red;">Erro ao carregar dados.</td></tr>';
+            }
+        };
+
+        // Função para atualizar os dados de entrega no banco do Firebase
+        window.alternarStatusEntrega = async function(idDocumento, campo, statusAtual) {
+            try {
+                const docRef = doc(db, "agendamentos", idDocumento);
+                await updateDoc(docRef, {
+                    [campo]: !statusAtual
+                });
+                
+                // Recarrega a tabela imediatamente sem precisar usar alerts para agilizar o processo da coordenação
+                renderizarControleEntregas();
+            } catch (error) {
+                console.error("Erro ao atualizar status:", error);
+                Swal.fire('Erro', 'Não foi possível salvar o status.', 'error');
+            }
+        };
+
+        // Renderiza tudo na carga inicial
         renderizarProfessores();
         renderizarAcervo();
     </script>
