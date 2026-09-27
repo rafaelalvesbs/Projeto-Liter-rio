@@ -44,7 +44,6 @@
         .status-aguardando { color: #e67e22; font-style: italic; }
         .status-escolhido { color: #27ae60; font-weight: bold; }
 
-        /* Botões de Entrega e Devolução */
         .btn-acao { border: 1px solid #ccc; background: white; color: #555; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; transition: 0.2s; width: 100%; text-align: left; display: block; box-sizing: border-box; font-weight: bold; }
         .btn-acao:hover { background: #f0f0f0; }
         .btn-entregue-ativo { background: #27ae60; color: white; border: 1px solid #27ae60; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; width: 100%; text-align: left; display: block; box-sizing: border-box; font-weight: bold; }
@@ -60,7 +59,7 @@
             .menu { flex-wrap: wrap; }
             .menu button { width: 50%; flex-direction: column; padding: 12px 5px; font-size: 11px; border-right: 1px solid #eee; border-bottom: 1px solid #eee !important; gap: 5px; }
             .menu button:nth-child(2n) { border-right: none; }
-            .menu button:last-child:nth-child(odd) { width: 100%; border-right: none; } /* Ajuste para o 5º botão ocupar a linha toda */
+            .menu button:last-child:nth-child(odd) { width: 100%; border-right: none; }
 
             .tab-content { padding: 15px; }
             select { max-width: 100%; }
@@ -86,7 +85,7 @@
             #tabelaSugestoes td:nth-of-type(4)::before { content: "LINK:"; font-size: 10px; color: #888; font-weight: bold; }
 
             #areaTabelasAgendamento table td:nth-of-type(1)::before { content: "SEMANA:"; font-size: 10px; color: #888; font-weight: bold; }
-            #areaTabelasAgendamento table td:nth-of-type(2)::before { content: "STATUS / PROFESSOR:"; font-size: 10px; color: #888; font-weight: bold; }
+            #areaTabelasAgendamento table td:nth-of-type(2)::before { content: "PROFESSOR AGENDADO:"; font-size: 10px; color: #888; font-weight: bold; }
 
             #tabelaEntregas td:nth-of-type(1)::before { content: "PROFESSOR:"; font-size: 10px; color: #888; font-weight: bold; }
             #tabelaEntregas td:nth-of-type(2)::before { content: "LIVRO:"; font-size: 10px; color: #888; font-weight: bold; }
@@ -115,7 +114,6 @@
             <button class="tab-link" onclick="openTab('gerenciar', this); renderizarAcervo();"><i class="fas fa-book"></i> Paradidáticos</button>
             <button class="tab-link" onclick="openTab('sugestoes', this)" id="btnCarregarSugestoes"><i class="fas fa-lightbulb"></i> Analisar Sugestões</button>
             <button class="tab-link" onclick="openTab('agendados', this); renderizarAgendamentosCoordenadora();"><i class="fas fa-calendar-check"></i> Livros Agendados</button>
-            <!-- NOVA ABA: CONTROLE DE ENTREGAS -->
             <button class="tab-link" onclick="openTab('controle-entregas', this); renderizarControleEntregas();"><i class="fas fa-box-open"></i> Controle de Entregas</button>
         </div>
     </nav>
@@ -207,7 +205,7 @@
             </div>
         </div>
 
-        <!-- NOVA ABA: Controle de Entregas -->
+        <!-- Controle de Entregas -->
         <div id="controle-entregas" class="tab-content">
             <div class="flex-header">
                 <h3>Controle de Entrega e Devolução (Livros Físicos)</h3>
@@ -245,7 +243,6 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        // Importamos também o doc e updateDoc para atualizar o status dinamicamente
         import { getFirestore, collection, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -419,38 +416,47 @@
         window.renderizarAgendamentosCoordenadora = async function() {
             const sem = parseInt(document.getElementById('filtroAgendamentoCoord').value);
             const area = document.getElementById('areaTabelasAgendamento');
-            area.innerHTML = '<div style="text-align:center;"><i class="fas fa-spinner fa-spin"></i> Buscando quadro de agendamentos no banco...</div>';
-
-            const livrosFisicos = acervo.filter(l => l.sem === sem && l.qtd !== "Digital");
-
-            if(livrosFisicos.length === 0) {
-                area.innerHTML = `<div style="border: 2px dashed #ccc; padding: 20px; text-align: center; color: #777; border-radius: 4px;">Nenhum livro físico para controle neste semestre.</div>`;
-                return;
-            }
+            area.innerHTML = '<div style="text-align:center;"><i class="fas fa-spinner fa-spin"></i> Buscando agendamentos no banco...</div>';
 
             try {
                 const snap = await getDocs(collection(db, "agendamentos"));
                 let agendaData = [];
                 snap.forEach(doc => agendaData.push(doc.data()));
 
+                let agendamentosDoSemestre = agendaData.filter(a => parseInt(a.semestre) === sem);
+
+                // Se não existir NENHUM agendamento para o semestre, exibe o aviso
+                if(agendamentosDoSemestre.length === 0) {
+                    area.innerHTML = `<div style="border: 2px dashed #ccc; padding: 20px; text-align: center; color: #777; border-radius: 4px;">Nenhum livro físico agendado pelos professores neste semestre até o momento.</div>`;
+                    return;
+                }
+
                 let htmlFinal = '';
 
-                livrosFisicos.forEach(livro => {
-                    let linhasSemanas = '';
+                // Isola apenas os Nomes dos Livros que constam na lista de agendamentos deste semestre
+                const livrosAgendados = [...new Set(agendamentosDoSemestre.map(a => a.livro))];
+
+                livrosAgendados.forEach(livroNome => {
+                    const livroInfo = acervo.find(l => l.titulo === livroNome && l.sem === sem);
+                    const qtd = livroInfo ? livroInfo.qtd : 'N/A';
                     
-                    semanasAgendamento.forEach(semana => {
-                        const reserva = agendaData.find(a => a.livro === livro.titulo && a.semana === semana && parseInt(a.semestre) === livro.sem);
-                        const prof = reserva ? `<strong style="color:#27ae60;">${reserva.professor}</strong>` : '<span style="color:#aaa;">--- Disponível ---</span>';
-                        
+                    let linhasSemanas = '';
+                    const reservasDoLivro = agendamentosDoSemestre.filter(a => a.livro === livroNome);
+                    
+                    // Ordena pela posição que a semana aparece na matriz original de semanas
+                    reservasDoLivro.sort((a, b) => semanasAgendamento.indexOf(a.semana) - semanasAgendamento.indexOf(b.semana));
+
+                    reservasDoLivro.forEach(reserva => {
                         linhasSemanas += `<tr>
-                            <td style="width: 150px; background: #fdfdfd; font-weight: bold; color: #555;">${semana}</td>
-                            <td>${prof}</td>
+                            <td style="width: 150px; background: #fdfdfd; font-weight: bold; color: #555;">${reserva.semana}</td>
+                            <td><strong style="color:#27ae60;">${reserva.professor}</strong></td>
                         </tr>`;
                     });
 
+                    // O livro SÓ é renderizado porque ele já passou pelo filtro de quem tem agendamento
                     htmlFinal += `
                     <div style="margin-bottom: 25px; border: 1px solid #0066cc; border-radius: 4px; overflow: hidden; background: white;">
-                        <h4 style="background: #0066cc; color: white; margin: 0; padding: 10px 15px;"><i class="fas fa-book"></i> ${livro.titulo} (Estoque: ${livro.qtd})</h4>
+                        <h4 style="background: #0066cc; color: white; margin: 0; padding: 10px 15px;"><i class="fas fa-book"></i> ${livroNome} (Estoque: ${qtd})</h4>
                         <div class="table-responsive" style="margin: 0; border: none;">
                             <table style="margin: 0;">
                                 <tbody>
@@ -468,22 +474,20 @@
             }
         };
 
-        // --- NOVA FUNÇÃO: CONTROLE DE ENTREGAS ---
         window.renderizarControleEntregas = async function() {
             const tbody = document.getElementById('tabelaEntregas');
             const filtro = document.getElementById('filtroControleEntregas').value;
             tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;"><i class="fas fa-spinner fa-spin"></i> Buscando agendamentos...</td></tr>';
 
             try {
-                // Como as entregas ocorrem baseadas nos agendamentos de livros físicos
                 const snap = await getDocs(collection(db, "agendamentos"));
                 let agendamentosLista = [];
                 snap.forEach(doc => {
                     agendamentosLista.push({ id: doc.id, ...doc.data() });
                 });
 
-                // Ordena por semana para melhor organização
-                agendamentosLista.sort((a, b) => a.semana.localeCompare(b.semana));
+                // Ordena por semana 
+                agendamentosLista.sort((a, b) => semanasAgendamento.indexOf(a.semana) - semanasAgendamento.indexOf(b.semana));
 
                 let html = '';
                 agendamentosLista.forEach(item => {
@@ -527,7 +531,6 @@
             }
         };
 
-        // Função para atualizar os dados de entrega no banco do Firebase
         window.alternarStatusEntrega = async function(idDocumento, campo, statusAtual) {
             try {
                 const docRef = doc(db, "agendamentos", idDocumento);
@@ -535,7 +538,6 @@
                     [campo]: !statusAtual
                 });
                 
-                // Recarrega a tabela imediatamente sem precisar usar alerts para agilizar o processo da coordenação
                 renderizarControleEntregas();
             } catch (error) {
                 console.error("Erro ao atualizar status:", error);
@@ -543,7 +545,6 @@
             }
         };
 
-        // Renderiza tudo na carga inicial
         renderizarProfessores();
         renderizarAcervo();
     </script>
