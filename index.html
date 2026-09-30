@@ -44,7 +44,6 @@
         .status-aguardando { color: #e67e22; font-style: italic; }
         .status-escolhido { color: #27ae60; font-weight: bold; }
 
-        /* Botões de Entrega e Devolução */
         .btn-acao { border: 1px solid #ccc; background: white; color: #555; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; transition: 0.2s; width: 100%; text-align: left; display: block; box-sizing: border-box; font-weight: bold; }
         .btn-acao:hover { background: #f0f0f0; }
         .btn-entregue-ativo { background: #27ae60; color: white; border: 1px solid #27ae60; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; width: 100%; text-align: left; display: block; box-sizing: border-box; font-weight: bold; }
@@ -257,14 +256,16 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
+        // ATUALIZADO: Márcio removido do 1, 4, 6 e 7. Fica apenas no 5.
+        // Daniele entra substituindo Guilherme nos demais: 1, 4, 6 e 7.
         const professores = {
-            1: ["Lígia", "Luzirene", "João Paulo", "Márcio", "Sônia", "Miguel", "Rafael", "Nelson", "Iasmin", "Angélica"],
+            1: ["Lígia", "Luzirene", "João Paulo", "Sônia", "Miguel", "Rafael", "Nelson", "Iasmin", "Angélica", "Daniele"],
             2: ["Lígia", "Luzirene", "João Paulo", "Sônia", "Miguel", "Kethleen", "Rafael", "Nelson", "Iasmin", "Angélica"],
             3: ["Lígia", "Luzirene", "Sônia", "Miguel", "Nelson", "Iasmin", "Angélica"],
-            4: ["Rômulo", "João Paulo", "Luzirene", "Márcio", "Sônia"],
-            5: ["Lígia", "João Paulo", "Rômulo", "Daniele", "Kethleen"],
-            6: ["Rômulo", "Márcio", "Kethleen", "Miguel"],
-            7: ["Keyle", "Márcio", "Miguel"]
+            4: ["Rômulo", "João Paulo", "Luzirene", "Sônia", "Daniele"],
+            5: ["Lígia", "João Paulo", "Rômulo", "Kethleen", "Márcio"],
+            6: ["Rômulo", "Kethleen", "Miguel", "Daniele"],
+            7: ["Keyle", "Miguel", "Daniele"]
         };
 
         const acervo = [
