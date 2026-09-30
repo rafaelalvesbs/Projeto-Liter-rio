@@ -60,7 +60,7 @@
             .menu { flex-wrap: wrap; }
             .menu button { width: 50%; flex-direction: column; padding: 12px 5px; font-size: 11px; border-right: 1px solid #eee; border-bottom: 1px solid #eee !important; gap: 5px; }
             .menu button:nth-child(2n) { border-right: none; }
-            .menu button:last-child:nth-child(odd) { width: 100%; border-right: none; } /* Ajuste para o 5º botão ocupar a linha toda */
+            .menu button:last-child:nth-child(odd) { width: 100%; border-right: none; } 
 
             .tab-content { padding: 15px; }
             select { max-width: 100%; }
@@ -115,7 +115,6 @@
             <button class="tab-link" onclick="openTab('gerenciar', this); renderizarAcervo();"><i class="fas fa-book"></i> Paradidáticos</button>
             <button class="tab-link" onclick="openTab('sugestoes', this)" id="btnCarregarSugestoes"><i class="fas fa-lightbulb"></i> Analisar Sugestões</button>
             <button class="tab-link" onclick="openTab('agendados', this); renderizarAgendamentosCoordenadora();"><i class="fas fa-calendar-check"></i> Livros Agendados</button>
-            <!-- NOVA ABA: CONTROLE DE ENTREGAS -->
             <button class="tab-link" onclick="openTab('controle-entregas', this); renderizarControleEntregas();"><i class="fas fa-box-open"></i> Controle de Entregas</button>
         </div>
     </nav>
@@ -207,7 +206,7 @@
             </div>
         </div>
 
-        <!-- NOVA ABA: Controle de Entregas -->
+        <!-- Controle de Entregas -->
         <div id="controle-entregas" class="tab-content">
             <div class="flex-header">
                 <h3>Controle de Entrega e Devolução (Livros Físicos)</h3>
@@ -245,7 +244,6 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        // Importamos também o doc e updateDoc para atualizar o status dinamicamente
         import { getFirestore, collection, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -260,13 +258,13 @@
         const db = getFirestore(app);
 
         const professores = {
-            1: ["Lígia", "Luzirene", "João Paulo", "Márcio", "Sônia", "Miguel", "Rafael", "Nelson", "Iasmin", "Angélica", "Guilherme"],
+            1: ["Lígia", "Luzirene", "João Paulo", "Márcio", "Sônia", "Miguel", "Rafael", "Nelson", "Iasmin", "Angélica"],
             2: ["Lígia", "Luzirene", "João Paulo", "Sônia", "Miguel", "Kethleen", "Rafael", "Nelson", "Iasmin", "Angélica"],
             3: ["Lígia", "Luzirene", "Sônia", "Miguel", "Nelson", "Iasmin", "Angélica"],
-            4: ["Rômulo", "João Paulo", "Luzirene", "Márcio", "Sônia", "Guilherme"],
-            5: ["Lígia", "João Paulo", "Rômulo", "Guilherme", "Kethleen"],
-            6: ["Rômulo", "Guilherme", "Kethleen", "Miguel"],
-            7: ["Keyle", "Guilherme", "Miguel"]
+            4: ["Rômulo", "João Paulo", "Luzirene", "Márcio", "Sônia"],
+            5: ["Lígia", "João Paulo", "Rômulo", "Daniele", "Kethleen"],
+            6: ["Rômulo", "Márcio", "Kethleen", "Miguel"],
+            7: ["Keyle", "Márcio", "Miguel"]
         };
 
         const acervo = [
@@ -468,21 +466,18 @@
             }
         };
 
-        // --- NOVA FUNÇÃO: CONTROLE DE ENTREGAS ---
         window.renderizarControleEntregas = async function() {
             const tbody = document.getElementById('tabelaEntregas');
             const filtro = document.getElementById('filtroControleEntregas').value;
             tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;"><i class="fas fa-spinner fa-spin"></i> Buscando agendamentos...</td></tr>';
 
             try {
-                // Como as entregas ocorrem baseadas nos agendamentos de livros físicos
                 const snap = await getDocs(collection(db, "agendamentos"));
                 let agendamentosLista = [];
                 snap.forEach(doc => {
                     agendamentosLista.push({ id: doc.id, ...doc.data() });
                 });
 
-                // Ordena por semana para melhor organização
                 agendamentosLista.sort((a, b) => a.semana.localeCompare(b.semana));
 
                 let html = '';
@@ -527,7 +522,6 @@
             }
         };
 
-        // Função para atualizar os dados de entrega no banco do Firebase
         window.alternarStatusEntrega = async function(idDocumento, campo, statusAtual) {
             try {
                 const docRef = doc(db, "agendamentos", idDocumento);
@@ -535,7 +529,6 @@
                     [campo]: !statusAtual
                 });
                 
-                // Recarrega a tabela imediatamente sem precisar usar alerts para agilizar o processo da coordenação
                 renderizarControleEntregas();
             } catch (error) {
                 console.error("Erro ao atualizar status:", error);
@@ -543,7 +536,6 @@
             }
         };
 
-        // Renderiza tudo na carga inicial
         renderizarProfessores();
         renderizarAcervo();
     </script>
