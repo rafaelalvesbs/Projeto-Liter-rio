@@ -259,13 +259,13 @@
         window.livrosJaEscolhidos = [];
 
         const mapProfessores = {
-            1: ["Lígia", "Luzirene", "João Paulo", "Márcio", "Sônia", "Miguel", "Rafael", "Nelson", "Iasmin", "Angélica", "Guilherme"],
+            1: ["Lígia", "Luzirene", "João Paulo", "Márcio", "Sônia", "Miguel", "Rafael", "Nelson", "Iasmin", "Angélica"],
             2: ["Lígia", "Luzirene", "João Paulo", "Sônia", "Miguel", "Kethleen", "Rafael", "Nelson", "Iasmin", "Angélica"],
             3: ["Lígia", "Luzirene", "Sônia", "Miguel", "Nelson", "Iasmin", "Angélica"],
-            4: ["Rômulo", "João Paulo", "Luzirene", "Márcio", "Sônia", "Guilherme"],
-            5: ["Lígia", "João Paulo", "Rômulo", "Guilherme", "Kethleen"],
-            6: ["Rômulo", "Guilherme", "Kethleen", "Miguel"],
-            7: ["Keyle", "Guilherme", "Miguel"]
+            4: ["Rômulo", "João Paulo", "Luzirene", "Márcio", "Sônia"],
+            5: ["Lígia", "João Paulo", "Rômulo", "Daniele", "Kethleen"],
+            6: ["Rômulo", "Márcio", "Kethleen", "Miguel"],
+            7: ["Keyle", "Márcio", "Miguel"]
         };
 
         const acervo = [
@@ -534,14 +534,12 @@
             } catch (error) { Swal.fire('Erro', 'Ocorreu um erro.', 'error'); }
         });
 
-        // --- SISTEMA DE AGENDAMENTO DE FÍSICOS ---
         window.renderizarPainelAgendamento = async function() {
             const semSelecionado = document.getElementById('filtroSemestreAgendamento').value;
             const area = document.getElementById('areaAgendamento');
             area.innerHTML = '<div style="width:100%; text-align:center;"><i class="fas fa-spinner fa-spin"></i> Carregando dados de agendamento...</div>';
 
             try {
-                // 1. Busca a escolha do professor para o semestre
                 const escolhasSnap = await getDocs(collection(db, "escolhas"));
                 let livroEscolhido = null;
                 escolhasSnap.forEach(doc => {
@@ -551,7 +549,6 @@
                     }
                 });
 
-                // 2. Se não escolheu livro ainda
                 if(!livroEscolhido) {
                     area.innerHTML = `
                         <div style="border: 2px dashed #ccc; padding: 30px; width:100%; text-align: center; color: #555; border-radius: 4px;">
@@ -567,7 +564,6 @@
 
                 const livroAcervo = acervo.find(l => l.titulo === livroEscolhido && l.sem.toString() === semSelecionado.toString());
                 
-                // 3. Verifica se é Digital
                 if(!livroAcervo || livroAcervo.qtd === "Digital") {
                     area.innerHTML = `
                         <div style="border: 2px dashed #2ecc71; padding: 30px; width:100%; text-align: center; color: #27ae60; border-radius: 4px;">
@@ -578,7 +574,6 @@
                     return;
                 }
 
-                // 4. Se é físico, mostra a agenda do livro
                 const snapAgendamentos = await getDocs(collection(db, "agendamentos"));
                 let agendamentosFeitos = [];
                 snapAgendamentos.forEach(doc => agendamentosFeitos.push({ id: doc.id, ...doc.data() }));
